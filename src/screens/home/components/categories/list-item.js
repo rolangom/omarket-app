@@ -13,6 +13,7 @@ import {
 } from 'native-base';
 
 import OptThumbnail from '../../../../common/components/opt-thumbnail';
+import { lightGray } from '../../../../config/constants';
 
 export type Props = {
   imgURL?: ?string,
@@ -28,7 +29,7 @@ const styles = {
     height: 45,
   },
   text: {
-    color: 'gray',
+    color: lightGray,
     textAlign: 'center',
   },
   image: {
@@ -50,7 +51,6 @@ export default class CategoryListItem extends React.Component<Props> {
     return (
       <ListItem
         button
-        thumbnail
         onPress={this.onPress}
       >
         <OptThumbnail

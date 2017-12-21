@@ -1,7 +1,8 @@
 // @flow
 import React from 'react';
-import { Thumbnail } from 'native-base';
-import DummyView from './dummy-view'
+import { Thumbnail, View } from 'native-base';
+import DummyView from './dummy-view';
+import { lightGray } from '../../config/constants';
 
 export type Props = {
   square?: boolean,
@@ -9,14 +10,29 @@ export type Props = {
   uri: string,
 };
 
-const OptThumbnail = ({ square, size, uri, ...args }: Props) => (
+const styles = {
+  main: {
+    borderColor: lightGray,
+    borderWidth: 2,
+  },
+};
+
+const OptThumbnail = ({
+  square,
+  size,
+  uri,
+  ...args
+}: Props) => (
   uri ?
-    <Thumbnail
-      square={square}
-      size={size}
-      source={{ uri }}
-      {...args}
-    /> :
+    <View style={styles.main}>
+      <Thumbnail
+        square={square}
+        size={size}
+        source={{ uri }}
+        {...args}
+      />
+    </View>
+    :
     <DummyView size={size} />
 );
 

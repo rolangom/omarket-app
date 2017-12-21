@@ -3,7 +3,7 @@ import { View, Dimensions, TouchableOpacity } from 'react-native';
 import { Text } from 'native-base';
 import OptImage from '../../../../common/components/opt-image';
 import { getPriceWithCurrency } from '../../../../utils';
-import { lightGray } from '../../../../config/constants';
+import {darkGray, lighterGray} from '../../../../config/constants';
 
 export type Props = {
   value: any,
@@ -22,13 +22,13 @@ const styles = {
   container: {
     backgroundColor: 'white',
     margin: 2,
-    paddingBottom: 15,
+    paddingBottom: 10,
   },
   item: {
     flexDirection: 'column',
   },
   content: {
-    backgroundColor: lightGray,
+    backgroundColor: lighterGray,
     padding: 5,
   },
   row: {
@@ -41,12 +41,18 @@ const styles = {
   title: {
     fontSize: 12,
     flex: 1,
+    fontFamily: 'Roboto_regular',
+    color: darkGray,
   },
   subtitle: {
+    fontFamily: 'Roboto_regular',
     fontSize: 10,
+    color: darkGray,
   },
   price: {
-    fontSize: 8,
+    fontFamily: 'Roboto_regular',
+    fontSize: 10,
+    color: darkGray,
   },
 };
 
@@ -82,7 +88,7 @@ class ProductListItem extends React.Component<Props> {
             </View>
             <Text
               style={styles.subtitle}
-              numberOfLines={1}
+              numberOfLines={2}
               note
             >
               {descr}

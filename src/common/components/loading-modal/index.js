@@ -15,7 +15,7 @@ const styles = {
     alignItems: 'center',
   },
   box: {
-    backgroundColor: '#efefef',
+    backgroundColor: '#f1f1f1',
     borderRadius: 5,
     padding: 25,
   },

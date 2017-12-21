@@ -11,6 +11,15 @@ import adsReducer, { fetchAdsLogic } from '../ducks/ads';
 
 import firebase, { db } from './fbase';
 
+const originalSend = XMLHttpRequest.prototype.send;
+XMLHttpRequest.prototype.send = function(body) {
+  if (body === '') {
+    originalSend.call(this);
+  } else {
+    originalSend.call(this, body);
+  }
+};
+
 const configureStore = () => {
   const reducers = combineReducers({
     nav: navReducer,

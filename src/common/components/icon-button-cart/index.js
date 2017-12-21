@@ -7,6 +7,7 @@ import {
   View,
   Badge,
 } from 'native-base';
+import { darkGray } from '../../../config/constants';
 
 export type Props = {
   onNavigate: () => void,
@@ -17,7 +18,10 @@ const IconButtonCart = ({ onNavigate }: Props) => (
     transparent
     onPress={onNavigate}
   >
-    <Icon name="md-cart" />
+    <Icon
+      name="ios-cart-outline"
+      style={{ color: darkGray }}
+    />
   </Button>
 );
 

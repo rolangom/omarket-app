@@ -4,15 +4,7 @@ import { connect } from 'react-redux';
 // import { NavigationNavigatorProps } from 'react-navigation/src/TypeDefinition';
 import {
   Container,
-  Header,
   Content,
-  Left,
-  Body,
-  Right,
-  Title,
-  Text,
-  Button,
-  Icon,
 } from 'native-base';
 import type { Category, Product } from '../../config/types';
 
@@ -30,8 +22,6 @@ export type Props = {
   products: Product[],
   onNavigate: (string) => void,
   onNavigateProduct: (string) => void,
-  loadCategories: () => void,
-  loadProducts: () => void,
 };
 
 class HomeScreen extends React.Component<Props> {
@@ -75,10 +65,8 @@ const mapStateToProps = (state, props) => {
     products: getProducts(state, parent),
   };
 };
-const mapDispatchToProps = (dispatch, props) => {
-  return {
-    onNavigate: (id: string) => props.navigation.navigate('Home', { parent: id }),
-    onNavigateProduct: (id: string) => { }, // props.navigation.navigate('ProductDetail', { parent: id }),
-  };
-};
+const mapDispatchToProps = (dispatch, props) => ({
+  onNavigate: (id: string) => props.navigation.navigate('Home', { parent: id }),
+  onNavigateProduct: (id: string) => props.navigation.navigate('ProductDetail', { productID: id }),
+});
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);

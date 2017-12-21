@@ -5,13 +5,16 @@ import { Platform, StatusBar } from 'react-native';
 
 import SettingsScreen from '../screens/settings';
 import HomeScreen from '../screens/home';
+import ProductDetailScreen from '../screens/product-detail';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
+import { darkGray } from '../config/constants';
 
 const AppNavigator = StackNavigator(
   {
     Home: { screen: HomeScreen },
+    ProductDetail: { screen: ProductDetailScreen },
     Settings: { screen: SettingsScreen },
   },
   {
@@ -21,6 +24,7 @@ const AppNavigator = StackNavigator(
     },
     navigationOptions: ({ navigation }) => ({
       headerTitle: HeaderTitle,
+      headerTintColor: darkGray,
       headerStyle: { backgroundColor: 'white' },
       headerRight: <IconButtonCart onNavigate={() => navigation.navigate('Settings')} />,
     }),
