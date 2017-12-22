@@ -24,12 +24,12 @@ const AppNavigator = StackNavigator(
     cardStyle: {
       paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
     },
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: {
       headerTitle: HeaderTitle,
       headerTintColor: darkGray,
       headerStyle: { backgroundColor: 'white' },
-      headerRight: <IconButtonCart onNavigate={() => navigation.navigate('Cart')} />,
-    }),
+      headerRight: <IconButtonCart destRoute="Cart" />,
+    },
   },
 );
 

@@ -19,7 +19,7 @@ export default (variables = variable) => {
     },
     "NativeBase.Text": {
       color: variables.badgeColor,
-      fontSize: variables.fontSizeBase,
+      fontSize: variables.fontSizeBase - 3,
       lineHeight: variables.lineHeight - 1,
       textAlign: "center",
       paddingHorizontal: 3

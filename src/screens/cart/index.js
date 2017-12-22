@@ -5,39 +5,26 @@ import {
   Container,
   Content,
   List,
-  View,
-  Text,
 } from 'native-base';
 
-import CartListItem from './list-item';
+import CartListItem from './components/list-item';
+import PriceView from './components/price-view';
 import Ads from '../../common/components/ads';
 import type { CartItem, Product, State } from '../../config/types';
 import { getCartItems, getCartItemsSubTotalPrice } from '../../ducks/cart/selectors';
 import { changeCartProductQty } from '../../ducks/cart';
-import { currency, darkGray } from '../../config/constants';
+import { currency } from '../../config/constants';
 
 export type Props = {
   items: CartItem,
+  subTotal: number,
   productById: (string) => Product,
   onChangeQty: (string, number) => void,
 };
 
 const styles = {
-  priceView: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-end',
-    backgroundColor: 'white',
-    padding: 10,
-  },
-  priceCurr: {
-    fontSize: 18,
-    color: darkGray,
-    fontFamily: 'Roboto_regular',
-  },
-  priceValue: {
-    fontSize: 26,
-    color: darkGray,
-    fontFamily: 'Roboto_regular',
+  list: {
+    paddingTop: 15,
   },
 };
 
@@ -61,24 +48,14 @@ class CartScreen extends React.Component<Props> {
           <List
             dataArray={items}
             renderRow={this.renderItem}
-            style={{ paddingTop: 15 }}
+            style={styles.list}
           />
-          <View>
-
-            <View style={styles.priceView}>
-              <Text style={styles.priceValue}>{subTotal}</Text>
-              <Text style={styles.priceCurr}>{currency}</Text>
-            </View>
-          </View>
+          <PriceView value={subTotal} currency={currency} />
         </Content>
       </Container>
     );
   }
 }
-
-CartScreen.navigationOptions = {
-  headerRight: null,
-};
 
 const mapStateToProps = (state: State) => ({
   items: getCartItems(state),
@@ -87,7 +64,7 @@ const mapStateToProps = (state: State) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  onChangeQty: (id: string, qty: number) => dispatch(changeCartProductQty(id, qty))
+  onChangeQty: (id: string, qty: number) => dispatch(changeCartProductQty(id, qty)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartScreen);

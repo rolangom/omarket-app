@@ -6,10 +6,10 @@ import {
   Body,
   Right,
 } from 'native-base';
-import OptThumbnail from '../../common/components/opt-thumbnail';
-import QtyInput from '../../common/components/qty-input';
-import type { CartItem, Product } from '../../config/types';
-import { lightGray } from '../../config/constants';
+import OptThumbnail from '../../../common/components/opt-thumbnail';
+import QtyInput from '../../../common/components/qty-input/index';
+import type { CartItem, Product } from '../../../config/types';
+import { lightGray } from '../../../config/constants';
 
 export type Props = {
   item: CartItem,
