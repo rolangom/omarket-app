@@ -8,6 +8,7 @@ export type Props = {
   square?: boolean,
   size?: number,
   uri: string,
+  borderless?: boolean,
 };
 
 const styles = {
@@ -21,10 +22,11 @@ const OptThumbnail = ({
   square,
   size,
   uri,
+  borderless,
   ...args
 }: Props) => (
   uri ?
-    <View style={styles.main}>
+    <View style={borderless ? null : styles.main}>
       <Thumbnail
         square={square}
         size={size}
@@ -36,5 +38,10 @@ const OptThumbnail = ({
     <DummyView size={size} />
 );
 
+OptThumbnail.defaultProps = {
+  square: false,
+  size: 45,
+  borderless: false,
+};
 
 export default OptThumbnail;

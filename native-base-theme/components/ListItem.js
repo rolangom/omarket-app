@@ -339,7 +339,7 @@ export default (variables = variable) => {
       "NativeBase.Body": {
         "NativeBase.Text": {
           marginLeft: null,
-          fontSize: 17
+          fontSize: 20
         },
         flex: 1,
         height: 44,

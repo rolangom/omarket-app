@@ -8,6 +8,7 @@ import globalReducer, { initAppDataLogic } from '../ducks/global';
 import categoriesReducer, { fetchCategoriesLogic } from '../ducks/categories';
 import productsReducer, { fetchProductsLogic } from '../ducks/products';
 import adsReducer, { fetchAdsLogic } from '../ducks/ads';
+import cartItemsReducer, { deleteCartItemIfEmptyLogic, postCardProductLogic } from '../ducks/cart';
 
 import firebase, { db } from './fbase';
 
@@ -27,6 +28,7 @@ const configureStore = () => {
     categories: categoriesReducer,
     products: productsReducer,
     ads: adsReducer,
+    cartItems: cartItemsReducer,
   });
 
   return createStore(
@@ -38,6 +40,8 @@ const configureStore = () => {
         fetchCategoriesLogic,
         fetchProductsLogic,
         initAppDataLogic,
+        deleteCartItemIfEmptyLogic,
+        postCardProductLogic,
       ], { firebase, db }),
     ),
   );

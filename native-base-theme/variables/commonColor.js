@@ -116,9 +116,9 @@ export default {
   brandInfo: "#62B1F6",
   brandSuccess: "#5cb85c",
   brandDanger: "#d9534f",
-  brandWarning: "#f0ad4e",
+  brandWarning: '#B3B3B3', // "#f0ad4e",
   brandSidebar: "#252932",
-  brandDark: "#000",
+  brandDark: '#4D4D4D', // "#000",
   brandLight: "#f4f4f4",
 
   // Font

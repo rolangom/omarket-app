@@ -13,6 +13,9 @@ export default (variables = variable) => {
       alignItems: 'center',
       justifyContent: 'center',
     },
+    '.parentAlign': {
+      alignSelf: 'auto',
+    },
     '.bordered': {
       '.dark': {
         'NativeBase.Text': {
@@ -386,6 +389,14 @@ export default (variables = variable) => {
       height: 30,
       'NativeBase.Text': {
         fontSize: 14,
+      },
+      'NativeBase.IconNB': {
+        marginRight: 8,
+        marginLeft: 8,
+      },
+      'NativeBase.Icon': {
+        marginRight: 8,
+        marginLeft: 8,
       },
     },
 

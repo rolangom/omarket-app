@@ -37,6 +37,12 @@ export type Product = {
   },
 };
 
+export type CartItem = {
+  productID: string,
+  qty: number,
+  descr?: string,
+};
+
 export type MessageMode = "error"|"info"|"warning";
 
 export type Message = {
@@ -50,9 +56,19 @@ export type Global = {
   messages: Array<Message>,
 };
 
+export type KeysOf<T> = {
+  [key: string]: T,
+};
+
+export type Normalizd<T> = {
+  byId: KeysOf<T>,
+  allIds: string[],
+};
+
 export type State = {
   global: Global,
-  categories: Category[],
-  products: Product[],
+  categories: Normalizd<Category>,
+  products: Normalizd<Product>,
   ads: Ad[],
+  cartItems: Normalizd<CartItem>,
 };

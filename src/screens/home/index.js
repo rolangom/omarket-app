@@ -12,8 +12,8 @@ import Ads from '../../common/components/ads';
 import CategoryList from './components/categories';
 import ProductList from './components/products';
 
-import { getCategories } from './components/categories/selectors';
-import { getProducts } from './components/products/selectors';
+import { getCategories } from '../../ducks/categories/selectors';
+import { getProducts } from '../../ducks/products/selectors';
 
 
 export type Props = {

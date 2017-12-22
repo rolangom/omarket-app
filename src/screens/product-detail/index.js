@@ -8,13 +8,13 @@ import {
   Content,
   Text,
   View,
-  Footer
 } from 'native-base';
 
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
 import { currency, darkGray } from '../../config/constants';
 import type { Product, State } from '../../config/types';
+import { postCartProduct } from '../../ducks/cart';
 
 const { width } = Dimensions.get('window');
 
@@ -96,7 +96,7 @@ class ProductDetailScreen extends React.Component<Props> {
             <Text style={styles.detailSubtitle}>{descr}</Text>
           </View>
           <QtyForm
-            defaultValue={0}
+            defaultValue={1}
             max={parseInt(qty)}
             onSubmit={onSubmit}
           />
@@ -107,9 +107,9 @@ class ProductDetailScreen extends React.Component<Props> {
 }
 
 const mapStateToProps = (state: State, { navigation: { state: { params: { productID } } } }) => ({
-  product: state.products.find((it: Product) => it.id === productID),
+  product: state.products.byId[productID],
 });
-const mapDispatchToProps = (dispatch) => ({
-  onSubmit: (value: number) => {},
+const mapDispatchToProps = (dispatch, { navigation: { state: { params: { productID } } } }) => ({
+  onSubmit: (value: number) => dispatch(postCartProduct(productID, value)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetailScreen);

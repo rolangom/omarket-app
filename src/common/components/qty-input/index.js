@@ -13,9 +13,16 @@ const styles = {
   main: {
     flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   flex1: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  paddingCenter: {
+    padding: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -25,15 +32,26 @@ const styles = {
     textAlign: 'center',
     fontFamily: 'Roboto_regular',
   },
+  qty: {
+    fontSize: 22,
+    color: darkGray,
+    textAlign: 'center',
+    fontFamily: 'Roboto_regular',
+  },
   icon: {
     color: darkGray,
     fontSize: 20,
+  },
+  whiteIcon: {
+    color: 'white',
+    fontSize: 16,
   },
 };
 
 export type Props = {
   value: number,
   max: number,
+  styled?: boolean,
   onChange: (number) => void,
 };
 
@@ -43,30 +61,36 @@ class QtyInput extends React.Component<Props> {
   onPlusPress = () => this.props.value < this.props.max
     && this.props.onChange(this.props.value + 1);
   render() {
-    const { value } = this.props;
+    const { value, styled } = this.props;
     return (
       <View style={styles.main}>
         <Button
-          transparent
-          style={styles.flex1}
+          transparent={!styled}
+          warning={styled}
+          style={!styled ? styles.flex1 : null}
+          small={styled}
+          parentAlign={styled}
           onPress={this.onMinusPress}
         >
           <Icon
             name="md-remove"
-            style={styles.icon}
+            style={styled ? styles.whiteIcon : styles.icon}
           />
         </Button>
-        <View style={styles.flex1}>
-          <Text style={styles.text}>{padStart(value, 2)}</Text>
+        <View style={!styled ? styles.flex1 : styles.paddingCenter}>
+          <Text style={styled ? styles.text : styles.qty}>{padStart(value, 2)}</Text>
         </View>
         <Button
-          transparent
-          style={styles.flex1}
+          transparent={!styled}
+          dark={styled}
+          style={!styled ? styles.flex1 : null}
+          small={styled}
+          parentAlign={styled}
           onPress={this.onPlusPress}
         >
           <Icon
             name="md-add"
-            style={styles.icon}
+            style={styled ? styles.whiteIcon : styles.icon}
           />
         </Button>
       </View>

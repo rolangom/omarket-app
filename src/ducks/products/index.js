@@ -1,10 +1,11 @@
 // @flow
+import { combineReducers } from 'redux';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Product as ProductType } from '../../config/types';
+import type { KeysOf, Product } from '../../config/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs } from '../../utils';
+import { getDocs, reduceFnByID, sortBy } from '../../utils';
 
 export const fetchProducts = createAction('FETCH_PRODUCTS', (force: boolean = false) => ({ force }));
 export const setProducts = createAction('SET_PRODUCTS');
@@ -19,11 +20,11 @@ export const fetchProductsLogic = createLogic({
     dispatch(setIsLoading(true));
     try {
       const docsSnapshots = await db.collection('products').where('isActive', '==', true).get();
-      const products = getDocs(docsSnapshots);
+      const products = sortBy(getDocs(docsSnapshots), 'orderID', true);
       dispatch(setProducts(products));
     } catch (error) {
       console.error('fetchProducts', error);
-      dispatch(addError(error));
+      dispatch(addError(error.message));
     } finally {
       dispatch(setIsLoading(false));
       done();
@@ -31,9 +32,17 @@ export const fetchProductsLogic = createLogic({
   },
 });
 
-const reducer = createReducer({
-  [setProducts]: (state, categories: ProductType[]) => categories,
+const byId = createReducer({
+  [setProducts]: (state: KeysOf<Product>, products: Product[]) => products.reduce(reduceFnByID, {}),
+}, {});
+
+const allIds = createReducer({
+  [setProducts]: (state: string[], products: Product[]) => products.map((it: Product) => it.id),
 }, []);
 
-export default reducer;
+const reducer = combineReducers({
+  byId,
+  allIds,
+});
 
+export default reducer;
