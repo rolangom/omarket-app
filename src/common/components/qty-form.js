@@ -10,7 +10,7 @@ export type Props = {
   onSubmit: (number) => void,
 };
 
-export type State = {
+type State = {
   value: number,
 };
 

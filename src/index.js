@@ -11,7 +11,7 @@ import Messages from './common/components/messages';
 
 import AppWithNavigationState from './navigators/app-with-navigation-state';
 import configureStore from './config/store';
-import { initAppData } from './ducks/global';
+import initApp from './config/app';
 
 const styles = {
   main: {
@@ -21,8 +21,12 @@ const styles = {
 
 class Root extends React.Component {
   componentDidMount() {
-    this.store.dispatch(initAppData());
+    this.unsubscr = initApp(this.store);
   }
+  componentWillUnmount() {
+    this.unsubscr();
+  }
+  unsubscr;
   store = configureStore();
   style = getTheme(commonColor);
   render() {

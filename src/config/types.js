@@ -43,6 +43,40 @@ export type CartItem = {
   descr?: string,
 };
 
+export type Location = {
+  latitude: number,
+  longitude: number,
+};
+
+export type Address = {
+  id?: string,
+  name: string,
+  detail: string,
+  extra?: ?string,
+  location: Location,
+};
+
+export type User = {
+  uid: string,
+  displayName: string,
+  email: string,
+  phoneNumber: string,
+  gender: string,
+  birthday: string,
+  photoURL: string,
+  taxInfo: {
+    ced_rnc: string,
+    nombre_razonSocial: string,
+    nombreComercial: string,
+    category: string,
+    regPag: string,
+    status: string,
+    ecoAct: string,
+  },
+};
+
+// ------------------------------------------------ //
+
 export type MessageMode = "error"|"info"|"warning";
 
 export type Message = {
@@ -71,4 +105,6 @@ export type State = {
   products: Normalizd<Product>,
   ads: Ad[],
   cartItems: Normalizd<CartItem>,
+  addresses: Normalizd<Address>,
+  user: ?User,
 };

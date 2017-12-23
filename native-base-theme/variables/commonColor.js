@@ -119,7 +119,7 @@ export default {
   brandWarning: '#B3B3B3', // "#f0ad4e",
   brandSidebar: "#252932",
   brandDark: '#4D4D4D', // "#000",
-  brandLight: "#f4f4f4",
+  brandLight: "#f1f1f1",
 
   // Font
   fontFamily: "Roboto_light",

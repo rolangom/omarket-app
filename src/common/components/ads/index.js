@@ -5,6 +5,7 @@ import Swiper from 'react-native-swiper';
 import { connect } from 'react-redux';
 import { fetchAds } from '../../../ducks/ads/index';
 import { Ad as AdType } from '../../../config/types';
+import { darkGray } from '../../../config/constants';
 
 const { width } = Dimensions.get('window');
 const height = 200;
@@ -48,6 +49,7 @@ class Ads extends React.Component<Props> {
         <Swiper
           showsPagination
           autoPlay
+          activeDotColor={darkGray}
         >
           {this.props.ads.map(this.renderItem)}
         </Swiper>

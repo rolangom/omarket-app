@@ -19,17 +19,17 @@ export default (variables = variable) => {
     },
     "NativeBase.Text": {
       color: variables.badgeColor,
-      fontSize: variables.fontSizeBase - 3,
+      fontSize: variables.fontSizeBase - 2,
       lineHeight: variables.lineHeight - 1,
       textAlign: "center",
-      paddingHorizontal: 3
+      paddingHorizontal: 2
     },
     backgroundColor: variables.badgeBg,
     padding: variables.badgePadding,
-    paddingHorizontal: 6,
+    paddingHorizontal: 4,
     alignSelf: "flex-start",
-    borderRadius: 13.5,
-    height: 27
+    borderRadius: 12,
+    height: 24
   };
   return badgeTheme;
 };

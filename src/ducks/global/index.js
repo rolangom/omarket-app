@@ -12,6 +12,7 @@ export const deleteMessage = createAction('DELETE_MESSAGE');
 export const initAppData = createAction('INIT_APP_DATA');
 
 export const addError = text => addMessage('error', 'Error', text);
+export const addRawError = error => addMessage('error', 'Error', error.message);
 
 const reducer = createReducer({
   [setIsLoading]: (state, isLoading: boolean) => ({ ...state, isLoading }),

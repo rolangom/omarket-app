@@ -9,6 +9,8 @@ export const darkGray: string = '#666666';
 export const darkerGray: string = '#4D4D4D';
 export const red: string = '#eb1c23';
 
+export const FACEBOOK_APPID = '559131207620680';
+
 export const currency: string = 'RD$';
 
 export default null;

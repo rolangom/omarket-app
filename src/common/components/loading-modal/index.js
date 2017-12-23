@@ -1,12 +1,12 @@
+// @flow
 import React from 'react';
 import {
   StyleSheet,
-} from 'react-native';
-import {
+  ActivityIndicator,
   View,
-  Spinner,
-} from 'native-base';
+} from 'react-native';
 import { connect } from 'react-redux';
+import { lighterGray, red } from '../../../config/constants';
 
 const styles = {
   container: {
@@ -15,7 +15,7 @@ const styles = {
     alignItems: 'center',
   },
   box: {
-    backgroundColor: '#f1f1f1',
+    backgroundColor: lighterGray,
     borderRadius: 5,
     padding: 25,
   },
@@ -28,7 +28,7 @@ export type Props = {
 export const LoadingModal = ({ isLoading }: Props) => (isLoading ?
   <View style={styles.container}>
     <View style={styles.box}>
-      <Spinner color="red" />
+      <ActivityIndicator color={red} />
     </View>
   </View> : null
 );

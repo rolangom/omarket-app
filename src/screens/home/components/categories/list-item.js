@@ -31,12 +31,17 @@ const styles = {
   text: {
     color: lightGray,
     textAlign: 'center',
+    fontSize: 22,
   },
   image: {
     height: 45,
     width: 45,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  icon: {
+    fontSize: 24,
+    color: lightGray,
   },
 };
 
@@ -64,7 +69,10 @@ export default class CategoryListItem extends React.Component<Props> {
           <Text style={styles.text}>{title}</Text>
         </Body>
         <Right>
-          <Icon name="ios-arrow-forward" />
+          <Icon
+            name="ios-arrow-forward"
+            style={styles.icon}
+          />
         </Right>
       </ListItem>
     );

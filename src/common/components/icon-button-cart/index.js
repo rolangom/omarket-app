@@ -18,6 +18,7 @@ export type Props = {
   qty: number,
   destRoute?: string,
   isLocal: boolean,
+  shouldNavigate: boolean,
 };
 
 const styles = {
@@ -55,6 +56,7 @@ const IconButtonCart = ({ onNavigate, qty, isLocal }: Props) => (
 
 IconButtonCart.defaultProps = {
   destRoute: 'Cart',
+  shouldNavigate: true,
 };
 
 const mapStateToProps = (state: State) => ({
@@ -71,7 +73,7 @@ const mergeStateDispatchToProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...ownProps,
   isLocal: stateProps.routeName === ownProps.destRoute,
-  onNavigate: stateProps.routeName === ownProps.destRoute ? (() => {}) : dispatchProps.onNavigate,
+  onNavigate: ownProps.shouldNavigate ? dispatchProps.onNavigate : (() => {}),
 });
 
 export default connect(

@@ -66,7 +66,7 @@ const mapStateToProps = (state, props) => {
   };
 };
 const mapDispatchToProps = (dispatch, props) => ({
-  onNavigate: (id: string) => props.navigation.navigate('Home', { parent: id }),
+  onNavigate: (id: string) => props.navigation.navigate('Browse', { parent: id }),
   onNavigateProduct: (id: string) => props.navigation.navigate('ProductDetail', { productID: id }),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
