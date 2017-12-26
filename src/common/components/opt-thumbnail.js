@@ -2,7 +2,7 @@
 import React from 'react';
 import { Thumbnail, View } from 'native-base';
 import DummyView from './dummy-view';
-import { lightGray } from '../../config/constants';
+import { lightGray } from '../utils/constants';
 
 export type Props = {
   square?: boolean,

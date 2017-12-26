@@ -1,7 +1,7 @@
 import React from 'react';
 import { List } from 'native-base';
 import CategoryListItem from './list-item';
-import type { Category } from '../../../../config/types';
+import type { Category } from '../../../../common/types';
 
 export type Props = {
   items: Category[],

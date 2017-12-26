@@ -19,29 +19,26 @@ import {
 import { connect } from 'react-redux';
 
 import { deleteMessage } from '../../../ducks/global/index';
-// import { brandBlue, brandRed } from './utils';
-import type { Message } from '../../../config/types';
+import type { Message } from '../../types';
 
 const { width, height } = Dimensions.get('window');
 
 const styles = {
   container: {
-    // ...StyleSheet.absoluteFillObject,
-    // justifyContent: 'center',
-    // alignItems: 'center',
-    // margin: 25,
     alignSelf: 'center',
     width,
     height: height * 0.5,
   },
-  box: {
-    // flex: 1,
-  },
 };
 
-const Messages = ({ message, onOkPress }: Message) => (message ?
+type Props = {
+  message: Message,
+  onOkPress: () => void,
+};
+
+const Messages = ({ message, onOkPress }: Props) => (message ?
   <View style={styles.container}>
-    <Card style={styles.box}>
+    <Card>
       <CardItem header>
         <Text>
           {message.title || (message.type === 'error' ? 'Error' : 'Info')}

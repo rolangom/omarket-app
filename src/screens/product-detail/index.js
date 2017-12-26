@@ -12,8 +12,9 @@ import {
 
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
-import { currency, darkGray } from '../../config/constants';
-import type { Product, State } from '../../config/types';
+import CondContent from '../../common/components/cond-content';
+import { currency, darkGray } from '../../common/utils/constants';
+import type { Product, State } from '../../common/types';
 import { postCartProduct } from '../../ducks/cart';
 
 const { width } = Dimensions.get('window');
@@ -77,6 +78,7 @@ class ProductDetailScreen extends React.Component<Props> {
       },
       onSubmit,
     } = this.props;
+    const secureQty = parseInt(qty, 10);
     return (
       <Container>
         <Content>
@@ -95,11 +97,17 @@ class ProductDetailScreen extends React.Component<Props> {
             <Text style={styles.detailTitle}>{name}</Text>
             <Text style={styles.detailSubtitle}>{descr}</Text>
           </View>
-          <QtyForm
-            defaultValue={1}
-            max={parseInt(qty)}
-            onSubmit={onSubmit}
-          />
+          <CondContent
+            cond={secureQty > 0}
+            defaultText="Existencia 0"
+            containerStyle={styles.detail}
+          >
+            <QtyForm
+              defaultValue={1}
+              max={secureQty}
+              onSubmit={onSubmit}
+            />
+          </CondContent>
         </Content>
       </Container>
     );

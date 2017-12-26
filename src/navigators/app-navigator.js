@@ -14,7 +14,7 @@ import AddressListScreen from '../screens/addresses';
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
 import HambMenuIcon from '../common/components/hamb-menu-icon';
-import { darkGray, red } from '../config/constants';
+import { darkGray, red } from '../common/utils/constants';
 import MainDrawer from '../common/components/main-drawer';
 
 const defaultNavigationOptions = (shouldNavigateCart = true) => ({

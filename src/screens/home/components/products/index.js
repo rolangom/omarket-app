@@ -3,7 +3,7 @@
 import React from 'react';
 import { View, FlatList } from 'react-native';
 import ProductListItem from './list-item';
-import type { Product } from '../../../../config/types';
+import type { Product } from '../../../../common/types';
 
 export type Props = {
   items: Product[],

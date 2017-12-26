@@ -9,7 +9,7 @@ import categoriesReducer, { fetchCategoriesLogic } from '../ducks/categories';
 import productsReducer, { fetchProductsLogic } from '../ducks/products';
 import adsReducer, { fetchAdsLogic } from '../ducks/ads';
 import cartItemsReducer, { deleteCartItemIfEmptyLogic, postCardProductLogic } from '../ducks/cart';
-import userReducer, { loginWithFacebookLogic, logoutLogic } from '../ducks/user';
+import userReducer, { loginWithFacebookLogic, logoutLogic, postUserLogic, getUserLogic } from '../ducks/user';
 
 import firebase, { db } from './fbase';
 
@@ -44,6 +44,8 @@ const configureStore = () => {
         initAppDataLogic,
         loginWithFacebookLogic,
         logoutLogic,
+        postUserLogic,
+        getUserLogic,
         deleteCartItemIfEmptyLogic,
         postCardProductLogic,
       ], { firebase, db }),

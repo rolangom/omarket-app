@@ -6,7 +6,7 @@ import {
   Container,
   Content,
 } from 'native-base';
-import type { Category, Product } from '../../config/types';
+import type { Category, Product } from '../../common/types';
 
 import Ads from '../../common/components/ads';
 import CategoryList from './components/categories';

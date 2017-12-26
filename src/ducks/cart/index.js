@@ -4,8 +4,8 @@ import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
-import type { CartItem, KeysOf } from '../../config/types';
-import { setImmutable, deleteImmutable } from '../../utils';
+import type { CartItem, KeysOf } from '../../common/types';
+import { setImmutable, deleteImmutable } from '../../common/utils';
 
 export const postCartProduct = createAction('POST_CART_PRODUCT', (productID: string, qty: number) => ({ productID, qty }));
 export const changeCartProductQty = createAction('CHANGE_CART_PRODUCT_QTY', (productID: string, qty: number) => ({ productID, qty }));

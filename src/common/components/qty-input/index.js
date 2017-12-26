@@ -6,8 +6,8 @@ import {
   View,
   Icon,
 } from 'native-base';
-import { darkGray } from '../../../config/constants';
-import { padStart } from '../../../utils';
+import { darkGray } from '../../utils/constants';
+import { padStart } from '../../utils';
 
 const styles = {
   main: {

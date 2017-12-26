@@ -1,6 +1,6 @@
 // @flow
 
-import type { CartItem, State } from '../../config/types';
+import type { CartItem, State } from '../../common/types';
 
 export const getCartItems = (state: State): CartItem =>
   state

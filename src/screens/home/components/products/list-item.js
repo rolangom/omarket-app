@@ -2,8 +2,8 @@ import React from 'react';
 import { View, Dimensions, TouchableOpacity } from 'react-native';
 import { Text } from 'native-base';
 import OptImage from '../../../../common/components/opt-image';
-import { getPriceWithCurrency } from '../../../../utils';
-import {darkGray, lighterGray} from '../../../../config/constants';
+import { getPriceWithCurrency } from '../../../../common/utils';
+import { darkGray, lighterGray } from '../../../../common/utils/constants';
 
 export type Props = {
   value: any,

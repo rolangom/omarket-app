@@ -9,8 +9,8 @@ import {
   Badge,
   Text,
 } from 'native-base';
-import { darkGray } from '../../../config/constants';
-import type { State } from '../../../config/types';
+import { darkGray } from '../../utils/constants';
+import type { State } from '../../types';
 import { getCartItemsQty } from '../../../ducks/cart/selectors';
 
 export type Props = {

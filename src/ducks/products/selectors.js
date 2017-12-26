@@ -1,6 +1,6 @@
 // @flow
 
-import type { State, Product } from '../../config/types';
+import type { State, Product } from '../../common/types';
 
 export function getProducts(state: State, category: string): Product[] {
   const allProducts: Product[] =

@@ -4,8 +4,8 @@ import Swiper from 'react-native-swiper';
 
 import { connect } from 'react-redux';
 import { fetchAds } from '../../../ducks/ads/index';
-import { Ad as AdType } from '../../../config/types';
-import { darkGray } from '../../../config/constants';
+import { Ad as AdType } from '../../types';
+import { darkGray } from '../../utils/constants';
 
 const { width } = Dimensions.get('window');
 const height = 200;

@@ -3,9 +3,9 @@ import { combineReducers } from 'redux';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Category, KeysOf } from '../../config/types';
+import type { Category, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs, reduceFnByID, sortBy } from '../../utils';
+import { getDocs, reduceFnByID, sortBy } from '../../common/utils';
 
 export const fetchCategories = createAction('FETCH_CATEGORIES', (force: boolean = false) => ({ force }));
 export const setCategories = createAction('SET_CATEGORIES');
@@ -23,7 +23,7 @@ export const fetchCategoriesLogic = createLogic({
       const categories = sortBy(getDocs(docsSnapshots), 'orderID', true);
       dispatch(setCategories(categories));
     } catch (error) {
-      console.error('fetchCategories', error);
+      console.warn('fetchCategories error', error);
       dispatch(addError(error.message));
     } finally {
       dispatch(setIsLoading(false));
@@ -33,17 +33,13 @@ export const fetchCategoriesLogic = createLogic({
 });
 
 const byId = createReducer({
-  [setCategories]: (
-    state: KeysOf<Category>,
-    categories: Category[],
-  ) => categories.reduce(reduceFnByID, {}),
+  [setCategories]: (state: KeysOf<Category>, categories: Category[]) =>
+    categories.reduce(reduceFnByID, {}),
 }, {});
 
 const allIds = createReducer({
-  [setCategories]: (
-    state: string[],
-    categories: Category[],
-  ) => categories.map((it: Category) => it.id),
+  [setCategories]: (state: string[], categories: Category[]) =>
+    categories.map((it: Category) => it.id),
 }, []);
 
 const reducer = combineReducers({

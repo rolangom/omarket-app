@@ -1,10 +1,11 @@
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Message as MessageType } from '../../config/types';
+import type { Message as MessageType } from '../../common/types';
 import { fetchCategories } from '../categories';
 import { fetchAds } from '../ads';
 import { fetchProducts } from '../products';
+import { getUser } from '../user';
 
 export const setIsLoading = createAction('SET_IS_LOADING');
 export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({ type, title, text }));
@@ -30,6 +31,7 @@ export const initAppDataLogic = createLogic({
     dispatch(fetchAds(true));
     dispatch(fetchCategories(true));
     dispatch(fetchProducts(true));
+    dispatch(getUser());
     done();
   },
 });

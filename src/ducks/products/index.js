@@ -3,9 +3,9 @@ import { combineReducers } from 'redux';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { KeysOf, Product } from '../../config/types';
+import type { KeysOf, Product } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs, reduceFnByID, sortBy } from '../../utils';
+import { getDocs, reduceFnByID, sortBy } from '../../common/utils';
 
 export const fetchProducts = createAction('FETCH_PRODUCTS', (force: boolean = false) => ({ force }));
 export const setProducts = createAction('SET_PRODUCTS');
@@ -23,7 +23,7 @@ export const fetchProductsLogic = createLogic({
       const products = sortBy(getDocs(docsSnapshots), 'orderID', true);
       dispatch(setProducts(products));
     } catch (error) {
-      console.error('fetchProducts', error);
+      console.warn('fetchProducts', error);
       dispatch(addError(error.message));
     } finally {
       dispatch(setIsLoading(false));

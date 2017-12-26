@@ -5,7 +5,7 @@ import {
   Button,
   Icon,
 } from 'native-base';
-import { darkGray } from '../../config/constants';
+import { darkGray } from '../utils/constants';
 
 
 const styles = {

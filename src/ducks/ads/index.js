@@ -2,9 +2,9 @@
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Ad as AdType } from '../../config/types';
+import type { Ad as AdType } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs } from '../../utils';
+import { getDocs } from '../../common/utils';
 
 export const fetchAds = createAction('FETCH_ADS', (force: boolean = false) => ({ force }));
 export const setAds = createAction('SET_ADS');
@@ -22,7 +22,7 @@ export const fetchAdsLogic = createLogic({
       const ads = getDocs(docsSnapshots);
       dispatch(setAds(ads));
     } catch (error) {
-      console.error('fetchAds', error);
+      console.warn('fetchAds error', error);
       dispatch(addError(error));
     } finally {
       dispatch(setIsLoading(false));
@@ -32,7 +32,6 @@ export const fetchAdsLogic = createLogic({
 });
 
 const reducer = createReducer({
-  // [fetchAds]: state => state,
   [setAds]: (state, ads: AdType[]) => ads,
 }, []);
 

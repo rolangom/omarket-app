@@ -3,7 +3,7 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { Icon } from 'native-base';
 
-import { lighterGray } from '../../../config/constants';
+import { lighterGray } from '../../utils/constants';
 
 export type Props = {
   uri: string,

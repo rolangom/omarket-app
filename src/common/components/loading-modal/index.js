@@ -6,7 +6,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
-import { lighterGray, red } from '../../../config/constants';
+import { lighterGray, red } from '../../utils/constants';
 
 const styles = {
   container: {

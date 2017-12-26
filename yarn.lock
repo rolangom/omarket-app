@@ -2712,6 +2712,10 @@ fill-range@^2.1.0:
     repeat-element "^1.1.2"
     repeat-string "^1.5.2"
 
+final-form@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/final-form/-/final-form-3.0.0.tgz#1fa5b017ab6d61f1aca5b976687979cf0424312f"
+
 finalhandler@0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/finalhandler/-/finalhandler-0.4.0.tgz#965a52d9e8d05d2b857548541fb89b53a2497d9b"
@@ -5534,9 +5538,19 @@ react-devtools-core@^2.5.0:
     shell-quote "^1.6.1"
     ws "^2.0.3"
 
+react-final-form@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/react-final-form/-/react-final-form-2.1.1.tgz#44b79005ffc6e7abfba36c1c04a2bb3b93424223"
+
 react-native-branch@2.0.0-beta.3:
   version "2.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.0.0-beta.3.tgz#2167af86bbc9f964bd45bd5f37684e5b54965e32"
+
+react-native-datepicker@^1.6.0:
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-datepicker/-/react-native-datepicker-1.6.0.tgz#3a40dc9b112023c49d60ba2a0789d440b7e3d97c"
+  dependencies:
+    moment "2.x.x"
 
 react-native-debugger-open@^0.3.12:
   version "0.3.15"

@@ -13,7 +13,7 @@ import {
 } from 'native-base';
 
 import OptThumbnail from '../../../../common/components/opt-thumbnail';
-import { lightGray } from '../../../../config/constants';
+import { lightGray } from '../../../../common/utils/constants';
 
 export type Props = {
   imgURL?: ?string,

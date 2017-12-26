@@ -8,7 +8,7 @@ import {
   currency as defaultCurrency,
   darkGray,
   lighterGray,
-} from '../../../config/constants';
+} from '../../../common/utils/constants';
 
 export type Props = {
   value?: number,

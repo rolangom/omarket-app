@@ -1,5 +1,5 @@
 // @flow
-import type { Category, State } from '../../config/types';
+import type { Category, State } from '../../common/types';
 
 export function getCategories(state: State, parent: string): Array<Category> {
   const allCategories =

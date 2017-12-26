@@ -6,7 +6,7 @@
 //   // FirebaseFirestore,
 // } from '@firebase/firestore-types';
 
-import { currency } from '../config/constants';
+import { currency } from './constants';
 
 // const colors
 
@@ -56,5 +56,13 @@ export function deleteImmutable(obj: any, key: string) {
   delete newObj[key];
   return newObj;
 }
+
+export const filterKeys = (obj: any, keys: string[]) =>
+  Object.keys(obj)
+    .filter((key: string) => !!obj[key] && keys.includes(key))
+    .reduce((objAcc: any, key: string) => {
+      objAcc[key] = obj[key];
+      return objAcc;
+    }, {});
 
 export default null;

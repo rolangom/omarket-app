@@ -1,6 +1,6 @@
 // @flow
 
-import type { State } from '../../config/types';
+import type { State } from '../../common/types';
 
 export const isUserLogged = (state: State): boolean => !!state.user;
 
