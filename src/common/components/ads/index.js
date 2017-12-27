@@ -3,7 +3,6 @@ import { Image, Dimensions, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import { connect } from 'react-redux';
-import { fetchAds } from '../../../ducks/ads/index';
 import { Ad as AdType } from '../../types';
 import { darkGray } from '../../utils/constants';
 
@@ -28,15 +27,10 @@ const CarouseItem = ({ ad }: { ad: AdType }) => (
 
 type Props = {
   ads: AdType[],
-  forceLoad: boolean,
   visible?: boolean,
-  loadAds: () => void,
 };
 
 class Ads extends React.Component<Props> {
-  // componentDidMount() {
-  //   this.props.visible && this.props.loadAds();
-  // }
   renderItem = (ad: AdType) => (
     <CarouseItem
       key={ad.id}
@@ -60,7 +54,4 @@ class Ads extends React.Component<Props> {
 
 
 const mapStateToProps = state => ({ ads: state.ads });
-const mapDispatchToProps = (dispatch, { forceLoad }: Props) => ({
-  // loadAds: () => dispatch(fetchAds(forceLoad)),
-});
-export default connect(mapStateToProps, mapDispatchToProps)(Ads);
+export default connect(mapStateToProps)(Ads);

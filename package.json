@@ -2,6 +2,8 @@
   "main": "node_modules/expo/AppEntry.js",
   "private": true,
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
+    "es6-symbol": "^3.1.1",
     "expo": "^24.0.0",
     "final-form": "^3.0.0",
     "firebase": "^4.8.1",
@@ -16,7 +18,8 @@
     "redux": "^3.7.2",
     "redux-act": "^1.5.1",
     "redux-logger": "^3.0.6",
-    "redux-logic": "^0.12.3"
+    "redux-logic": "^0.12.3",
+    "redux-persist": "^5.4.0"
   },
   "devDependencies": {
     "@firebase/firestore-types": "^0.1.0",

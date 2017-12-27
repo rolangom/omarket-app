@@ -5,25 +5,21 @@ import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
 import type { CartItem, KeysOf } from '../../common/types';
-import { setImmutable, deleteImmutable } from '../../common/utils';
+import { setImmutable, deleteImmutable, uniqFilterFn } from '../../common/utils';
 
 export const postCartProduct = createAction('POST_CART_PRODUCT', (productID: string, qty: number) => ({ productID, qty }));
 export const changeCartProductQty = createAction('CHANGE_CART_PRODUCT_QTY', (productID: string, qty: number) => ({ productID, qty }));
-export const increaseCartProduct = createAction('INCREASE_CART_PRODUCT');
-export const reduceCartProduct = createAction('REDUCE_CART_PRODUCT');
 export const deleteCartProduct = createAction('DELETE_CART_PRODUCT');
 
 const byId = createReducer({
-  [postCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => setImmutable(state, `${item.productID}`, item),
-  [changeCartProductQty]: (state: KeysOf<CartItem>, { productID, qty }) => setImmutable(state, `${productID}.qty`, qty),
-  [increaseCartProduct]: (state: KeysOf<CartItem>, productID) => setImmutable(state, `${productID}.qty`, state[productID].qty + 1),
-  [reduceCartProduct]: (state: KeysOf<CartItem>, productID) => setImmutable(state, `${productID}.qty`, state[productID].qty - 1),
-  [deleteCartProduct]: (state: KeysOf<CartItem>, productID) => deleteImmutable(state, productID),
+  [postCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => ({ ...state, [item.productID]: item}),
+  [changeCartProductQty]: (state: KeysOf<CartItem>, { productID, qty }: CartItem) => setImmutable(state, `${productID}.qty`, qty),
+  [deleteCartProduct]: (state: KeysOf<CartItem>, productID: string) => deleteImmutable(state, productID),
 }, {});
 
 const allIds = createReducer({
-  [postCartProduct]: (state: string[], item: CartItem) => Array.from(new Set(state.concat(item.productID))),
-  [deleteCartProduct]: (state: string[], productID) => state.filter((id: string) => id !== productID),
+  [postCartProduct]: (state: string[], item: CartItem) => state.concat(item.productID).filter(uniqFilterFn),
+  [deleteCartProduct]: (state: string[], productID: string) => state.filter((id: string) => id !== productID),
 }, []);
 
 const reducer = combineReducers({
@@ -35,9 +31,10 @@ const reducer = combineReducers({
 export const postCardProductLogic = createLogic({
   type: postCartProduct.getType(),
   validate({ action }, allow, reject) {
-    (action.payload.qty > 0 ? allow : reject)(action);
+    (action.payload && action.payload.qty && action.payload.qty > 0 ?
+      allow : reject)(action);
   },
-  process({ }, dispatch, done) {
+  process(_, dispatch, done) {
     dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
     done();
   },

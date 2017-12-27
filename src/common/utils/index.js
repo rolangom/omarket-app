@@ -1,14 +1,6 @@
 // @flow
-// import {
-//   // DocumentReference,
-//   QuerySnapshot,
-//   // DocumentSnapshot,
-//   // FirebaseFirestore,
-// } from '@firebase/firestore-types';
 
 import { currency } from './constants';
-
-// const colors
 
 export const getDocs = querySnapshot =>
   querySnapshot
@@ -26,23 +18,24 @@ export const getDocsAsDict = querySnapshot =>
 const sortFnAsc = (attr: string) => (a, b) => (a[attr] || 100) - (b[attr] || 100);
 const sortFnDesc = (attr: string) => (a, b) => (b[attr] || 100) - (a[attr] || 100);
 
-export const sortBy = (data: Array, attr: string, asc: boolean = true) =>
+export const sortBy = (data: Array<any>, attr: string, asc: boolean = true) =>
   data
     .sort((asc ? sortFnAsc : sortFnDesc)(attr));
 
-export const getPriceWithCurrency = (price: number, pCurrency = currency) => `${pCurrency} ${price || 0}`;
+export const getPriceWithCurrency = (price: number, pCurrency: string = currency) =>
+  `${pCurrency} ${price || 0}`;
 
-export function padStart(num, places, char = '0') {
+export function padStart(num: number, places: number, char: string = '0') {
   const zero = (places - num.toString().length) + 1;
   return Array(+(zero > 0 && zero)).join(char) + num;
 }
 
-export const reduceFnByID = (acc, it) => {
+export const reduceFnByID = (acc: any, it: any) => {
   acc[it.id] = it;
   return acc;
 };
 
-export function setImmutable(obj, attr, value) {
+export function setImmutable(obj: any, attr: string, value: any) {
   const attrArr = attr.split('.');
   const [tattr, nattr] = attrArr;
   return Object.assign({},
@@ -64,5 +57,8 @@ export const filterKeys = (obj: any, keys: string[]) =>
       objAcc[key] = obj[key];
       return objAcc;
     }, {});
+
+export const uniqFilterFn = (value: any, index: number, arr: Array<any>) =>
+  arr.indexOf(value) === index;
 
 export default null;

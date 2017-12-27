@@ -1,15 +1,12 @@
 // @flow
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import logger from 'redux-logger';
 import { createLogicMiddleware } from 'redux-logic';
+import { persistStore, persistCombineReducers } from 'redux-persist';
+import storage from 'redux-persist/es/storage';
 
-import navReducer from '../navigators/reducer';
-import globalReducer, { initAppDataLogic } from '../ducks/global';
-import categoriesReducer, { fetchCategoriesLogic } from '../ducks/categories';
-import productsReducer, { fetchProductsLogic } from '../ducks/products';
-import adsReducer, { fetchAdsLogic } from '../ducks/ads';
-import cartItemsReducer, { deleteCartItemIfEmptyLogic, postCardProductLogic } from '../ducks/cart';
-import userReducer, { loginWithFacebookLogic, logoutLogic, postUserLogic, getUserLogic } from '../ducks/user';
+import reducers from './reducers';
+import logics from './logics';
 
 import firebase, { db } from './fbase';
 
@@ -23,34 +20,23 @@ XMLHttpRequest.prototype.send = function(body) {
 };
 
 const configureStore = () => {
-  const reducers = combineReducers({
-    nav: navReducer,
-    global: globalReducer,
-    categories: categoriesReducer,
-    products: productsReducer,
-    ads: adsReducer,
-    cartItems: cartItemsReducer,
-    user: userReducer,
-  });
+  const config = {
+    key: 'root',
+    blacklist: ['nav'],
+    storage,
+  };
 
-  return createStore(
-    reducers,
+  const reducer = persistCombineReducers(config, reducers);
+
+  let store = createStore(
+    reducer,
     applyMiddleware(
       logger,
-      createLogicMiddleware([
-        fetchAdsLogic,
-        fetchCategoriesLogic,
-        fetchProductsLogic,
-        initAppDataLogic,
-        loginWithFacebookLogic,
-        logoutLogic,
-        postUserLogic,
-        getUserLogic,
-        deleteCartItemIfEmptyLogic,
-        postCardProductLogic,
-      ], { firebase, db }),
+      createLogicMiddleware(logics, { firebase, db }),
     ),
   );
+  const persistor = persistStore(store);
+  return { store, persistor };
 };
 
 export default configureStore;

@@ -36,10 +36,8 @@ export const getUserLogic = createLogic({
   process: async ({ action, db }, dispatch, done) => {
     try {
       const { uid } = action.payload;
-      console.log('getUserLogic uid =', uid);
       const doc = await db.collection('users').doc(uid).get();
-      const user = doc.exists && { id: doc.id, ...doc.data() };
-      console.log('getUserLogic user =', user);
+      const user = doc.exists && { uid: doc.id, ...doc.data() };
       user && dispatch(mergeUser(user));
     } catch (err) {
       console.warn('getUserLogic error', err);
@@ -64,7 +62,6 @@ export const postUserLogic = createLogic({
     try {
       dispatch(setIsLoading(true));
       const { uid, ...data } = action.payload;
-      console.log('postUserLogic', data);
       await db.collection('users')
         .doc(uid)
         .set(data);
@@ -89,10 +86,11 @@ export const loginWithFacebookLogic = createLogic({
         FACEBOOK_APPID,
         { permissions: ['public_profile', 'email'] },
       );
-      console.log('loginWithFacebookLogic', type, token);
       if (type === 'success') {
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
         await firebase.auth().signInWithCredential(credential);
+      } else {
+        dispatch(addError('Solicitud cancelada por usuario.'));
       }
     } catch (err) {
       console.warn('loginWithFacebookLogic error', err);

@@ -1,44 +1,38 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { View } from 'react-native';
 import { StyleProvider } from 'native-base';
+import { PersistGate } from 'redux-persist/es/integration/react';
 
+import LoadingModal from './common/components/loading-modal';
 import getTheme from '../native-base-theme/components';
 import commonColor from '../native-base-theme/variables/commonColor';
 
-import LoadingModal from './common/components/loading-modal';
-import Messages from './common/components/messages';
-
-import AppWithNavigationState from './navigators/app-with-navigation-state';
 import configureStore from './config/store';
 import initApp from './config/app';
+import App from './app';
 
-const styles = {
-  main: {
-    flex: 1,
-  },
-};
+const { persistor, store } = configureStore();
 
 class Root extends React.Component {
   componentDidMount() {
-    this.unsubscr = initApp(this.store);
+    this.unsubscr = initApp(store);
   }
   componentWillUnmount() {
     this.unsubscr();
   }
   unsubscr;
-  store = configureStore();
   style = getTheme(commonColor);
   render() {
     return (
-      <Provider store={this.store}>
-        <StyleProvider style={this.style}>
-          <View style={styles.main}>
-            <AppWithNavigationState />
-            <Messages />
-            <LoadingModal />
-          </View>
-        </StyleProvider>
+      <Provider store={store}>
+        <PersistGate
+          persistor={persistor}
+          loading={<LoadingModal isLoading />}
+        >
+          <StyleProvider style={this.style}>
+            <App />
+          </StyleProvider>
+        </PersistGate>
       </Provider>
     );
   }

@@ -8,6 +8,7 @@ import {
   Content,
   Text,
   View,
+  Separator,
 } from 'native-base';
 
 import OptImage from '../../common/components/opt-image';
@@ -108,6 +109,7 @@ class ProductDetailScreen extends React.Component<Props> {
               onSubmit={onSubmit}
             />
           </CondContent>
+          <Separator />
         </Content>
       </Container>
     );

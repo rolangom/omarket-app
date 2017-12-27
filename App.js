@@ -1,5 +1,6 @@
 import React from 'react';
 import { AppLoading, Font } from 'expo';
+import 'babel-polyfill';
 import Root from './src';
 
 export default class App extends React.Component {
@@ -9,6 +10,7 @@ export default class App extends React.Component {
 
   async cacheResourcesAsync() {
     const promise = Font.loadAsync({
+      'Roboto_medium': require('./assets/fonts/Roboto-Medium.ttf'),
       'Roboto_regular': require('./assets/fonts/Roboto-Regular.ttf'),
       'Roboto_light': require('./assets/fonts/Roboto-Light.ttf'),
     });
