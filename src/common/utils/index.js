@@ -3,9 +3,12 @@
 import { currency } from './constants';
 
 export const getDocs = querySnapshot =>
-  querySnapshot
-    .docs
-    .map(it => ({ id: it.id, ...it.data() }));
+  querySnapshot && querySnapshot.docs ?
+    querySnapshot
+      .docs
+      .map(it => ({ id: it.id, ...it.data() }))
+    :
+    [];
 
 export const getDocsAsDict = querySnapshot =>
   querySnapshot
@@ -53,12 +56,20 @@ export function deleteImmutable(obj: any, key: string) {
 export const filterKeys = (obj: any, keys: string[]) =>
   Object.keys(obj)
     .filter((key: string) => !!obj[key] && keys.includes(key))
-    .reduce((objAcc: any, key: string) => {
-      objAcc[key] = obj[key];
-      return objAcc;
-    }, {});
+    .reduce((objAcc: Object, key: string) => (objAcc[key] = obj[key], objAcc), {});
 
 export const uniqFilterFn = (value: any, index: number, arr: Array<any>) =>
   arr.indexOf(value) === index;
+
+
+export const inputRequired = value => (value ? undefined : 'Required');
+
+export const composeValidators = (...validators) => value =>
+  validators.reduce((error, validator) => error || validator(value), undefined);
+
+export const postToCollection = ({ id, ...data }: Object, collection: Object) =>
+  id
+    ? collection.doc(id).set(data)
+    : collection.add(data);
 
 export default null;

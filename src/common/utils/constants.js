@@ -13,4 +13,6 @@ export const FACEBOOK_APPID = '559131207620680';
 
 export const currency: string = 'RD$';
 
+export const AD_RATIO = 0.4629;
+
 export default null;

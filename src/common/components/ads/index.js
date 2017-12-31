@@ -4,14 +4,13 @@ import Swiper from 'react-native-swiper';
 
 import { connect } from 'react-redux';
 import { Ad as AdType } from '../../types';
-import { darkGray } from '../../utils/constants';
+import { darkGray, AD_RATIO } from '../../utils/constants';
 
 const { width } = Dimensions.get('window');
-const height = 200;
 
 const styles = {
   item: {
-    height,
+    height: width * AD_RATIO,
     width,
   },
 };

@@ -10,6 +10,7 @@ import ProfileScreen from '../screens/profile';
 import ProductDetailScreen from '../screens/product-detail';
 import CartScreen from '../screens/cart';
 import AddressListScreen from '../screens/addresses';
+import AddressEditorScreen from '../screens/address-editor';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -63,6 +64,19 @@ const BrowseStack = StackNavigator({
   navigationOptions: defaultNavigationOptions(true),
 });
 
+const AddressesStack = StackNavigator({
+  Addresses: {
+    screen: AddressListScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+    }),
+  },
+  AddressEditor: { screen: AddressEditorScreen },
+}, {
+  cardStyle: getCardStyle(),
+  navigationOptions: defaultNavigationOptions(true),
+});
+
 const AppNavigator = DrawerNavigator({
   Start: {
     screen: BrowseStack,
@@ -79,7 +93,18 @@ const AppNavigator = DrawerNavigator({
   Profile: getStackScreen('Profile', ProfileScreen, 'Perfil', 'ios-contact', true),
   Cart: getStackScreen('Cart', CartScreen, 'Carrito', 'ios-cart', false),
   Settings: getStackScreen('Settings', SettingsScreen, 'Configuración', 'ios-cog', true),
-  Addresses: getStackScreen('Addresses', AddressListScreen, 'Direcciones', 'ios-locate', true),
+  Addresses: {
+    screen: AddressesStack,
+    navigationOptions: {
+      drawerLabel: 'Direcciones',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="ios-locate"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
 }, {
   contentComponent: MainDrawer,
   contentOptions: {

@@ -8,13 +8,11 @@ import type { User } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import { filterKeys, setImmutable } from '../../common/utils';
 import { FACEBOOK_APPID } from '../../common/utils/constants';
+import { setAddresses, fetchAddresses } from '../addresses';
 
 export const loginWithFacebook = createAction('LOG_IN_WITH_FACEBOOK');
 export const logout = createAction('LOG_OUT');
 export const setUserLogged = createAction('SET_USER_LOGGED_IN');
-export const setUserGender = createAction('SET_USER_GENDER');
-export const setUserBirthday = createAction('SET_USER_BIRTHDAY');
-export const setUserPhoneNumber = createAction('SET_USER_PHONENUMBER');
 export const setUserLoggedOut = createAction('SET_USER_LOGGED_OUT');
 export const postUser = createAction('POST_USER');
 export const getUser = createAction('GET_USER');
@@ -39,6 +37,7 @@ export const getUserLogic = createLogic({
       const doc = await db.collection('users').doc(uid).get();
       const user = doc.exists && { uid: doc.id, ...doc.data() };
       user && dispatch(mergeUser(user));
+      dispatch(fetchAddresses());
     } catch (err) {
       console.warn('getUserLogic error', err);
       dispatch(addError(err.message));
@@ -61,7 +60,7 @@ export const postUserLogic = createLogic({
   process: async ({ db, action }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
-      const { uid, ...data } = action.payload;
+      const { uid, id, ...data } = action.payload;
       await db.collection('users')
         .doc(uid)
         .set(data);
@@ -107,6 +106,7 @@ export const logoutLogic = createLogic({
   process: async ({ firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
+      dispatch(setAddresses([]));
       await firebase.auth().signOut();
     } catch (err) {
       console.warn('loginWithFacebookLogic error', err);

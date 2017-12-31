@@ -14,18 +14,16 @@ import {
   Right,
 } from 'native-base';
 import type { Address, State } from '../../common/types';
-import { lightGray } from '../../common/utils/constants';
+import Link from '../../common/components/link';
+import { lightGray, red } from '../../common/utils/constants';
+import { getAllAddresses } from '../../ducks/addresses/selectors';
+import { fetchAddresses as fetchAddressesAction } from '../../ducks/addresses';
+import UserContent from '../../common/components/user-content';
 
 type Props = {
   items: Address[],
-  onGoAddNew: () => void,
-  onGoEdit: (string) => void,
+  fetchAddresses: () => void,
 };
-
-const testData = [
-  { name: 'Casa' },
-  { name: 'Trabajo' },
-];
 
 const styles = {
   text: {
@@ -37,12 +35,23 @@ const styles = {
     fontSize: 24,
     color: lightGray,
   },
+  fab: {
+    backgroundColor: red,
+  },
 };
 
 class AddressList extends React.Component<Props> {
+  componentDidMount() {
+    this.props.fetchAddresses();
+  }
   renderItem = (address: Address) => (
-    <ListItem
+    <Link
+      component={ListItem}
+      to="AddressEditor"
+      params={address}
+      thumbnail
       button
+      key={address.id}
     >
       <Body>
         <Text style={styles.text}>{address.name}</Text>
@@ -53,34 +62,39 @@ class AddressList extends React.Component<Props> {
           style={styles.icon}
         />
       </Right>
-    </ListItem>
+    </Link>
   );
-
-  onGoAddNew = () => console.log('onGoAddNew');
 
   render() {
     const { items } = this.props;
     return (
       <Container>
         <Content>
-          <List
-            dataArray={items}
-            renderRow={this.renderItem}
-          />
-          <Fab
-            active
-            primary
-            onPress={this.onGoAddNew}
-          >
-            <Icon name="md-add" />
-          </Fab>
+          <UserContent>
+            <List
+              dataArray={items}
+              renderRow={this.renderItem}
+            />
+          </UserContent>
         </Content>
+        <Link
+          component={Fab}
+          to="AddressEditor"
+          primary
+          style={styles.fab}
+          position="bottomRight"
+        >
+          <Icon name="md-add" />
+        </Link>
       </Container>
     );
   }
 }
 
-const mapStateToProps = (state: State, { navigation: { navigate } }) => ({
-  items: testData, // Object.values(state.addresses.byId),
+const mapStateToProps = (state: State) => ({
+  items: getAllAddresses(state),
 });
-export default connect(mapStateToProps)(AddressList);
+const mapDispatchToProps = dispatch => ({
+  fetchAddresses: () => dispatch(fetchAddressesAction()),
+});
+export default connect(mapStateToProps, mapDispatchToProps)(AddressList);

@@ -28,7 +28,7 @@ const configureStore = () => {
 
   const reducer = persistCombineReducers(config, reducers);
 
-  let store = createStore(
+  const store = createStore(
     reducer,
     applyMiddleware(
       logger,

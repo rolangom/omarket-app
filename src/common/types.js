@@ -51,7 +51,7 @@ export type Location = {
 export type Address = {
   id?: string,
   name: string,
-  detail: string,
+  descr: string,
   extra?: ?string,
   location: Location,
 };

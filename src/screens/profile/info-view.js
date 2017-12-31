@@ -16,6 +16,7 @@ import {
   Separator,
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
+// import Prompt from 'react-native-prompt';
 import { Form, Field } from 'react-final-form';
 import type { State, User } from '../../common/types';
 import {
@@ -68,7 +69,7 @@ class UserInfoView extends React.Component<Props> {
         <Form
           initialValues={user}
           onSubmit={onSave}
-          render={({ handleSubmit, pristine, invalid }) =>(
+          render={({ handleSubmit, pristine, invalid }) => (
             <List>
               <ListItem avatar>
                 <Left>
