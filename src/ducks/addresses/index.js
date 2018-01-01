@@ -6,7 +6,7 @@ import { NavigationActions } from 'react-navigation';
 
 import type { Address, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { deleteImmutable, getDocs, reduceFnByID, sortBy, uniqFilterFn, postToCollection } from '../../common/utils';
+import { deleteImmutable, getDocs, reduceFnByID, sortBy, uniqFilterFn, upsertDoc } from '../../common/utils';
 
 export const fetchAddresses = createAction('FETCH_ADDRESSES');
 export const setAddresses = createAction('SET_ADDRESSES');
@@ -61,11 +61,8 @@ export const postAddressLogic = createLogic({
       const collection = db.collection('users')
         .doc(uid)
         .collection('addresses');
+      const doc = await upsertDoc(action.payload, collection);
       const { id, ...data } = action.payload;
-      // const doc = await postToCollection(payload, collection);
-      const doc = await (id
-        ? collection.doc(id).set(data)
-        : collection.add(data));
       const newAddress = {
         id: id || doc.id,
         ...data,

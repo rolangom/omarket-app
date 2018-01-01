@@ -11,6 +11,8 @@ import ProductDetailScreen from '../screens/product-detail';
 import CartScreen from '../screens/cart';
 import AddressListScreen from '../screens/addresses';
 import AddressEditorScreen from '../screens/address-editor';
+import CreditCardListScreen from '../screens/credit-cards';
+import CreditCardEditorScreen from '../screens/creditcard-editor';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -77,6 +79,19 @@ const AddressesStack = StackNavigator({
   navigationOptions: defaultNavigationOptions(true),
 });
 
+const CreditCardStack = StackNavigator({
+  Creditcards: {
+    screen: CreditCardListScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+    }),
+  },
+  CreditcardEditor: { screen: CreditCardEditorScreen },
+}, {
+  cardStyle: getCardStyle(),
+  navigationOptions: defaultNavigationOptions(true),
+});
+
 const AppNavigator = DrawerNavigator({
   Start: {
     screen: BrowseStack,
@@ -100,6 +115,18 @@ const AppNavigator = DrawerNavigator({
       drawerIcon: ({ tintColor }) => (
         <Icon
           name="ios-locate"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
+  Creditcards: {
+    screen: CreditCardStack,
+    navigationOptions: {
+      drawerLabel: 'Tarjetas',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="ios-card"
           style={{ color: tintColor }}
         />
       ),

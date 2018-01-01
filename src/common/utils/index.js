@@ -2,13 +2,14 @@
 
 import { currency } from './constants';
 
-export const getDocs = querySnapshot =>
-  querySnapshot && querySnapshot.docs ?
+export function getDocs(querySnapshot) {
+  return querySnapshot && querySnapshot.docs ?
     querySnapshot
       .docs
       .map(it => ({ id: it.id, ...it.data() }))
     :
     [];
+}
 
 export const getDocsAsDict = querySnapshot =>
   querySnapshot
@@ -33,7 +34,11 @@ export function padStart(num: number, places: number, char: string = '0') {
   return Array(+(zero > 0 && zero)).join(char) + num;
 }
 
-export const reduceFnByID = (acc: any, it: any) => {
+export const getLast4Chars = (number: string) => number.slice(-4);
+
+export const replace = (str: string, replacement = '') => str.replace(/ /g, replacement);
+
+export const reduceFnByID = (acc: Object, it: Object) => {
   acc[it.id] = it;
   return acc;
 };
@@ -67,9 +72,33 @@ export const inputRequired = value => (value ? undefined : 'Required');
 export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined);
 
-export const postToCollection = ({ id, ...data }: Object, collection: Object) =>
+export const upsertDoc: Promise = ({ id, ...data }: Object, collection: Object) =>
   id
     ? collection.doc(id).set(data)
     : collection.add(data);
+
+export const mapCreditCardTypeAsIconName = (type: string) => {
+  switch (type) {
+    case 'visa': return 'cc-visa';
+    case 'master-card': return 'cc-mastercard';
+    case 'american-express': return 'cc-amex';
+    case 'diners-club': return 'cc-dinners-club';
+    case 'discover': return 'cc-discover';
+    case 'jcb': return 'cc-jcb';
+    default: return 'cc';
+  }
+};
+
+export const mapCreditCardTypeName = (type: string) => {
+  switch (type) {
+    case 'visa': return 'Visa';
+    case 'master-card': return 'MasterCard';
+    case 'american-express': return 'Amex';
+    case 'diners-club': return 'DinnersClub';
+    case 'discover': return 'Discover';
+    case 'jcb': return 'JBC';
+    default: return 'Tarjeta';
+  }
+};
 
 export default null;

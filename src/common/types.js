@@ -53,7 +53,14 @@ export type Address = {
   name: string,
   descr: string,
   extra?: ?string,
-  location: Location,
+  location?: Location,
+};
+
+export type CreditCard = {
+  number: string,
+  expiry: string,
+  cvc: string,
+  type: string,
 };
 
 export type User = {
@@ -106,5 +113,6 @@ export type State = {
   ads: Ad[],
   cartItems: Normalizd<CartItem>,
   addresses: Normalizd<Address>,
+  creditCards: Normalizd<CreditCard>,
   user: ?User,
 };

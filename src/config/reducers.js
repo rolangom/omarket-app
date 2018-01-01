@@ -6,6 +6,7 @@ import adsReducer from '../ducks/ads';
 import cartItemsReducer from '../ducks/cart';
 import userReducer from '../ducks/user';
 import addressesReducer from '../ducks/addresses';
+import creditCardsReducer from '../ducks/credit-cards';
 
 const reducers = {
   nav: navReducer,
@@ -16,6 +17,7 @@ const reducers = {
   cartItems: cartItemsReducer,
   user: userReducer,
   addresses: addressesReducer,
+  creditCards: creditCardsReducer,
 };
 
 export default reducers;
