@@ -11,13 +11,15 @@ import {
   Body,
   Text,
   View,
+  Form,
+  Label,
   Button,
-  Picker,
-  Separator,
+  // Picker,
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 // import Prompt from 'react-native-prompt';
-import { Form, Field } from 'react-final-form';
+import { Form as FinalForm, Field } from 'react-final-form';
+import DropDown from '../../common/components/drop-down';
 import Visible from '../../common/components/visible';
 import type { State, User } from '../../common/types';
 import {
@@ -35,8 +37,8 @@ export type Props = {
 
 const styles = {
   datePickerDateTouch: {
-    width: undefined,
     flex: 1,
+    alignSelf: 'stretch',
   },
   datePicker: {
     dateInput: {
@@ -45,8 +47,6 @@ const styles = {
       justifyContent: 'center',
     },
     dateText: {
-      paddingLeft: 5,
-      paddingRight: 5,
       fontSize: 17,
       color: darkGray,
     },
@@ -56,8 +56,12 @@ const styles = {
   },
 };
 
-class UserInfoView extends React.Component<Props> {
+const genders = [
+  { label: 'Masculino', value: 'M' },
+  { label: 'Femenino', value: 'F' },
+];
 
+class UserInfoView extends React.Component<Props> {
   render() {
     const {
       user,
@@ -66,106 +70,99 @@ class UserInfoView extends React.Component<Props> {
       onSave,
     } = this.props;
     return (
-      <View>
-        <Form
-          initialValues={user}
-          onSubmit={onSave}
-          render={({ handleSubmit, pristine, invalid }) => (
-            <List>
-              <ListItem avatar>
-                <Left>
-                  <Thumbnail source={{ uri: user.photoURL }} />
-                </Left>
-                <Body>
-                  <Text>{user.displayName}</Text>
-                  <Text note>{user.email}</Text>
-                </Body>
-              </ListItem>
-              <ListItem>
-                <Body>
-                  <Field
-                    name="gender"
-                    render={({ input, meta }) => (
-                      <Picker
-                        iosHeader="Sexo"
-                        mode="dropdown"
-                        placeholder="Seleccione"
-                        selectedValue={input.value}
-                        onValueChange={input.onChange}
-                        textStyle={styles.datePicker.dateText}
-                      >
-                        <Picker.Item label="Masculino" value="M" />
-                        <Picker.Item label="Femenino" value="F" />
-                      </Picker>
-                    )}
+      <FinalForm
+        initialValues={user}
+        onSubmit={onSave}
+        render={({ handleSubmit, pristine, invalid }) => (
+          <Form white>
+            <ListItem avatar>
+              <Left>
+                <Thumbnail source={{ uri: user.photoURL }} />
+              </Left>
+              <Body>
+                <Text>{user.displayName}</Text>
+                <Text note>{user.email}</Text>
+              </Body>
+            </ListItem>
+            <Field
+              name="gender"
+              render={({ input, meta: { touched, error } }) => (
+                <Item
+                  stackedLabel
+                  error={touched && !!error}
+                >
+                  <Label>Sexo</Label>
+                  <DropDown
+                    options={genders}
+                    onChange={input.onChange}
+                    selectedValue={input.value}
+                    placeholder="Seleccione"
                   />
-                  <Text note>Sexo</Text>
-                </Body>
-              </ListItem>
-              <ListItem>
-                <Body>
-                  <Field
-                    name="birthday"
-                    render={({ input, meta }) => (
-                      <DatePicker
-                        confirmBtnText="OK"
-                        cancelBtnText="Cancelar"
-                        placeholder="Seleccione Fecha"
-                        date={input.value}
-                        onDateChange={input.onChange}
-                        showIcon={false}
-                        style={styles.datePickerDateTouch}
-                        customStyles={styles.datePicker}
-                      />
-                    )}
+                </Item>
+              )}
+            />
+            <Field
+              name="birthday"
+              render={({ input, meta: { touched, error } }) => (
+                <Item
+                  stackedLabel
+                  error={touched && !!error}
+                >
+                  <Label>Fecha Nac.</Label>
+                  <DatePicker
+                    confirmBtnText="OK"
+                    cancelBtnText="Cancelar"
+                    placeholder="Seleccione Fecha"
+                    date={input.value}
+                    onDateChange={input.onChange}
+                    showIcon={false}
+                    style={styles.datePickerDateTouch}
+                    customStyles={styles.datePicker}
                   />
-                  <Text note>Fecha Nac.</Text>
-                </Body>
-              </ListItem>
-              <ListItem>
-                <Body>
-                  <Item>
-                    <Field
-                      name="phoneNumber"
-                      render={({ input, meta }) => (
-                        <Input
-                          value={input.value}
-                          onChange={input.onChange}
-                          keyboardType="phone-pad"
-                        />
-                      )}
-                    />
-                  </Item>
-                  <Text note>Teléfono</Text>
-                </Body>
-              </ListItem>
-              <ListItem>
-                <Body>
-                  <Visible enabled={!pristine}>
-                    <Button
-                      primary
-                      block
-                      onPress={handleSubmit}
-                      disabled={isLoading || invalid}
-                    >
-                      <Text>Guardar</Text>
-                    </Button>
-                  </Visible>
+                </Item>
+              )}
+            />
+            <Field
+              name="phoneNumber"
+              render={({ input, meta: { touched, error } }) => (
+                <Item
+                  stackedLabel
+                  error={touched && !!error}
+                >
+                  <Label>Teléfono</Label>
+                  <Input
+                    value={input.value}
+                    onChange={input.onChange}
+                    keyboardType="phone-pad"
+                  />
+                </Item>
+              )}
+            />
+            <ListItem>
+              <Body>
+                <Visible enabled={!pristine}>
                   <Button
-                    dark
+                    primary
                     block
-                    onPress={onLogout}
-                    disabled={isLoading}
+                    onPress={handleSubmit}
+                    disabled={isLoading || invalid}
                   >
-                    <Text>Cerrar Sesión</Text>
+                    <Text>Guardar</Text>
                   </Button>
-                </Body>
-              </ListItem>
-            </List>
-          )}
-        />
-        <Separator />
-      </View>
+                </Visible>
+                <Button
+                  dark
+                  block
+                  onPress={onLogout}
+                  disabled={isLoading}
+                >
+                  <Text>Cerrar Sesión</Text>
+                </Button>
+              </Body>
+            </ListItem>
+          </Form>
+        )}
+      />
     );
   }
 }

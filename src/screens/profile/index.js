@@ -4,10 +4,10 @@ import React from 'react';
 import {
   Container,
   Content,
+  Separator,
 } from 'native-base';
 import UserInfoView from './info-view';
 import UserContent from '../../common/components/user-content';
-
 
 const ProfileScreen = () => (
   <Container>
@@ -15,6 +15,7 @@ const ProfileScreen = () => (
       <UserContent>
         <UserInfoView />
       </UserContent>
+      <Separator />
     </Content>
   </Container>
 );
