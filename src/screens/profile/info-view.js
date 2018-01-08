@@ -2,7 +2,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  List,
   ListItem,
   Item,
   Input,
@@ -10,11 +9,9 @@ import {
   Left,
   Body,
   Text,
-  View,
   Form,
   Label,
   Button,
-  // Picker,
 } from 'native-base';
 import DatePicker from 'react-native-datepicker';
 // import Prompt from 'react-native-prompt';

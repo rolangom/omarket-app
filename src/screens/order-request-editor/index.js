@@ -11,6 +11,7 @@ import {
 } from 'native-base';
 import { Form as FinalForm } from 'react-final-form';
 
+import UserContent from '../../common/components/user-content';
 import OrderRequestForm from './components/form';
 import { formatCreditCardText } from '../../common/utils';
 import type { Address, CreditCard, OrderRequest, State } from '../../common/types';
@@ -68,29 +69,31 @@ class OrderRequestEditor extends React.Component<Props> {
     return (
       <Container>
         <Content>
-          <Text style={styles.topText}>¿Dónde quieres que te enviemos?</Text>
-          <FinalForm
-            onSubmit={onSubmit}
-            render={({ handleSubmit, pristine, invalid }) => (
-              <Form white>
-                <OrderRequestForm
-                  addresses={addressesToRender}
-                  creditCards={ccToRender}
-                  paymentMethods={paymentMethods}
-                />
-                <View style={styles.padding}>
-                  <Button
-                    block
-                    primary
-                    disabled={pristine || invalid}
-                    onPress={handleSubmit}
-                  >
-                    <Text>Terminar su compra</Text>
-                  </Button>
-                </View>
-              </Form>
-            )}
-          />
+          <UserContent>
+            <Text style={styles.topText}>¿Dónde quieres que te enviemos?</Text>
+            <FinalForm
+              onSubmit={onSubmit}
+              render={({ handleSubmit, pristine, invalid }) => (
+                <Form white>
+                  <OrderRequestForm
+                    addresses={addressesToRender}
+                    creditCards={ccToRender}
+                    paymentMethods={paymentMethods}
+                  />
+                  <View style={styles.padding}>
+                    <Button
+                      block
+                      primary
+                      disabled={pristine || invalid}
+                      onPress={handleSubmit}
+                    >
+                      <Text>Terminar su compra</Text>
+                    </Button>
+                  </View>
+                </Form>
+              )}
+            />
+          </UserContent>
         </Content>
       </Container>
     );
