@@ -57,10 +57,24 @@ export type Address = {
 };
 
 export type CreditCard = {
+  id?: string,
   number: string,
   expiry: string,
   cvc: string,
   type: string,
+};
+
+export type PaymentMethod = 'cash' | 'credit-card';
+
+
+export type OrderRequest = {
+  addressID: string,
+  address: Address,
+  items: CartItem[],
+  paymentMethod: PaymentMethod,
+  creditCardID?: string,
+  creditCard?: ?CreditCard,
+  cashFor?: number,
 };
 
 export type User = {

@@ -13,6 +13,7 @@ import AddressListScreen from '../screens/addresses';
 import AddressEditorScreen from '../screens/address-editor';
 import CreditCardListScreen from '../screens/credit-cards';
 import CreditCardEditorScreen from '../screens/creditcard-editor';
+import OrderRequestEditorScreen from '../screens/order-request-editor';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -92,6 +93,19 @@ const CreditCardStack = StackNavigator({
   navigationOptions: defaultNavigationOptions(true),
 });
 
+const CartStack = StackNavigator({
+  Cart: {
+    screen: CartScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+    }),
+  },
+  OrderRequest: { screen: OrderRequestEditorScreen },
+}, {
+  cardStyle: getCardStyle(),
+  navigationOptions: defaultNavigationOptions(false),
+});
+
 const AppNavigator = DrawerNavigator({
   Start: {
     screen: BrowseStack,
@@ -106,8 +120,19 @@ const AppNavigator = DrawerNavigator({
     },
   },
   Profile: getStackScreen('Profile', ProfileScreen, 'Perfil', 'ios-contact', true),
-  Cart: getStackScreen('Cart', CartScreen, 'Carrito', 'ios-cart', false),
   Settings: getStackScreen('Settings', SettingsScreen, 'Configuración', 'ios-cog', true),
+  Cart: {
+    screen: CartStack,
+    navigationOptions: {
+      drawerLabel: 'Carrito',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="ios-cart"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
   Addresses: {
     screen: AddressesStack,
     navigationOptions: {

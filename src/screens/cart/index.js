@@ -13,6 +13,7 @@ import {
 import CartListItem from './components/list-item';
 import PriceView from './components/price-view';
 import Ads from '../../common/components/ads';
+import Link from '../../common/components/link';
 import type { CartItem, Product, State } from '../../common/types';
 import { getCartItems, getCartItemsSubTotalPrice } from '../../ducks/cart/selectors';
 import { changeCartProductQty } from '../../ducks/cart';
@@ -41,6 +42,7 @@ const styles = {
 class CartScreen extends React.Component<Props> {
   renderItem = (item: CartItem) => (
     <CartListItem
+      key={item.productID}
       item={item}
       product={this.props.productById(item.productID)}
       onChange={this.props.onChangeQty}
@@ -65,12 +67,14 @@ class CartScreen extends React.Component<Props> {
             currency={currency}
           />
           <View style={styles.buttons}>
-            <Button
+            <Link
+              component={Button}
               light
               disabled={items.length <= 0}
+              to="OrderRequest"
             >
               <Text>Terminar</Text>
-            </Button>
+            </Link>
             <Button
               primary
               onPress={onContinueShopping}
