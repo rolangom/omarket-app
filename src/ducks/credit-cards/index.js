@@ -6,7 +6,10 @@ import { NavigationActions } from 'react-navigation';
 
 import type { CreditCard, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { deleteImmutable, getDocs, reduceFnByID, uniqFilterFn, upsertDoc, padStart, replace } from '../../common/utils';
+import {
+  deleteImmutable, getDocs, reduceFnByID, uniqFilterFn, upsertDoc, padStart, replace,
+  upsertRealtDoc, getRealtDocs,
+} from '../../common/utils';
 
 
 export const fetchCreditcards = createAction('FETCH_CREDITCARDS');
@@ -34,14 +37,20 @@ export const fetchCreditcardsLogic = createLogic({
     const { user } = getState();
     (user ? allow : reject)(action);
   },
-  process: async ({ db, getState }, dispatch, done) => {
+  process: async ({ db, getState, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      const docsSnapshots = await db.collection('users')
-        .doc(uid)
-        .collection('creditCards').get();
-      const creditCards = getDocs(docsSnapshots);
+      // const docsSnapshots = await db.collection('users')
+      //   .doc(uid)
+      //   .collection('creditCards').get();
+      const docsSnapshots = await firebase.database()
+        .ref('users')
+        .child(uid)
+        .child('creditCards')
+        .once('value');
+      // const creditCards = getDocs(docsSnapshots);
+      const creditCards = getRealtDocs(docsSnapshots);
       dispatch(setCreditcards(creditCards));
     } catch (error) {
       console.warn('fetchCreditcardsLogic error', error);
@@ -64,22 +73,26 @@ export const postCreditcardLogic = createLogic({
       },
     });
   },
-  process: async ({ db, action, getState }, dispatch, done) => {
+  process: async ({ db, action, getState, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      const userRef = db.collection('users').doc(uid);
-      const collection = userRef.collection('creditCards');
-      const privCollection = userRef.collection('privCreditCards');
+      // const userRef = db.collection('users').doc(uid);
+      // const collection = userRef.collection('creditCards');
+      // const privCollection = userRef.collection('privCreditCards');
+      const userRef = firebase.database().ref('users').child(uid);
+      const collection = userRef.child('creditCards');
+      const privCollection = userRef.child('privCreditCards');
+
       const { id, ...data } = action.payload;
       const number = padStart(data.number.slice(-4), data.number.length, 'X');
       const pubData: CreditCard = { ...action.payload, number };
-      const doc = await upsertDoc(pubData, collection);
+      const doc = await upsertRealtDoc(pubData, collection);
       const newCreditCard = {
-        id: id || doc.id,
+        id: id || doc.key || doc.id,
         ...pubData,
       };
-      await upsertDoc({ id: newCreditCard.id, ...data }, privCollection);
+      await upsertRealtDoc({ id: newCreditCard.id, ...data }, privCollection);
       dispatch(saveCreditcard(newCreditCard));
       dispatch(NavigationActions.back());
     } catch (error) {
@@ -94,16 +107,22 @@ export const postCreditcardLogic = createLogic({
 
 export const deleteCreditcardLogic = createLogic({
   type: requestDeleteCreditcard.getType(),
-  process: async ({ getState, db, action }, dispatch, done) => {
+  process: async ({ getState, db, action, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
       const { payload: id } = action;
-      const getUserSubCollect = (name: string) => db.collection('users')
-        .doc(uid)
-        .collection(name);
-      await getUserSubCollect('creditCards').doc(id).delete();
-      await getUserSubCollect('privCreditCards').doc(id).delete();
+      // const getUserSubCollect = (name: string) => db.collection('users')
+      //   .doc(uid)
+      //   .collection(name);
+      const getUserSubCollect = (name: string) => firebase.database()
+        .ref('users')
+        .child(uid)
+        .child(name);
+      // await getUserSubCollect('creditCards').doc(id).delete();
+      // await getUserSubCollect('privCreditCards').doc(id).delete();
+      await getUserSubCollect('creditCards').child(id).remove();
+      await getUserSubCollect('privCreditCards').child(id).remove();
       dispatch(deleteCreditcard(id));
       dispatch(NavigationActions.back());
     } catch (error) {

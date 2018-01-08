@@ -12,6 +12,13 @@ export function getDocs(querySnapshot) {
     [];
 }
 
+export function getRealtDocs(snapshot) {
+  const data = [];
+  snapshot
+    .forEach(docSnapshot => data.push({ id: docSnapshot.key, ...docSnapshot.val() }));
+  return data;
+}
+
 export const getDocsAsDict = querySnapshot =>
   querySnapshot
     .docs
@@ -77,6 +84,11 @@ export const upsertDoc: Promise = ({ id, ...data }: Object, collection: Object) 
   id
     ? collection.doc(id).set(data)
     : collection.add(data);
+
+export const upsertRealtDoc: Promise = ({ id, ...data }: Object, dbRef: Object) =>
+  id
+    ? dbRef.child(id).set(data)
+    : dbRef.push(data);
 
 export const mapCreditCardTypeAsIconName = (type: string) => {
   switch (type) {
