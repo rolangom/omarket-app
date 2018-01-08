@@ -3,7 +3,7 @@ import { Image, Dimensions, View } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import { connect } from 'react-redux';
-import { Ad as AdType } from '../../types';
+import { Ad as AdType, State } from '../../types';
 import { darkGray, AD_RATIO } from '../../utils/constants';
 
 const { width } = Dimensions.get('window');
@@ -26,7 +26,6 @@ const CarouseItem = ({ ad }: { ad: AdType }) => (
 
 type Props = {
   ads: AdType[],
-  visible?: boolean,
 };
 
 class Ads extends React.Component<Props> {
@@ -37,7 +36,7 @@ class Ads extends React.Component<Props> {
     />
   );
   render() {
-    return (this.props.visible &&
+    return (
       <View style={styles.item}>
         <Swiper
           showsPagination
@@ -52,5 +51,5 @@ class Ads extends React.Component<Props> {
 }
 
 
-const mapStateToProps = state => ({ ads: state.ads });
+const mapStateToProps = (state: State) => ({ ads: state.ads });
 export default connect(mapStateToProps)(Ads);

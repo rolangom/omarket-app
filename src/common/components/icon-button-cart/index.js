@@ -10,6 +10,7 @@ import {
   Text,
 } from 'native-base';
 import { darkGray } from '../../utils/constants';
+import Visible from '../visible';
 import type { State } from '../../types';
 import { getCartItemsQty } from '../../../ducks/cart/selectors';
 
@@ -34,14 +35,14 @@ const styles = {
 
 const IconButtonCart = ({ onNavigate, qty, isLocal }: Props) => (
   <View>
-    {qty > 0 &&
+    <Visible enabled={qty > 0}>
       <Badge
         primary
         style={styles.badge}
       >
         <Text>{qty}</Text>
       </Badge>
-    }
+    </Visible>
     <Button
       transparent
       onPress={onNavigate}

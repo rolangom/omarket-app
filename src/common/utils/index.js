@@ -1,6 +1,7 @@
 // @flow
 
 import { currency } from './constants';
+import type { CreditCard } from '../types';
 
 export function getDocs(querySnapshot) {
   return querySnapshot && querySnapshot.docs ?
@@ -100,5 +101,8 @@ export const mapCreditCardTypeName = (type: string) => {
     default: return 'Tarjeta';
   }
 };
+
+export const formatCreditCardText = (creditCard: CreditCard) =>
+  `${mapCreditCardTypeName(creditCard.type)} ending in ${getLast4Chars(creditCard.number)}`;
 
 export default null;

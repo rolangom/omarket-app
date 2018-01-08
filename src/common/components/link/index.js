@@ -7,7 +7,7 @@ import { withNavigation } from 'react-navigation';
 
 type Props = {
   to: string,
-  component: React.ComponentType<any>,
+  component: React.ComponentType<*>,
   navigation: Object,
   params: Object
 };

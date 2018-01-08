@@ -4,20 +4,12 @@ import { connect } from 'react-redux';
 import {
   Container,
   Content,
-  List,
-  ListItem,
-  Body,
-  Input,
-  Button,
-  Text,
-  Textarea,
 } from 'native-base';
-import { Form as FinalForm, Field } from 'react-final-form';
 // import { Map } from 'expo';
 import type { Address, State } from '../../common/types';
-import { inputRequired } from '../../common/utils';
 import { requestDeleteAddress, postAddress as postAddressAction } from '../../ducks/addresses';
 import UserContent from '../../common/components/user-content';
+import Form from '../../common/components/address-form';
 
 type Props = {
   isLoading: boolean;
@@ -38,86 +30,11 @@ class AddressEditor extends React.Component<Props> {
       <Container>
         <Content padder>
           <UserContent>
-            <FinalForm
+            <Form
               onSubmit={postAddress}
-              initialValues={address}
-              render={({ handleSubmit, pristine, invalid }) => (
-                <List white>
-                  <Field
-                    name="name"
-                    validate={inputRequired}
-                    render={({ input, meta }) => (
-                      <ListItem>
-                        <Body>
-                          <Input
-                            placeholder="Nombre, eg: Casa, Trabajo..."
-                            value={input.value}
-                            onChangeText={input.onChange}
-                          />
-                          <Text note>Nombre</Text>
-                        </Body>
-                      </ListItem>
-                    )}
-                  />
-                  <Field
-                    name="descr"
-                    validate={inputRequired}
-                    render={({ input, meta }) => (
-                      <ListItem>
-                        <Body>
-                          <Textarea
-                            placeholder="Calle, Casa o Edificio No. Apt., Sector, Ciudad"
-                            value={input.value}
-                            onChangeText={input.onChange}
-                          />
-                          <Text note>Descripción</Text>
-                        </Body>
-                      </ListItem>
-                    )}
-                  />
-                  <Field
-                    name="extra"
-                    render={({ input, meta }) => (
-                      <ListItem error={meta.error}>
-                        <Body>
-                          <Textarea
-                            placeholder="Casi esquina ..."
-                            value={input.value}
-                            onChangeText={input.onChange}
-                          />
-                          <Text note>Referencias</Text>
-                        </Body>
-                      </ListItem>
-                    )}
-                  />
-                  <ListItem>
-                    <Body>
-                      <Button
-                        primary
-                        block
-                        onPress={handleSubmit}
-                        disabled={invalid || pristine || isLoading}
-                      >
-                        <Text>Guardar</Text>
-                      </Button>
-                    </Body>
-                  </ListItem>
-                  <ListItem>
-                    <Body>
-                      {address &&
-                        <Button
-                          dark
-                          block
-                          onPress={onDelete}
-                          disabled={isLoading}
-                        >
-                          <Text>Eliminar</Text>
-                        </Button>
-                      }
-                    </Body>
-                  </ListItem>
-                </List>
-              )}
+              values={address}
+              isLoading={isLoading}
+              onDelete={onDelete}
             />
           </UserContent>
         </Content>

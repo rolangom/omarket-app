@@ -6,6 +6,7 @@ import {
   View,
 } from 'react-native';
 import { connect } from 'react-redux';
+import Visible from '../visible';
 import { lighterGray, red } from '../../utils/constants';
 
 const styles = {
@@ -25,12 +26,14 @@ export type Props = {
   isLoading: boolean,
 };
 
-export const LoadingModal = ({ isLoading }: Props) => (isLoading ?
-  <View style={styles.container}>
-    <View style={styles.box}>
-      <ActivityIndicator color={red} />
+export const LoadingModal = ({ isLoading }: Props) => (
+  <Visible enabled={isLoading}>
+    <View style={styles.container}>
+      <View style={styles.box}>
+        <ActivityIndicator color={red} />
+      </View>
     </View>
-  </View> : null
+  </Visible>
 );
 
 const mapStateToProps = ({ global: { isLoading } }) => ({ isLoading });

@@ -18,6 +18,7 @@ import {
 import DatePicker from 'react-native-datepicker';
 // import Prompt from 'react-native-prompt';
 import { Form, Field } from 'react-final-form';
+import Visible from '../../common/components/visible';
 import type { State, User } from '../../common/types';
 import {
   logout,
@@ -140,7 +141,7 @@ class UserInfoView extends React.Component<Props> {
               </ListItem>
               <ListItem>
                 <Body>
-                  {!pristine &&
+                  <Visible enabled={!pristine}>
                     <Button
                       primary
                       block
@@ -149,7 +150,7 @@ class UserInfoView extends React.Component<Props> {
                     >
                       <Text>Guardar</Text>
                     </Button>
-                  }
+                  </Visible>
                   <Button
                     dark
                     block

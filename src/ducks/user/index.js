@@ -9,6 +9,7 @@ import { setIsLoading, addError } from '../global';
 import { filterKeys, setImmutable } from '../../common/utils';
 import { FACEBOOK_APPID } from '../../common/utils/constants';
 import { setAddresses, fetchAddresses } from '../addresses';
+import { setCreditcards, fetchCreditcards } from '../credit-cards';
 
 export const loginWithFacebook = createAction('LOG_IN_WITH_FACEBOOK');
 export const logout = createAction('LOG_OUT');
@@ -38,6 +39,7 @@ export const getUserLogic = createLogic({
       const user = doc.exists && { uid: doc.id, ...doc.data() };
       user && dispatch(mergeUser(user));
       dispatch(fetchAddresses());
+      dispatch(fetchCreditcards());
     } catch (err) {
       console.warn('getUserLogic error', err);
       dispatch(addError(err.message));
@@ -107,6 +109,7 @@ export const logoutLogic = createLogic({
     try {
       dispatch(setIsLoading(true));
       dispatch(setAddresses([]));
+      dispatch(setCreditcards([]));
       await firebase.auth().signOut();
     } catch (err) {
       console.warn('loginWithFacebookLogic error', err);
