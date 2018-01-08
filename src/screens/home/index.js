@@ -1,53 +1,47 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-// import { NavigationNavigatorProps } from 'react-navigation/src/TypeDefinition';
 import {
   Container,
   Content,
 } from 'native-base';
-import type { Category, Product } from '../../common/types';
+import type { Product } from '../../common/types';
+import Visible from '../../common/components/visible';
 
 import Ads from '../../common/components/ads';
 import CategoryList from './components/categories';
 import ProductList from './components/products';
 
-import { getCategories } from '../../ducks/categories/selectors';
 import { getProducts } from '../../ducks/products/selectors';
 
 
 export type Props = {
   parent: string,
-  categories: Category[],
   products: Product[],
-  onNavigate: (string) => void,
-  onNavigateProduct: (string) => void,
+  navigation: { navigate: (string, Object) => void },
 };
 
 class HomeScreen extends React.Component<Props> {
+  onNavigate = (id: string) => this.props.navigation.navigate('Browse', { parent: id });
+  onNavigateProduct = (id: string) => this.props.navigation.navigate('ProductDetail', { productID: id });
   render() {
     const {
       parent,
-      categories,
       products,
-      onNavigate,
-      onNavigateProduct,
     } = this.props;
     return (
       <Container>
         <Content>
-          <Ads
-            visible={products.length === 0}
-            forceLoad={!parent}
-          />
+          <Visible enabled={products.length === 0}>
+            <Ads forceLoad={!parent} />
+          </Visible>
           <CategoryList
             parent={parent}
-            onNavigate={onNavigate}
-            items={categories}
+            onNavigate={this.onNavigate}
           />
           <ProductList
             items={products}
-            onNavigate={onNavigateProduct}
+            onNavigate={this.onNavigateProduct}
           />
         </Content>
       </Container>
@@ -61,10 +55,7 @@ const mapStateToProps = (state, props) => {
     && props.navigation.state.params.parent;
   return {
     parent,
-    categories: getCategories(state, parent),
     products: getProducts(state, parent),
-    onNavigate: (id: string) => props.navigation.navigate('Browse', { parent: id }),
-    onNavigateProduct: (id: string) => props.navigation.navigate('ProductDetail', { productID: id }),
   };
 };
 export default connect(mapStateToProps)(HomeScreen);
