@@ -15,12 +15,15 @@ import {
   Right,
 } from 'native-base';
 import { FontAwesome } from '@expo/vector-icons';
-import type { CreditCard, State } from '../../common/types';
-import Link from '../../common/components/link';
-import { mapCreditCardTypeAsIconName, getLast4Chars, mapCreditCardTypeName } from '../../common/utils';
-import { lightGray, red } from '../../common/utils/constants';
-import { fetchCreditcards as fetchCredicardsAction } from '../../ducks/credit-cards';
-import UserContent from '../../common/components/user-content';
+import type { CreditCard, State } from '../../../common/types';
+import Link from '../../../common/components/link/index';
+import {
+  mapCreditCardTypeAsIconName,
+  formatCreditCardText,
+} from '../../../common/utils/index';
+import { lightGray, red } from '../../../common/utils/constants';
+import { fetchCreditcards as fetchCredicardsAction } from '../../../ducks/credit-cards/index';
+import UserContent from '../../../common/components/user-content/index';
 
 type Props = {
   items: CreditCard[],
@@ -62,15 +65,10 @@ class CreditCardList extends React.Component<Props> {
         />
       </Left>
       <Body>
-        <Text style={styles.text}>
-          {mapCreditCardTypeName(creditCard.type)} Ending in {getLast4Chars(creditCard.number)}
-        </Text>
+        <Text style={styles.text}>{formatCreditCardText(creditCard)}</Text>
       </Body>
       <Right>
-        <Icon
-          name="ios-arrow-forward"
-          style={styles.icon}
-        />
+        <Icon name="ios-arrow-forward" style={styles.icon} />
       </Right>
     </Link>
   );
@@ -81,10 +79,7 @@ class CreditCardList extends React.Component<Props> {
       <Container>
         <Content>
           <UserContent>
-            <List
-              dataArray={items}
-              renderRow={this.renderItem}
-            />
+            <List dataArray={items} renderRow={this.renderItem} />
           </UserContent>
         </Content>
         <Link

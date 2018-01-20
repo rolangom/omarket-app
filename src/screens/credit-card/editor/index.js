@@ -14,15 +14,20 @@ import {
 import { CreditCardInput } from 'react-native-credit-card-input';
 import { FontAwesome } from '@expo/vector-icons';
 
-import type { CreditCard, State } from '../../common/types';
-import { requestDeleteCreditcard, postCreditcard as postCreditcardAction } from '../../ducks/credit-cards';
-import UserContent from '../../common/components/user-content';
-import { getLast4Chars, mapCreditCardTypeAsIconName, mapCreditCardTypeName } from '../../common/utils';
-
+import type { CreditCard, State, CreditCardForm } from '../../../common/types';
+import {
+  requestDeleteCreditcard,
+  postCreditcard,
+} from '../../../ducks/credit-cards/index';
+import UserContent from '../../../common/components/user-content/index';
+import {
+  mapCreditCardTypeAsIconName,
+  formatCreditCardText,
+} from '../../../common/utils/index';
 
 type Props = {
-  isLoading: boolean;
-  postCreditcard: (CreditCard) => void,
+  isLoading: boolean,
+  onSubmit: CreditCard => void,
   onDelete: () => void,
   creditCard?: CreditCard,
 };
@@ -32,25 +37,6 @@ type CompState = {
   values: CreditCard,
 };
 
-type CreditCardForm = {
-  valid: boolean,
-  values: {
-    number: string,
-    expiry: string,
-    cvc: string,
-    type: string,
-    name: string,
-    postalCode: string,
-  },
-  status: {
-    number: string,
-    expiry: string,
-    cvc: string,
-    name: string,
-    postalCode: string,
-  },
-};
-
 class CreditCardEditor extends React.Component<Props, CompState> {
   state = {
     valid: false,
@@ -58,29 +44,24 @@ class CreditCardEditor extends React.Component<Props, CompState> {
       ...this.props.creditCard,
     },
   };
-  onSubmit = () => this.props.postCreditcard(this.state.values);
-  onChangeValues = (form: CreditCardForm) => this.setState((prevState: CompState) => ({
-    valid: form.valid,
-    values: {
-      ...prevState.values,
-      ...form.values,
-    },
-  }));
+  onSubmit = () => this.props.onSubmit(this.state.values);
+  onChangeValues = (form: CreditCardForm) =>
+    this.setState((prevState: CompState) => ({
+      valid: form.valid,
+      values: {
+        ...prevState.values,
+        ...form.values,
+      },
+    }));
   render() {
-    const {
-      isLoading,
-      onDelete,
-      creditCard,
-    } = this.props;
+    const { isLoading, onDelete, creditCard } = this.props;
     return (
       <Container>
         <Content padder>
           <UserContent>
             <List white>
-              {creditCard &&
-                <ListItem
-                  thumbnail
-                >
+              {creditCard && (
+                <ListItem thumbnail>
                   <Left>
                     <FontAwesome
                       name={mapCreditCardTypeAsIconName(creditCard.type)}
@@ -88,12 +69,10 @@ class CreditCardEditor extends React.Component<Props, CompState> {
                     />
                   </Left>
                   <Body>
-                    <Text>
-                      {mapCreditCardTypeName(creditCard.type)} Ending in {getLast4Chars(creditCard.number)}
-                    </Text>
+                    <Text>{formatCreditCardText(creditCard)}</Text>
                   </Body>
                 </ListItem>
-              }
+              )}
               <ListItem>
                 <CreditCardInput
                   onChange={this.onChangeValues}
@@ -114,16 +93,11 @@ class CreditCardEditor extends React.Component<Props, CompState> {
               </ListItem>
               <ListItem>
                 <Body>
-                  {creditCard &&
-                    <Button
-                      dark
-                      block
-                      onPress={onDelete}
-                      disabled={isLoading}
-                    >
+                  {creditCard && (
+                    <Button dark block onPress={onDelete} disabled={isLoading}>
                       <Text>Eliminar</Text>
                     </Button>
-                  }
+                  )}
                 </Body>
               </ListItem>
             </List>
@@ -135,16 +109,17 @@ class CreditCardEditor extends React.Component<Props, CompState> {
 }
 
 const mapStateToProps = (state: State, ownProps) => {
-  const id: string = ownProps.navigation
-    && ownProps.navigation.state.params
-    && ownProps.navigation.state.params.id;
+  const id: string =
+    ownProps.navigation &&
+    ownProps.navigation.state.params &&
+    ownProps.navigation.state.params.id;
   return {
     isLoading: state.global.isLoading,
     creditCard: id && state.creditCards.byId[id],
   };
 };
-const mapDispatchToProps = (dispatch) => ({
-  postCreditcard: (creditCard: CreditCard) => dispatch(postCreditcardAction(creditCard)),
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (creditCard: CreditCard) => dispatch(postCreditcard(creditCard)),
   onDelete: (id: string) => dispatch(requestDeleteCreditcard(id)),
 });
 const mergeProps = (stateProps, dispatchProps) => ({
@@ -153,4 +128,6 @@ const mergeProps = (stateProps, dispatchProps) => ({
   onDelete: () => dispatchProps.onDelete(stateProps.creditCard.id),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(CreditCardEditor);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  CreditCardEditor,
+);

@@ -4,7 +4,7 @@ import { createLogic } from 'redux-logic';
 
 import type { Ad as AdType } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs } from '../../common/utils';
+import { getFmtDocs } from '../../common/utils';
 
 export const fetchAds = createAction('FETCH_ADS', (force: boolean = false) => ({ force }));
 export const setAds = createAction('SET_ADS');
@@ -19,7 +19,7 @@ export const fetchAdsLogic = createLogic({
     dispatch(setIsLoading(true));
     try {
       const docsSnapshots = await db.collection('ads').get();
-      const ads = getDocs(docsSnapshots);
+      const ads = getFmtDocs(docsSnapshots);
       dispatch(setAds(ads));
     } catch (error) {
       console.warn('fetchAds error', error);

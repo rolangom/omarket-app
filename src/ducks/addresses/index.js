@@ -6,7 +6,11 @@ import { NavigationActions } from 'react-navigation';
 
 import type { Address, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { deleteImmutable, getDocs, reduceFnByID, sortBy, uniqFilterFn, upsertDoc } from '../../common/utils';
+import {
+  deleteDoc,
+  deleteImmutable, getFmtDocs, getRealtDocs, queryDoc, reduceFnByID, sortBy, uniqFilterFn,
+  upsertDoc
+} from '../../common/utils';
 
 export const fetchAddresses = createAction('FETCH_ADDRESSES');
 export const setAddresses = createAction('SET_ADDRESSES');
@@ -33,14 +37,12 @@ export const fetchAddressesLogic = createLogic({
     const { user } = getState();
     (user ? allow : reject)(action);
   },
-  process: async ({ db, getState }, dispatch, done) => {
+  process: async ({ firebase, getState }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      const docsSnapshots = await db.collection('users')
-        .doc(uid)
-        .collection('addresses').get();
-      const addresses = getDocs(docsSnapshots);
+      const docsSnapshots = await queryDoc(firebase, `users/${uid}/addresses`);
+      const addresses = getRealtDocs(docsSnapshots);
       dispatch(setAddresses(addresses));
     } catch (error) {
       console.warn('fetchAddressesLogic error', error);
@@ -54,17 +56,14 @@ export const fetchAddressesLogic = createLogic({
 
 export const postAddressLogic = createLogic({
   type: postAddress.getType(),
-  process: async ({ db, action, getState }, dispatch, done) => {
+  process: async ({ firebase, action, getState }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      const collection = db.collection('users')
-        .doc(uid)
-        .collection('addresses');
-      const doc = await upsertDoc(action.payload, collection);
       const { id, ...data } = action.payload;
+      const doc = await upsertDoc(firebase, `users/${uid}/addresses`, { key: id, ...data });
       const newAddress = {
-        id: id || doc.id,
+        id: id || doc.key,
         ...data,
       };
       dispatch(saveAddress(newAddress));
@@ -81,16 +80,12 @@ export const postAddressLogic = createLogic({
 
 export const deleteAddressLogic = createLogic({
   type: requestDeleteAddress.getType(),
-  process: async ({ getState, db, action }, dispatch, done) => {
+  process: async ({ getState, firebase, action }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
       const { payload: id } = action;
-      await db.collection('users')
-        .doc(uid)
-        .collection('addresses')
-        .doc(id)
-        .delete();
+      await deleteDoc(firebase, `users/${uid}/addresses/${id}`);
       dispatch(deleteAddress(id));
       dispatch(NavigationActions.back());
     } catch (error) {

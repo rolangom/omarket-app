@@ -1,26 +1,25 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import {
-  Container,
-  Content,
-  Text,
-  Button,
-  Form,
-  View,
-} from 'native-base';
+import { Container, Content, Text, Button, Form, View } from 'native-base';
 import { Form as FinalForm } from 'react-final-form';
 
-import UserContent from '../../common/components/user-content';
+import UserContent from '../../../common/components/user-content/index';
 import OrderRequestForm from './components/form';
-import { formatCreditCardText } from '../../common/utils';
-import type { Address, CreditCard, OrderRequest, State } from '../../common/types';
-import { darkGray } from '../../common/utils/constants';
+import { formatCreditCardText } from '../../../common/utils/index';
+import type {
+  Address,
+  CreditCard,
+  OrderRequest,
+  State,
+} from '../../../common/types';
+import { darkGray } from '../../../common/utils/constants';
+import { postOrderRequest } from '../../../ducks/order-requests/index';
 
 type Props = {
   addresses: Address[],
   creditCards: CreditCard[],
-  onSubmit: (OrderRequest) => void,
+  onSubmit: OrderRequest => void,
 };
 
 const styles = {
@@ -48,18 +47,17 @@ const styles = {
 
 class OrderRequestEditor extends React.Component<Props> {
   render() {
-    const {
-      addresses,
-      creditCards,
-      onSubmit,
-    } = this.props;
+    const { addresses, creditCards, onSubmit } = this.props;
     const addressesToRender = [
       { value: '', label: 'Seleccione' },
       ...addresses.map(it => ({ value: it.id, label: it.name })),
     ];
     const ccToRender = [
       { value: '', label: 'Seleccione' },
-      ...creditCards.map(it => ({ value: it.id, label: formatCreditCardText(it) })),
+      ...creditCards.map(it => ({
+        value: it.id,
+        label: formatCreditCardText(it),
+      })),
     ];
     const paymentMethods = [
       { value: '', label: 'Seleccione' },
@@ -104,7 +102,7 @@ const mapStateToProps = (state: State) => ({
   addresses: Object.values(state.addresses.byId),
   creditCards: Object.values(state.creditCards.byId),
 });
-const mapDispatchToProps = (dispatch) => ({
-  onSubmit: (values: OrderRequest) => { console.log(values); },
+const mapDispatchToProps = dispatch => ({
+  onSubmit: (values: OrderRequest) => dispatch(postOrderRequest(values)),
 });
 export default connect(mapStateToProps, mapDispatchToProps)(OrderRequestEditor);

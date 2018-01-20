@@ -64,8 +64,28 @@ export type CreditCard = {
   type: string,
 };
 
-export type PaymentMethod = 'cash' | 'credit-card';
 
+export type CreditCardForm = {
+  valid: boolean,
+  values: {
+    number: string,
+    expiry: string,
+    cvc: string,
+    type: string,
+    name: string,
+    postalCode: string,
+  },
+  status: {
+    number: string,
+    expiry: string,
+    cvc: string,
+    name: string,
+    postalCode: string,
+  },
+};
+
+export type PaymentMethod = 'cash' | 'credit-card';
+export type OrderStatus = 'inCart' | 'placed' | 'reviewed' | 'sent' | 'completed';
 
 export type OrderRequest = {
   addressID: string,
@@ -75,6 +95,8 @@ export type OrderRequest = {
   creditCardID?: string,
   creditCard?: ?CreditCard,
   cashFor?: number,
+  doSaveAddress?: boolean,
+  status?: OrderStatus,
 };
 
 export type User = {

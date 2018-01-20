@@ -9,11 +9,11 @@ import HomeScreen from '../screens/home';
 import ProfileScreen from '../screens/profile';
 import ProductDetailScreen from '../screens/product-detail';
 import CartScreen from '../screens/cart';
-import AddressListScreen from '../screens/addresses';
-import AddressEditorScreen from '../screens/address-editor';
-import CreditCardListScreen from '../screens/credit-cards';
-import CreditCardEditorScreen from '../screens/creditcard-editor';
-import OrderRequestEditorScreen from '../screens/order-request-editor';
+import AddressListScreen from '../screens/address/list';
+import AddressEditorScreen from '../screens/address/editor';
+import CreditCardListScreen from '../screens/credit-card/list';
+import CreditCardEditorScreen from '../screens/credit-card/editor';
+import OrderRequestEditorScreen from '../screens/order-request/editor';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';

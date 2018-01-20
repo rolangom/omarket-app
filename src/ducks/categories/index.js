@@ -5,7 +5,7 @@ import { createLogic } from 'redux-logic';
 
 import type { Category, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs, reduceFnByID, sortBy } from '../../common/utils';
+import { getFmtDocs, reduceFnByID, sortBy } from '../../common/utils';
 
 export const fetchCategories = createAction('FETCH_CATEGORIES', (force: boolean = false) => ({ force }));
 export const setCategories = createAction('SET_CATEGORIES');
@@ -20,7 +20,7 @@ export const fetchCategoriesLogic = createLogic({
     dispatch(setIsLoading(true));
     try {
       const docsSnapshots = await db.collection('categories').get();
-      const categories = sortBy(getDocs(docsSnapshots), 'orderID', true);
+      const categories = sortBy(getFmtDocs(docsSnapshots), 'orderID', true);
       dispatch(setCategories(categories));
     } catch (error) {
       console.warn('fetchCategories error', error);

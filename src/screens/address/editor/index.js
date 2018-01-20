@@ -6,10 +6,10 @@ import {
   Content,
 } from 'native-base';
 // import { Map } from 'expo';
-import type { Address, State } from '../../common/types';
-import { requestDeleteAddress, postAddress as postAddressAction } from '../../ducks/addresses';
-import UserContent from '../../common/components/user-content';
-import Form from '../../common/components/address-form';
+import type { Address, State } from '../../../common/types';
+import { requestDeleteAddress, postAddress as postAddressAction } from '../../../ducks/addresses/index';
+import UserContent from '../../../common/components/user-content/index';
+import Form from '../../../common/components/address-form/index';
 
 type Props = {
   isLoading: boolean;

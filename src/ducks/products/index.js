@@ -5,7 +5,7 @@ import { createLogic } from 'redux-logic';
 
 import type { KeysOf, Product } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getDocs, reduceFnByID, sortBy } from '../../common/utils';
+import { getFmtDocs, reduceFnByID, sortBy } from '../../common/utils';
 
 export const fetchProducts = createAction('FETCH_PRODUCTS', (force: boolean = false) => ({ force }));
 export const setProducts = createAction('SET_PRODUCTS');
@@ -20,7 +20,7 @@ export const fetchProductsLogic = createLogic({
     dispatch(setIsLoading(true));
     try {
       const docsSnapshots = await db.collection('products').where('isActive', '==', true).get();
-      const products = sortBy(getDocs(docsSnapshots), 'orderID', true);
+      const products = sortBy(getFmtDocs(docsSnapshots), 'orderID', true);
       dispatch(setProducts(products));
     } catch (error) {
       console.warn('fetchProducts', error);

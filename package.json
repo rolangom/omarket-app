@@ -6,7 +6,7 @@
     "es6-symbol": "^3.1.1",
     "expo": "^24.0.0",
     "final-form": "^3.0.0",
-    "firebase": "^4.8.1",
+    "firebase": "^4.9.0",
     "native-base": "^2.3.5",
     "react": "16.0.0",
     "react-final-form": "^2.1.1",

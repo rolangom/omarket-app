@@ -13,12 +13,12 @@ import {
   Icon,
   Right,
 } from 'native-base';
-import type { Address, State } from '../../common/types';
-import Link from '../../common/components/link';
-import { lightGray, red } from '../../common/utils/constants';
-import { getAllAddresses } from '../../ducks/addresses/selectors';
-import { fetchAddresses as fetchAddressesAction } from '../../ducks/addresses';
-import UserContent from '../../common/components/user-content';
+import type { Address, State } from '../../../common/types';
+import Link from '../../../common/components/link/index';
+import { lightGray, red } from '../../../common/utils/constants';
+import { getAllAddresses } from '../../../ducks/addresses/selectors';
+import { fetchAddresses as fetchAddressesAction } from '../../../ducks/addresses/index';
+import UserContent from '../../../common/components/user-content/index';
 
 type Props = {
   items: Address[],

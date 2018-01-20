@@ -7,8 +7,8 @@ import { NavigationActions } from 'react-navigation';
 import type { CreditCard, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import {
-  deleteImmutable, getDocs, reduceFnByID, uniqFilterFn, upsertDoc, padStart, replace,
-  upsertRealtDoc, getRealtDocs,
+  deleteImmutable, reduceFnByID, uniqFilterFn, padStart, replace,
+  upsertRealtDoc, getRealtDocs, queryDoc,
 } from '../../common/utils';
 
 
@@ -37,19 +37,11 @@ export const fetchCreditcardsLogic = createLogic({
     const { user } = getState();
     (user ? allow : reject)(action);
   },
-  process: async ({ db, getState, firebase }, dispatch, done) => {
+  process: async ({ getState, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      // const docsSnapshots = await db.collection('users')
-      //   .doc(uid)
-      //   .collection('creditCards').get();
-      const docsSnapshots = await firebase.database()
-        .ref('users')
-        .child(uid)
-        .child('creditCards')
-        .once('value');
-      // const creditCards = getDocs(docsSnapshots);
+      const docsSnapshots = await queryDoc(firebase, `users/${uid}/creditCards`);
       const creditCards = getRealtDocs(docsSnapshots);
       dispatch(setCreditcards(creditCards));
     } catch (error) {
@@ -77,9 +69,6 @@ export const postCreditcardLogic = createLogic({
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
-      // const userRef = db.collection('users').doc(uid);
-      // const collection = userRef.collection('creditCards');
-      // const privCollection = userRef.collection('privCreditCards');
       const userRef = firebase.database().ref('users').child(uid);
       const collection = userRef.child('creditCards');
       const privCollection = userRef.child('privCreditCards');
@@ -107,20 +96,15 @@ export const postCreditcardLogic = createLogic({
 
 export const deleteCreditcardLogic = createLogic({
   type: requestDeleteCreditcard.getType(),
-  process: async ({ getState, db, action, firebase }, dispatch, done) => {
+  process: async ({ getState, action, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
       const { payload: id } = action;
-      // const getUserSubCollect = (name: string) => db.collection('users')
-      //   .doc(uid)
-      //   .collection(name);
       const getUserSubCollect = (name: string) => firebase.database()
         .ref('users')
         .child(uid)
         .child(name);
-      // await getUserSubCollect('creditCards').doc(id).delete();
-      // await getUserSubCollect('privCreditCards').doc(id).delete();
       await getUserSubCollect('creditCards').child(id).remove();
       await getUserSubCollect('privCreditCards').child(id).remove();
       dispatch(deleteCreditcard(id));
