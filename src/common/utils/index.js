@@ -11,11 +11,15 @@ export function getFmtDocs(querySnapshot) {
 
 export function getRealtDocs(snapshot) {
   const data = [];
-  snapshot.forEach(docSnapshot =>
-    data.push({ id: docSnapshot.key, ...docSnapshot.val() }),
-  );
+  snapshot.forEach(docSnapshot => {
+    console.log('docSnapshot', docSnapshot.key);
+    data.push({ id: docSnapshot.key, ...docSnapshot.val() });
+  });
   return data;
 }
+
+export const getNavParamsFromProp = (props: Object) =>
+  (props && props.navigation && props.navigation.state && props.navigation.state.params) || {};
 
 const sortFnAsc = (attr: string) => (a, b) =>
   (a[attr] || 100) - (b[attr] || 100);
@@ -37,7 +41,7 @@ export function padStart(num: number, places: number, char: string = '0') {
 
 export const getLast4Chars = (number: string) => number.slice(-4);
 
-export const replace = (str: string, replacement = '') =>
+export const replaceSpace = (str: string, replacement = '') =>
   str.replace(/ /g, replacement);
 
 export const impureSetObjKey = (obj: Object) => (acc: Object, key: string) =>
@@ -79,6 +83,8 @@ export const inputIsPropValid = (object: CreditCardForm) =>
   object && object.valid ? undefined : 'Tarjeta inválida.';
 export const parseCreditCardFormValue = (form: CreditCardForm) =>
   form && form.values;
+export const parseCreditCardNumber = (form: CreditCardForm) =>
+  form && { ...form, values: { ...form.values, number: replaceSpace(form.values.number) } };
 
 export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined);

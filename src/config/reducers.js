@@ -1,23 +1,25 @@
-import navReducer from '../navigators/reducer';
-import globalReducer from '../ducks/global';
-import categoriesReducer from '../ducks/categories';
-import productsReducer from '../ducks/products';
-import adsReducer from '../ducks/ads';
-import cartItemsReducer from '../ducks/cart';
-import userReducer from '../ducks/user';
-import addressesReducer from '../ducks/addresses';
-import creditCardsReducer from '../ducks/credit-cards';
+import nav from '../navigators/reducer';
+import global from '../ducks/global';
+import categories from '../ducks/categories';
+import products from '../ducks/products';
+import ads from '../ducks/ads';
+import cartItems from '../ducks/cart';
+import user from '../ducks/user';
+import addresses from '../ducks/addresses';
+import creditCards from '../ducks/credit-cards';
+import orders from '../ducks/order-requests';
 
 const reducers = {
-  nav: navReducer,
-  global: globalReducer,
-  categories: categoriesReducer,
-  products: productsReducer,
-  ads: adsReducer,
-  cartItems: cartItemsReducer,
-  user: userReducer,
-  addresses: addressesReducer,
-  creditCards: creditCardsReducer,
+  nav,
+  global,
+  categories,
+  products,
+  ads,
+  cartItems,
+  user,
+  addresses,
+  creditCards,
+  orders,
 };
 
 export default reducers;

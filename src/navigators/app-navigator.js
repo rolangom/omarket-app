@@ -14,6 +14,9 @@ import AddressEditorScreen from '../screens/address/editor';
 import CreditCardListScreen from '../screens/credit-card/list';
 import CreditCardEditorScreen from '../screens/credit-card/editor';
 import OrderRequestEditorScreen from '../screens/order-request/editor';
+import OrderRequestResultScreen from '../screens/order-request/result';
+import OrderRequestDetailScreen from '../screens/order-request/detail';
+import OrderListScreen from '../screens/orders/list';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -93,6 +96,19 @@ const CreditCardStack = StackNavigator({
   navigationOptions: defaultNavigationOptions(true),
 });
 
+const OrdersStack = StackNavigator({
+  Orders: {
+    screen: OrderListScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+    }),
+  },
+  OrdersRequestDetail: { screen: OrderRequestDetailScreen },
+}, {
+  cardStyle: getCardStyle(),
+  navigationOptions: defaultNavigationOptions(true),
+});
+
 const CartStack = StackNavigator({
   Cart: {
     screen: CartScreen,
@@ -101,6 +117,7 @@ const CartStack = StackNavigator({
     }),
   },
   OrderRequest: { screen: OrderRequestEditorScreen },
+  OrderRequestResult: { screen: OrderRequestResultScreen },
 }, {
   cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(false),
@@ -152,6 +169,18 @@ const AppNavigator = DrawerNavigator({
       drawerIcon: ({ tintColor }) => (
         <Icon
           name="ios-card"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
+  Orders: {
+    screen: OrdersStack,
+    navigationOptions: {
+      drawerLabel: 'Órdenes',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="md-list-box"
           style={{ color: tintColor }}
         />
       ),

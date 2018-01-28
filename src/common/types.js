@@ -41,6 +41,7 @@ export type CartItem = {
   productID: string,
   qty: number,
   descr?: string,
+  product?: Product,
 };
 
 export type Location = {
@@ -85,9 +86,10 @@ export type CreditCardForm = {
 };
 
 export type PaymentMethod = 'cash' | 'credit-card';
-export type OrderStatus = 'inCart' | 'placed' | 'reviewed' | 'sent' | 'completed';
+export type OrderStatus = 'inCart' | 'paymentDenied'| 'paid' |'placed' | 'reviewed' | 'sent' | 'completed';
 
 export type OrderRequest = {
+  createdAt: Date,
   addressID: string,
   address: Address,
   items: CartItem[],
@@ -150,5 +152,6 @@ export type State = {
   cartItems: Normalizd<CartItem>,
   addresses: Normalizd<Address>,
   creditCards: Normalizd<CreditCard>,
+  orders: Normalizd<OrderRequest>,
   user: ?User,
 };

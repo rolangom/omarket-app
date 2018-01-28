@@ -23,6 +23,9 @@ const styles = {
     fontSize: 17,
     color: darkGray,
   },
+  errorText: {
+    color: 'red',
+  },
 };
 
 const CheckmarkView = () => (
@@ -103,6 +106,7 @@ type Props = {
   children: React.Node<*>,
   placeholder: string,
   onChange: (any) => void,
+  error?: string,
 };
 
 type State = {
@@ -136,6 +140,7 @@ class DropDown extends React.Component<Props, State> {
       selectedValue,
       children,
       placeholder,
+      error,
     } = this.props;
     const { isOpen } = this.state;
     return (
@@ -154,6 +159,9 @@ class DropDown extends React.Component<Props, State> {
             renderItem={this.renderItem}
           />
           {children}
+        </Visible>
+        <Visible enabled={!!error}>
+          <Text style={styles.errorText}>{error}</Text>
         </Visible>
       </View>
     );

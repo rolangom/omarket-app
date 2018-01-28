@@ -43,11 +43,13 @@ export const getUserLogic = createLogic({
   validate({ action }, allow, reject) {
     (action.payload ? allow : reject)(action);
   },
-  process: async ({ action, firebase }, dispatch, done) => {
+  process: async ({ action, firebase, db }, dispatch, done) => {
     try {
       const { uid } = action.payload;
       const doc = await queryDoc(firebase, `users/${uid}/user`);
+      // const doc = await db.collection('users').doc(uid);
       const user = doc.exists && { uid, ...doc.val() };
+      // const user = doc.exists && { uid, ...doc.data() };
       user && dispatch(mergeUser(user));
       dispatch(fetchAddresses());
       dispatch(fetchCreditcards());
@@ -63,13 +65,14 @@ export const getUserLogic = createLogic({
 
 export const postUserLogic = createLogic({
   type: postUser.getType(),
-  process: async ({ firebase, action }, dispatch, done) => {
+  process: async ({ firebase, db, action }, dispatch, done) => {
     try {
       console.log('action', action);
       dispatch(setIsLoading(true));
       const { currentUser: { uid } } = firebase.auth();
       const { uid: _, ...data } = action.payload;
       await upsertDoc(firebase, `users/${uid}`, { key: 'user', ...data });
+      // await db.collection('users').doc(uid).set(data);
       dispatch(mergeUser(action.payload));
     } catch (err) {
       console.warn('postUserLogic error', err);

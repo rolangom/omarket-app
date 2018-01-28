@@ -15,6 +15,7 @@ export type Props = {
   item: CartItem,
   product: Product,
   onChange: (string, number) => void,
+  onEditPress: (string) => void,
 };
 
 const styles = {
@@ -37,10 +38,11 @@ const styles = {
 
 class CartListItem extends React.Component<Props> {
   onChange = (qty: number) => this.props.onChange(this.props.item.productID, qty);
+  onEditPress = () => this.props.onEditPress(this.props.item.productID);
   render() {
     const { product, item } = this.props;
     return (
-      <ListItem>
+      <ListItem button onPress={this.onEditPress}>
         <OptThumbnail
           uri={product.fileURL}
           size={45}
@@ -51,6 +53,7 @@ class CartListItem extends React.Component<Props> {
         <Body>
           <Text>{product.name}</Text>
           <Text note>{product.descr}</Text>
+          <Text note>{item.descr}</Text>
         </Body>
         <Right>
           <QtyInput

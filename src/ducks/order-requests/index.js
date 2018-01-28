@@ -5,7 +5,7 @@ import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
 import { postAddress } from '../addresses';
-import type { OrderRequest, KeysOf } from '../../common/types';
+import type { OrderRequest, KeysOf, State } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import {
   deleteImmutable,
@@ -14,6 +14,13 @@ import {
   uniqFilterFn,
   upsertDoc,
 } from '../../common/utils';
+import { clearCartItems } from '../cart';
+
+export const getSubtotal: number = (state: State, orderRequestID) =>
+  state.orders.byId[orderRequestID].items.reduce(
+    (acc, it) => acc + it.product.price,
+    0,
+  );
 
 export const fetchOrderRequests = createAction('FETCH_ORDER_REQUESTS');
 export const setOrderRequests = createAction('SET_ORDER_REQUESTS');
@@ -65,7 +72,7 @@ export const fetchOrderRequestsLogic = createLogic({
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
       const docsSnapshots = await db
-        .collection('orderRequests')
+        .collection('orders')
         .where('uid', '==', uid)
         .get();
       const orderRequests = getFmtDocs(docsSnapshots);
@@ -80,11 +87,12 @@ export const fetchOrderRequestsLogic = createLogic({
   },
 });
 
+type LogicActOrderRequest = { action: { payload: OrderRequest } };
+
 export const postOrderRequestLogic = createLogic({
   type: postOrderRequest.getType(),
   transform({ action }, next) {
     const { payload } = action;
-    console.log('postOrderRequestLogic transform', payload);
     next({
       ...action,
       payload: {
@@ -101,36 +109,52 @@ export const postOrderRequestLogic = createLogic({
       },
     });
   },
-  process: async ({ db, action, getState }: { action: { payload: OrderRequest } }, dispatch, done) => {
+  process: async (
+    { firebase, action, getState }: LogicActOrderRequest,
+    dispatch,
+    done,
+  ) => {
     try {
       dispatch(setIsLoading(true));
-      console.log('postOrderRequestLogic', action);
-      const {
-        doSaveAddress,
-        addressID,
-        address,
-        paymentMethod,
-        cashFor,
-        creditCard,
-        creditCardID,
-      } = action.payload;
-      const { cartItems: { byId: cartItemsById } } = getState();
+      const { doSaveAddress } = action.payload;
+      const { cartItems: { byId: cartItemsById }, user: { uid } } = getState();
       const items = Object.values(cartItemsById);
-      console.log('items', items);
+      const idToken = await firebase.auth().currentUser.getIdToken();
+      await upsertDoc(firebase, `users/${uid}`, { key: 'cart', ...items });
 
-      // doSaveAddress && dispatch(postAddress(address));
-
-      // const { user: { uid } } = getState();
-      // const collection = db.collection('orderRequests');
-      // const doc = await upsertDoc({ ...action.payload, uid }, collection);
-      // const { id, ...data } = action.payload;
-      // const newOrderRequest = {
-      //   id: id || doc.id,
-      //   ...data,
-      // };
-      // dispatch(saveOrderRequest(newOrderRequest));
-      // dispatch(NavigationActions.back());
-
+      const resp = await fetch(
+        'https://us-central1-shop-f518d.cloudfunctions.net/placeOrder',
+        {
+          // const resp = await fetch('http://localhost:5000/shop-f518d/us-central1/placeOrder', {
+          method: 'POST',
+          headers: {
+            'id-token': idToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(action.payload),
+        },
+      );
+      const jsonResp = await resp.json();
+      console.log('postOrderRequestLogic jsonResp', jsonResp);
+      const message =
+        jsonResp.message || 'Ha ocurrido un error durante la transacción.';
+      const isError = !resp.ok;
+      !isError && dispatch(clearCartItems());
+      !isError &&
+        doSaveAddress &&
+        dispatch(postAddress(action.payload.address, false));
+      const defaultAction = NavigationActions.navigate({
+        routeName: 'OrderRequestResult',
+        params: {
+          isError,
+          message,
+        },
+      });
+      const navActionSucc = NavigationActions.reset({
+        index: 0,
+        actions: [defaultAction],
+      });
+      dispatch(isError ? defaultAction : navActionSucc);
     } catch (error) {
       console.warn('postOrderRequestLogic error', error);
       dispatch(addError(error.message));
@@ -141,30 +165,6 @@ export const postOrderRequestLogic = createLogic({
   },
 });
 
-export const deleteOrderRequestLogic = createLogic({
-  type: requestDeleteOrderRequest.getType(),
-  process: async ({ getState, db, action }, dispatch, done) => {
-    try {
-      dispatch(setIsLoading(true));
-      const { user: { uid } } = getState();
-      const { payload: id } = action;
-      // await db
-      //   .collection('users')
-      //   .doc(uid)
-      //   .collection('orderRequests')
-      //   .doc(id)
-      //   .delete();
-      dispatch(deleteOrderRequest(id));
-      dispatch(NavigationActions.back());
-    } catch (error) {
-      console.warn('deleteOrderRequestLogic error', error);
-      dispatch(addError(error.message));
-    } finally {
-      dispatch(setIsLoading(false));
-      done();
-    }
-  },
-});
 
 const reducer = combineReducers({
   byId,

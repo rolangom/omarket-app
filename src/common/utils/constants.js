@@ -8,6 +8,7 @@ export const gray: string = '#B3B3B3';
 export const darkGray: string = '#666666';
 export const darkerGray: string = '#4D4D4D';
 export const red: string = '#eb1c23';
+export const green: string = '#3CCC3E';
 
 export const FACEBOOK_APPID = '559131207620680';
 

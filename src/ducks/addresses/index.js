@@ -14,7 +14,7 @@ import {
 
 export const fetchAddresses = createAction('FETCH_ADDRESSES');
 export const setAddresses = createAction('SET_ADDRESSES');
-export const postAddress = createAction('POST_ADDRESS');
+export const postAddress = createAction('POST_ADDRESS', args => args, (args, doNavigateBack) => ({ doNavigateBack }));
 export const saveAddress = createAction('SAVE_ADDRESS');
 export const requestDeleteAddress = createAction('REQ_DELETE_ADDRESS');
 export const deleteAddress = createAction('DELETE_ADDRESS');
@@ -66,8 +66,10 @@ export const postAddressLogic = createLogic({
         id: id || doc.key,
         ...data,
       };
+      const { doNavigateBack = true } = action.meta;
+      console.log('postAddressLogic doNavigateBack', action, doNavigateBack);
       dispatch(saveAddress(newAddress));
-      dispatch(NavigationActions.back());
+      doNavigateBack && dispatch(NavigationActions.back());
     } catch (error) {
       console.warn('postAddressLogic error', error);
       dispatch(addError(error.message));

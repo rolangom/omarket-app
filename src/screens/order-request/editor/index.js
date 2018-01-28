@@ -71,7 +71,7 @@ class OrderRequestEditor extends React.Component<Props> {
             <Text style={styles.topText}>¿Dónde quieres que te enviemos?</Text>
             <FinalForm
               onSubmit={onSubmit}
-              render={({ handleSubmit, pristine, invalid }) => (
+              render={({ handleSubmit, pristine, submiting }) => (
                 <Form white>
                   <OrderRequestForm
                     addresses={addressesToRender}
@@ -82,7 +82,7 @@ class OrderRequestEditor extends React.Component<Props> {
                     <Button
                       block
                       primary
-                      disabled={pristine || invalid}
+                      disabled={pristine || submiting}
                       onPress={handleSubmit}
                     >
                       <Text>Terminar su compra</Text>

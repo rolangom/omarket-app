@@ -21,7 +21,7 @@ import {
   inputCVCValidate,
   inputIsPropValid,
   inputRequired,
-  parseCreditCardFormValue,
+  parseCreditCardNumber,
 } from '../../../../common/utils/index';
 import VisibleIfFieldEq from '../../../../common/components/visible-if-field-eq';
 import PlainAddressForm from '../../../../common/components/address-form/plain';
@@ -124,8 +124,8 @@ const OrderRequestForm = ({
       <Field
         name="cashFor"
         validate={inputRequired}
-        render={({ input, meta }) => (
-          <Item stackedLabel>
+        render={({ input, meta: { touched, error } }) => (
+          <Item stackedLabel error={touched && !!error}>
             <Label>Necesitas Cambio?</Label>
             <Input
               placeholder="Para cuánto?"
@@ -142,8 +142,8 @@ const OrderRequestForm = ({
     <VisibleIfFieldEq name="paymentMethod" value="credit-card">
       <Field
         name="creditCardID"
-        render={({ input, meta }) => (
-          <Item stackedLabel>
+        render={({ input, meta: { touched, error } }) => (
+          <Item stackedLabel error={touched && !!error}>
             <Label>Tarjeta de crédito</Label>
             <View style={styles.row}>
               <DropDown
@@ -156,13 +156,14 @@ const OrderRequestForm = ({
                 <Field
                   name="cvc"
                   validate={inputCVCValidate}
-                  render={({ input: _input, meta }) => (
+                  render={({ input: _input, meta: { touched: _touched, error: _error } }) => (
                     <Input
                       style={styles.flex1}
                       placeholder="cvc/cvv"
                       value={_input.value}
                       keyboardType="numeric"
                       maxLength={4}
+                      placeholderTextColor={lightGray}
                       onChangeText={_input.onChange}
                     />
                   )}
@@ -172,14 +173,13 @@ const OrderRequestForm = ({
           </Item>
         )}
       />
-
       <VisibleIfFieldEq name="creditCardID" value="">
         <Field
           name="creditCard"
           validate={inputIsPropValid}
-          // parse={parseCreditCardFormValue}
-          render={({ input, meta }) => (
-            <Item>
+          parse={parseCreditCardNumber}
+          render={({ input, meta: { touched, error } }) => (
+            <Item error={touched && !!error}>
               <LiteCreditCardInput onChange={input.onChange} />
             </Item>
           )}

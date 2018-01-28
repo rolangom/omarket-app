@@ -7,7 +7,7 @@ import { NavigationActions } from 'react-navigation';
 import type { CreditCard, KeysOf } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import {
-  deleteImmutable, reduceFnByID, uniqFilterFn, padStart, replace,
+  deleteImmutable, reduceFnByID, uniqFilterFn, padStart, replaceSpace,
   upsertRealtDoc, getRealtDocs, queryDoc,
 } from '../../common/utils';
 
@@ -61,11 +61,11 @@ export const postCreditcardLogic = createLogic({
       ...action,
       payload: {
         ...action.payload,
-        number: replace(action.payload.number),
+        number: replaceSpace(action.payload.number),
       },
     });
   },
-  process: async ({ db, action, getState, firebase }, dispatch, done) => {
+  process: async ({ action, getState, firebase }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();

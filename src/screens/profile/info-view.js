@@ -1,5 +1,5 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import {
   ListItem,
@@ -58,111 +58,106 @@ const genders = [
   { label: 'Femenino', value: 'F' },
 ];
 
-class UserInfoView extends React.Component<Props> {
-  render() {
-    const {
-      user,
-      isLoading,
-      onLogout,
-      onSave,
-    } = this.props;
-    return (
-      <FinalForm
-        initialValues={user}
-        onSubmit={onSave}
-        render={({ handleSubmit, pristine, invalid }) => (
-          <Form white>
-            <ListItem avatar>
-              <Left>
-                <Thumbnail source={{ uri: user.photoURL }} />
-              </Left>
-              <Body>
-                <Text>{user.displayName}</Text>
-                <Text note>{user.email}</Text>
-              </Body>
-            </ListItem>
-            <Field
-              name="gender"
-              render={({ input, meta: { touched, error } }) => (
-                <Item
-                  stackedLabel
-                  error={touched && !!error}
-                >
-                  <Label>Sexo</Label>
-                  <DropDown
-                    options={genders}
-                    onChange={input.onChange}
-                    selectedValue={input.value}
-                    placeholder="Seleccione"
-                  />
-                </Item>
-              )}
-            />
-            <Field
-              name="birthday"
-              render={({ input, meta: { touched, error } }) => (
-                <Item
-                  stackedLabel
-                  error={touched && !!error}
-                >
-                  <Label>Fecha Nac.</Label>
-                  <DatePicker
-                    confirmBtnText="OK"
-                    cancelBtnText="Cancelar"
-                    placeholder="Seleccione Fecha"
-                    date={input.value}
-                    onDateChange={input.onChange}
-                    showIcon={false}
-                    style={styles.datePickerDateTouch}
-                    customStyles={styles.datePicker}
-                  />
-                </Item>
-              )}
-            />
-            <Field
-              name="phoneNumber"
-              render={({ input, meta: { touched, error } }) => (
-                <Item
-                  stackedLabel
-                  error={touched && !!error}
-                >
-                  <Label>Teléfono</Label>
-                  <Input
-                    value={input.value}
-                    onChange={input.onChange}
-                    keyboardType="phone-pad"
-                  />
-                </Item>
-              )}
-            />
-            <ListItem>
-              <Body>
-                <Visible enabled={!pristine}>
-                  <Button
-                    primary
-                    block
-                    onPress={handleSubmit}
-                    disabled={isLoading || invalid}
-                  >
-                    <Text>Guardar</Text>
-                  </Button>
-                </Visible>
-                <Button
-                  dark
-                  block
-                  onPress={onLogout}
-                  disabled={isLoading}
-                >
-                  <Text>Cerrar Sesión</Text>
-                </Button>
-              </Body>
-            </ListItem>
-          </Form>
-        )}
-      />
-    );
-  }
-}
+const UserInfoView = ({
+  user,
+  isLoading,
+  onLogout,
+  onSave,
+}: Props) =>
+  <FinalForm
+    initialValues={user}
+    onSubmit={onSave}
+    render={({ handleSubmit, pristine, invalid }) => (
+      <Form white>
+        <ListItem avatar>
+          <Left>
+            <Thumbnail source={{ uri: user.photoURL }} />
+          </Left>
+          <Body>
+            <Text>{user.displayName}</Text>
+            <Text note>{user.email}</Text>
+          </Body>
+        </ListItem>
+        <Field
+          name="gender"
+          render={({ input, meta: { touched, error } }) => (
+            <Item
+              stackedLabel
+              error={touched && !!error}
+            >
+              <Label>Sexo</Label>
+              <DropDown
+                options={genders}
+                onChange={input.onChange}
+                selectedValue={input.value}
+                placeholder="Seleccione"
+              />
+            </Item>
+          )}
+        />
+        <Field
+          name="birthday"
+          render={({ input, meta: { touched, error } }) => (
+            <Item
+              stackedLabel
+              error={touched && !!error}
+            >
+              <Label>Fecha Nac.</Label>
+              <DatePicker
+                confirmBtnText="OK"
+                cancelBtnText="Cancelar"
+                placeholder="Seleccione Fecha"
+                date={input.value}
+                onDateChange={input.onChange}
+                showIcon={false}
+                style={styles.datePickerDateTouch}
+                customStyles={styles.datePicker}
+              />
+            </Item>
+          )}
+        />
+        <Field
+          name="phoneNumber"
+          render={({ input, meta: { touched, error } }) => (
+            <Item
+              stackedLabel
+              error={touched && !!error}
+            >
+              <Label>Teléfono</Label>
+              <Input
+                value={input.value}
+                onChange={input.onChange}
+                keyboardType="phone-pad"
+              />
+            </Item>
+          )}
+        />
+        <ListItem>
+          <Body>
+            <Visible enabled={!pristine}>
+              <Button
+                primary
+                block
+                onPress={handleSubmit}
+                disabled={isLoading || invalid}
+              >
+                <Text>Guardar</Text>
+              </Button>
+            </Visible>
+            <Button
+              dark
+              block
+              onPress={onLogout}
+              disabled={isLoading}
+            >
+              <Text>Cerrar Sesión</Text>
+            </Button>
+          </Body>
+        </ListItem>
+      </Form>
+    )}
+  />
+);
 
 const mapStateToProps = (state: State) => ({
   user: state.user,
