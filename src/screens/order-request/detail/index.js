@@ -1,69 +1,82 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
-import { Container, Content, List, Body, Text, Right, ListItem } from 'native-base';
-// import Prompt from 'react-native-prompt';
+import { Container, Content, List, Text, View, Badge } from 'native-base';
 
 import PriceView from '../../../common/components/price-view';
-import OptThumbnail from '../../../common/components/opt-thumbnail';
-import type { CartItem, Product, State } from '../../../common/types';
+import type {
+  CartItem,
+  OrderRequest,
+  Product,
+  State,
+} from '../../../common/types';
 import { currency } from '../../../common/utils/constants';
-import { getSubtotal } from '../../../ducks/order-requests';
+import OrderRequestItem from './components/order-request-item';
+import AddressDetail from './components/address';
+import { getOrderStatusText } from '../../../common/utils';
+import OrderRequestDetailPayment from './components/payment';
 
 export type Props = {
-  items: CartItem,
-  subTotal: number,
+  order: OrderRequest,
   productById: string => Product,
 };
 
 const styles = {
-  list: {
-    paddingTop: 15,
-  },
-  buttons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  basic: {
     padding: 10,
-    marginTop: 25,
+    alignItems: 'flex-end',
+  },
+  createdAt: {
+    textAlign: 'right',
+  },
+  status: {
+    alignSelf: 'flex-end',
   },
 };
 
 class OrderRequestDetailScreen extends React.Component<Props> {
-  renderItem = (item: CartItem) => {
-    const product = this.props.productById(item.productID) || {};
-    const { name, descr, price } = item.product || {};
-    return (
-      <ListItem>
-        <OptThumbnail
-          uri={product.fileURL}
-          size={45}
-          borderless
-          square
-          style={styles.image}
-        />
-        <Body>
-          <Text>{name || product.name}</Text>
-          <Text note>{product.descr}</Text>
-          <Text note>{descr}</Text>
-        </Body>
-        <Right>
-          <Text>{item.qty}</Text>
-          <Text>{price || product.price}</Text>
-        </Right>
-      </ListItem>
-    );
-  };
+  renderItem = (item: CartItem) => (
+    <OrderRequestItem item={item} productById={this.props.productById} />
+  );
   render() {
-    const { items, subTotal } = this.props;
+    const {
+      order: {
+        cartItems,
+        status,
+        createdAt,
+        address,
+        subtotal,
+        itbis,
+        itbisFactor,
+        creditCard,
+        cashFor,
+        paymentMethod,
+      },
+    } = this.props;
     return (
       <Container>
         <Content whiteBackground>
-          <List
-            dataArray={items}
-            renderRow={this.renderItem}
-            style={styles.list}
+          <View style={styles.basic}>
+            <Text style={styles.createdAt}>
+              {createdAt && createdAt.toLocaleString('es-DO')}
+            </Text>
+            <Badge primary style={styles.status}>
+              <Text>{getOrderStatusText(status)}</Text>
+            </Badge>
+          </View>
+          <List dataArray={cartItems} renderRow={this.renderItem} />
+          <PriceView value={subtotal} currency={`Sub-total ${currency}`} />
+          <PriceView
+            value={itbis}
+            currency={`ITBIS ${itbisFactor * 100}% ${currency}`}
           />
-          {/*<PriceView value={subTotal} currency={currency} />*/}
+          <PriceView value={subtotal + itbis} currency={`TOTAL ${currency}`} />
+          <OrderRequestDetailPayment
+            paymentMethod={paymentMethod}
+            creditCard={creditCard}
+            cashFor={cashFor}
+          />
+          <AddressDetail address={address} />
         </Content>
       </Container>
     );
@@ -74,9 +87,7 @@ const mapStateToProps = (
   state: State,
   { navigation: { state: { params: { orderRequestID } } } },
 ) => ({
-  orderRequestID,
-  items: state.orders.byId[orderRequestID],
-  // subTotal: getSubtotal(state, orderRequestID),
+  order: state.orders.byId[orderRequestID],
   productById: (id: string) => state.products.byId[id],
 });
 

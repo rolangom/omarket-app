@@ -1,12 +1,12 @@
+// @flow
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Message as MessageType } from '../../common/types';
+import type { Message as MessageType, Global } from '../../common/types';
 import { fetchCategories } from '../categories';
 import { fetchAds } from '../ads';
 import { fetchProducts } from '../products';
 import { getUser } from '../user';
-import { fetchOrderRequests } from '../order-requests';
 import { fetchAddresses } from '../addresses';
 import { fetchCreditcards } from '../credit-cards';
 
@@ -24,12 +24,12 @@ export const addRawError = error => addMessage('error', 'Error', error.message);
 
 const reducer = createReducer(
   {
-    [setIsLoading]: (state, isLoading: boolean) => ({ ...state, isLoading }),
-    [addMessage]: (state, message: MessageType) => ({
+    [setIsLoading]: (state: Global, isLoading: boolean) => ({ ...state, isLoading }),
+    [addMessage]: (state: Global, message: MessageType) => ({
       ...state,
       messages: state.messages.concat(message),
     }),
-    [deleteMessage]: state => ({ ...state, messages: state.messages.slice(1) }),
+    [deleteMessage]: (state: Global) => ({ ...state, messages: state.messages.slice(1) }),
   },
   {
     isLoading: false,
@@ -46,7 +46,6 @@ export const initAppDataLogic = createLogic({
     dispatch(getUser());
     dispatch(fetchAddresses());
     dispatch(fetchCreditcards());
-    dispatch(fetchOrderRequests());
     done();
   },
 });

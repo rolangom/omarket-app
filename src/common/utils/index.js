@@ -1,7 +1,7 @@
 // @flow
 
 import { currency } from './constants';
-import type { CreditCard, CreditCardForm } from '../types';
+import type {CreditCard, CreditCardForm, OrderStatus, PaymentMethod} from '../types';
 
 export function getFmtDocs(querySnapshot) {
   return querySnapshot && querySnapshot.docs
@@ -159,6 +159,21 @@ export const mapCreditCardTypeName = (type: string) => {
       return 'Tarjeta';
   }
 };
+
+export const getOrderStatusText = (status: OrderStatus) => {
+  switch (status) {
+    case 'reviewed': return 'Revisada';
+    case 'sent': return 'Enviada';
+    case 'completed': return 'Entregada';
+    case 'placed':
+    default: return 'Recibida';
+  }
+};
+
+export const getPaymentMethodText = (paymentMethod: PaymentMethod) =>
+  paymentMethod === 'cash'
+    ? 'Efectivo'
+    : 'Tarjeta de crédito';
 
 export const formatCreditCardText = (creditCard: CreditCard) =>
   `${mapCreditCardTypeName(creditCard.type)} ...- ${getLast4Chars(

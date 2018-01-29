@@ -10,7 +10,7 @@ type Props = {
   // message: string,
   // isError: boolean,
   navigation: {
-    navigate: Object => void,
+    navigate: (string, Object) => void,
     goBack: () => void,
     dispatch: (Object) => void,
     state: {
@@ -53,7 +53,7 @@ export default class OrderRequestResult extends React.Component<Props> {
   };
   navigateOnSucced = () => {
     this.props.navigation.dispatch(navActionSucc);
-    this.props.navigation.navigate({ routeName: 'Start' });
+    this.props.navigation.navigate('Orders');
   };
   render() {
     const { message, isError } = getNavParamsFromProp(this.props);

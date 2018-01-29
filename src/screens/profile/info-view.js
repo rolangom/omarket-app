@@ -63,7 +63,7 @@ const UserInfoView = ({
   isLoading,
   onLogout,
   onSave,
-}: Props) =>
+}: Props) => (
   <FinalForm
     initialValues={user}
     onSubmit={onSave}

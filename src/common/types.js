@@ -92,13 +92,17 @@ export type OrderRequest = {
   createdAt: Date,
   addressID: string,
   address: Address,
-  items: CartItem[],
+  cartItems: CartItem[],
   paymentMethod: PaymentMethod,
   creditCardID?: string,
   creditCard?: ?CreditCard,
   cashFor?: number,
   doSaveAddress?: boolean,
+  authCode?: number,
   status?: OrderStatus,
+  itbis?: number,
+  itbisFactor?: number,
+  subtotal?: number,
 };
 
 export type User = {

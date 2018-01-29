@@ -207,7 +207,7 @@ export default (variables = variable) => {
         alignSelf: null
       },
       padding: null,
-      flex: 0.28
+      flex: 0.35
     },
     "NativeBase.Text": {
       ".note": {

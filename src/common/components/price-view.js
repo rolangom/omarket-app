@@ -18,7 +18,7 @@ export type Props = {
 const styles = {
   priceView: {
     flexDirection: 'row-reverse',
-    padding: 10,
+    padding: 5,
   },
   priceContainer: {
     flexDirection: 'row',
