@@ -14,4 +14,10 @@ export function getProducts(state: State, category: string): Product[] {
     : [];
 }
 
+export function getRelatedProducts(prodId: string, state: State): Product[] {
+  const product: Product = state.products.byId[prodId];
+  const relatedProdsId: string[] = Object.keys(product.relatedProds);
+  return relatedProdsId.map(pid => state.products.byId[pid]);
+}
+
 export default null;
