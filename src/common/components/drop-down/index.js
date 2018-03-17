@@ -3,7 +3,7 @@ import * as React from 'react';
 import { View, TouchableOpacity, Text, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-import { darkGray } from '../../utils/constants';
+import { darkGray, gray, lighterGray } from '../../utils/constants';
 import Chevron from '../chevron';
 import Visible from '../visible';
 
@@ -14,10 +14,18 @@ const styles = {
     justifyContent: 'space-between',
     padding: 10,
     paddingLeft: 0,
+    borderBottomColor: lighterGray,
+    borderBottomWidth: 1,
   },
   container: {
     flex: 1,
     alignSelf: 'stretch',
+    backgroundColor: 'white',
+  },
+  label: {
+    fontSize: 17,
+    color: gray,
+    textAlign: 'center',
   },
   text: {
     fontSize: 17,
@@ -29,31 +37,22 @@ const styles = {
 };
 
 const CheckmarkView = () => (
-  <Ionicons
-    name="md-checkmark"
-    size={24}
-    color={darkGray}
-  />
+  <Ionicons name="md-checkmark" size={24} color={darkGray} />
 );
 
 type OptionProps = {
   label: string,
   value: any,
   checked?: boolean,
-  onClick?: (any) => void,
+  onClick?: any => void,
 };
 
 class Option extends React.Component<OptionProps> {
   onPress = () => this.props.onClick && this.props.onClick(this.props.value);
   render() {
-    const {
-      label,
-      checked,
-    } = this.props;
+    const { label, checked } = this.props;
     return (
-      <TouchableOpacity
-        onPress={this.onPress}
-      >
+      <TouchableOpacity onPress={this.onPress}>
         <View style={styles.optionView}>
           <Text style={styles.text}>{label}</Text>
           <Visible enabled={checked}>
@@ -71,26 +70,21 @@ type HeadProps = {
   options: OptionProps[],
   selectedValue: any,
   placeholder?: string,
+  leftIcon?: string,
 };
 
 class Head extends React.Component<HeadProps> {
   render() {
-    const {
-      options,
-      placeholder,
-      selectedValue,
-    } = this.props;
-    const selected: OptionProps = options.find((it: OptionProps) => it.value === selectedValue);
+    const { options, placeholder, selectedValue, leftIcon } = this.props;
+    const selected: OptionProps = options.find(
+      (it: OptionProps) => it.value === selectedValue,
+    );
     return (
-      <TouchableOpacity
-        onPress={this.props.onClick}
-      >
+      <TouchableOpacity onPress={this.props.onClick}>
         <View style={styles.optionView}>
+          {leftIcon && <Ionicons name={leftIcon} size={24} color={darkGray} />}
           <Text style={styles.text}>
-            {(selected && selected.value)
-              ? selected.label
-              : placeholder
-            }
+            {selected && selected.value ? selected.label : placeholder}
           </Text>
           <Chevron isUp={this.props.isOpen} />
         </View>
@@ -102,23 +96,28 @@ class Head extends React.Component<HeadProps> {
 type Props = {
   options?: OptionProps[],
   name?: string,
-  selectedValue: any,
+  label?: string,
+  defaultOpen: boolean,
+  selectedValue: ?any,
   children: React.Node<*>,
   placeholder: string,
-  onChange: (any) => void,
+  onChange: any => void,
   error?: string,
+  leftIcon?: string,
+  closeOnChange: boolean,
 };
 
 type State = {
   isOpen: boolean,
-}
+};
 
 class DropDown extends React.Component<Props, State> {
-  state = { isOpen: false };
-  onToggleVisible = () => this.setState((state: State) => ({ isOpen: !state.isOpen }));
+  state = { isOpen: this.props.defaultOpen };
+  onToggleVisible = () =>
+    this.setState((state: State) => ({ isOpen: !state.isOpen }));
   onChange = (value: any) => {
     const { onChange } = this.props;
-    this.onToggleVisible();
+    !this.props.closeOnChange && this.onToggleVisible();
     onChange(value);
   };
   keyExtractor = (it: OptionProps) => it.value;
@@ -136,21 +135,25 @@ class DropDown extends React.Component<Props, State> {
   };
   render() {
     const {
+      label,
       options,
       selectedValue,
       children,
       placeholder,
       error,
+      leftIcon,
     } = this.props;
     const { isOpen } = this.state;
     return (
       <View style={styles.container}>
+        {label && <Text style={styles.label}>{label}</Text>}
         <Head
           isOpen={isOpen}
           selectedValue={selectedValue}
           onClick={this.onToggleVisible}
           placeholder={placeholder}
           options={options}
+          leftIcon={leftIcon}
         />
         <Visible enabled={isOpen}>
           <FlatList
@@ -170,6 +173,7 @@ class DropDown extends React.Component<Props, State> {
 
 DropDown.defaultProps = {
   options: [],
+  defaultOpen: false,
   closeOnChange: true,
 };
 

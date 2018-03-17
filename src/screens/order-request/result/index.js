@@ -4,7 +4,7 @@ import { Container, Content, View, H1, Button, Text } from 'native-base';
 import { Ionicons } from '@expo/vector-icons';
 import { green, red } from '../../../common/utils/constants';
 import { getNavParamsFromProp } from '../../../common/utils';
-import {NavigationActions} from "react-navigation";
+import { NavigationActions } from 'react-navigation';
 
 type Props = {
   // message: string,
@@ -12,7 +12,7 @@ type Props = {
   navigation: {
     navigate: (string, Object) => void,
     goBack: () => void,
-    dispatch: (Object) => void,
+    dispatch: Object => void,
     state: {
       params: {
         message: string,
@@ -40,9 +40,7 @@ const styles = {
 
 const navActionSucc = NavigationActions.reset({
   index: 0,
-  actions: [
-    NavigationActions.navigate({ routeName: 'Cart' }),
-  ],
+  actions: [NavigationActions.navigate({ routeName: 'Cart' })],
 });
 
 export default class OrderRequestResult extends React.Component<Props> {

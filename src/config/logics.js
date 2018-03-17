@@ -1,6 +1,6 @@
 
 
-import { initAppDataLogic } from '../ducks/global';
+import { initAppDataLogic, fetchConfigsLogic } from '../ducks/global';
 import { fetchCategoriesLogic } from '../ducks/categories';
 import { fetchProductsLogic } from '../ducks/products';
 import { fetchAdsLogic } from '../ducks/ads';
@@ -8,13 +8,14 @@ import { deleteCartItemIfEmptyLogic, postCardProductLogic } from '../ducks/cart'
 import { loginWithFacebookLogic, logoutLogic, postUserLogic, getUserLogic } from '../ducks/user';
 import { fetchAddressesLogic, postAddressLogic, deleteAddressLogic } from '../ducks/addresses';
 import { fetchCreditcardsLogic, postCreditcardLogic, deleteCreditcardLogic } from '../ducks/credit-cards';
-import { postOrderRequestLogic } from '../ducks/order-requests';
+import { postOrderRequestLogic, postOrderReqRatingLogic } from '../ducks/order-requests';
 
 export default [
   fetchAdsLogic,
   fetchCategoriesLogic,
   fetchProductsLogic,
   initAppDataLogic,
+  fetchConfigsLogic,
   loginWithFacebookLogic,
   logoutLogic,
   postUserLogic,
@@ -28,4 +29,5 @@ export default [
   postCreditcardLogic,
   deleteCreditcardLogic,
   postOrderRequestLogic,
+  postOrderReqRatingLogic
 ];

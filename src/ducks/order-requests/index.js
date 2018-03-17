@@ -5,22 +5,23 @@ import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
 import { postAddress } from '../addresses';
-import type { OrderRequest, KeysOf, State } from '../../common/types';
+import type {OrderRequest, KeysOf, State, Rating} from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import {
-  reduceFnByID,
+  reduceFnByID, setImmutable,
   upsertDoc,
 } from '../../common/utils';
 import { clearCartItems } from '../cart';
 
-export const getSubtotal: number = (state: State, orderRequestID) =>
-  state.orders.byId[orderRequestID].items.reduce(
-    (acc, it) => acc + it.product.price,
-    0,
-  );
+// export const getSubtotal: number = (state: State, orderRequestID) =>
+//   state.orders.byId[orderRequestID].items.reduce(
+//     (acc, it) => acc + it.product.price,
+//     0,
+//   );
 
 export const setOrderRequests = createAction('SET_ORDER_REQUESTS');
 export const postOrderRequest = createAction('POST_ORDER_REQUEST');
+export const postOrderRequestRating = createAction('POST_ORDER_REQ_RATING', (id: string, rating: Rating) => ({ id, rating }));
 
 const byId = createReducer(
   {
@@ -28,6 +29,8 @@ const byId = createReducer(
       state: KeysOf<OrderRequest>,
       orderRequests: OrderRequest[],
     ) => orderRequests.reduce(reduceFnByID, {}),
+    [postOrderRequestRating]: (state: State, { id, rating }: { id: string, rating: Rating }) =>
+      setImmutable(state, `${id}.rating`, rating),
   },
   {},
 );
@@ -44,6 +47,39 @@ type LogicActOrderRequest = {
   action: { payload: OrderRequest },
   getState: () => State,
 };
+
+export const postOrderReqRatingLogic = createLogic({
+  type: postOrderRequestRating.getType(),
+  process: async ({ db, firebase, action }, dispatch, done) => {
+    dispatch(setIsLoading(true));
+    try {
+      // const { id, rating } = action.payload;
+      const idToken = await firebase.auth().currentUser.getIdToken();
+
+      const resp = await fetch(
+        'https://us-central1-shop-f518d.cloudfunctions.net/rateOrder',
+        // 'http://localhost:5000/shop-f518d/us-central1/rateOrder',
+        {
+          method: 'POST',
+          headers: {
+            'id-token': idToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(action.payload),
+        },
+      );
+      const jsonResp = await resp.json();
+      console.log('postOrderRequestLogic jsonResp', jsonResp);
+      // await db.collection('orders').doc(id).update({ rating });
+    } catch (err) {
+      console.warn('postOrderReqRatingLogic', err);
+      dispatch(addError(err.message));
+    } finally {
+      dispatch(setIsLoading(false));
+      done();
+    }
+  },
+});
 
 export const postOrderRequestLogic = createLogic({
   type: postOrderRequest.getType(),

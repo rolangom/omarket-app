@@ -32,6 +32,8 @@ export type Product = {
   orderID: number,
   price: number,
   qty: number,
+  contents: string[],
+  usefulAs: string[],
   relatedProds: {
     [string]: boolean,
   },
@@ -65,7 +67,6 @@ export type CreditCard = {
   type: string,
 };
 
-
 export type CreditCardForm = {
   valid: boolean,
   values: {
@@ -86,7 +87,19 @@ export type CreditCardForm = {
 };
 
 export type PaymentMethod = 'cash' | 'credit-card';
-export type OrderStatus = 'inCart' | 'paymentDenied'| 'paid' |'placed' | 'reviewed' | 'sent' | 'completed';
+export type OrderStatus =
+  | 'inCart'
+  | 'paymentDenied'
+  | 'paid'
+  | 'placed'
+  | 'reviewed'
+  | 'sent'
+  | 'completed';
+
+export type Rating = {
+  value: ?number,
+  message: ?string,
+};
 
 export type OrderRequest = {
   createdAt: Date,
@@ -103,6 +116,7 @@ export type OrderRequest = {
   itbis?: number,
   itbisFactor?: number,
   subtotal?: number,
+  rating: Rating,
 };
 
 export type User = {
@@ -126,7 +140,7 @@ export type User = {
 
 // ------------------------------------------------ //
 
-export type MessageMode = "error"|"info"|"warning";
+export type MessageMode = 'error' | 'info' | 'warning';
 
 export type Message = {
   type: MessageMode,
@@ -137,6 +151,12 @@ export type Message = {
 export type Global = {
   isLoading: boolean,
   messages: Array<Message>,
+  utilities: string[],
+  contents: string[],
+  filters: {
+    utilities: string,
+    contents: string,
+  },
 };
 
 export type KeysOf<T> = {

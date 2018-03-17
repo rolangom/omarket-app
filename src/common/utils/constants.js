@@ -2,6 +2,7 @@
 
 export const rowHeight: number = 54;
 
+export const yellow: string = '#F2BF40';
 export const lighterGray: string = '#F1F1F1';
 export const lightGray: string = '#cccccc';
 export const gray: string = '#B3B3B3';

@@ -8,17 +8,21 @@ import type {
   CartItem,
   OrderRequest,
   Product,
+  Rating,
   State,
 } from '../../../common/types';
 import { currency } from '../../../common/utils/constants';
 import OrderRequestItem from './components/order-request-item';
 import AddressDetail from './components/address';
-import { getOrderStatusText } from '../../../common/utils';
+import { getOrderStatusText, isOrderCompleted } from '../../../common/utils';
+import RatingView from './components/rating';
 import OrderRequestDetailPayment from './components/payment';
+import { postOrderRequestRating } from '../../../ducks/order-requests';
 
 export type Props = {
   order: OrderRequest,
   productById: string => Product,
+  onRatingChange: (string, Rating) => void,
 };
 
 const styles = {
@@ -51,7 +55,9 @@ class OrderRequestDetailScreen extends React.Component<Props> {
         creditCard,
         cashFor,
         paymentMethod,
+        rating,
       },
+      onRatingChange,
     } = this.props;
     return (
       <Container>
@@ -64,6 +70,12 @@ class OrderRequestDetailScreen extends React.Component<Props> {
               <Text>{getOrderStatusText(status)}</Text>
             </Badge>
           </View>
+          {isOrderCompleted(status) && (
+            <RatingView
+              rating={rating}
+              onRatingChange={onRatingChange}
+            />
+          )}
           <List dataArray={cartItems} renderRow={this.renderItem} />
           <PriceView value={subtotal} currency={`Sub-total ${currency}`} />
           <PriceView
@@ -91,4 +103,14 @@ const mapStateToProps = (
   productById: (id: string) => state.products.byId[id],
 });
 
-export default connect(mapStateToProps)(OrderRequestDetailScreen);
+const mapDispatchToProps = (
+  dispatch,
+  { navigation: { state: { params: { orderRequestID } } } },
+) => ({
+  onRatingChange: (rating: Rating) =>
+    dispatch(postOrderRequestRating(orderRequestID, rating)),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(
+  OrderRequestDetailScreen,
+);

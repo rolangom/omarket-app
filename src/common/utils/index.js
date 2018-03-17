@@ -170,6 +170,8 @@ export const getOrderStatusText = (status: OrderStatus) => {
   }
 };
 
+export const isOrderCompleted = (status: OrderStatus) => status === 'completed';
+
 export const getPaymentMethodText = (paymentMethod: PaymentMethod) =>
   paymentMethod === 'cash'
     ? 'Efectivo'

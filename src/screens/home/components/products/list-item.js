@@ -26,6 +26,7 @@ const styles = {
   },
   item: {
     flexDirection: 'column',
+    width: size,
   },
   content: {
     backgroundColor: lighterGray,
