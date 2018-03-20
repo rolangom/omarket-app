@@ -1,6 +1,6 @@
 
 
-import { initAppDataLogic, fetchConfigsLogic } from '../ducks/global';
+import { initAppDataLogic, fetchConfigsLogic, searchTermLogic } from '../ducks/global';
 import { fetchCategoriesLogic } from '../ducks/categories';
 import { fetchProductsLogic } from '../ducks/products';
 import { fetchAdsLogic } from '../ducks/ads';
@@ -14,6 +14,7 @@ export default [
   fetchAdsLogic,
   fetchCategoriesLogic,
   fetchProductsLogic,
+  searchTermLogic,
   initAppDataLogic,
   fetchConfigsLogic,
   loginWithFacebookLogic,
@@ -29,5 +30,5 @@ export default [
   postCreditcardLogic,
   deleteCreditcardLogic,
   postOrderRequestLogic,
-  postOrderReqRatingLogic
+  postOrderReqRatingLogic,
 ];

@@ -154,6 +154,7 @@ export type Global = {
   utilities: string[],
   contents: string[],
   filters: {
+    searchTerm: string,
     utilities: string,
     contents: string,
   },

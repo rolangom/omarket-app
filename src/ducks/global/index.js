@@ -21,8 +21,12 @@ export const initAppData = createAction('INIT_APP_DATA');
 
 export const fetchConfigs = createAction('FECTH_CONFIGS');
 export const setConfigs = createAction('SET_CONFIGS');
-export const setFilters = createAction('SET_FILTERS', (key, value) => ({ key, value }));
+export const setFilters = createAction('SET_FILTERS', (key, value) => ({
+  key,
+  value,
+}));
 export const setFiltersAsUseful = createAction('SET_FILTERS_UTIL');
+// export const setSearchTerm = createAction('SET_SEARCH_TERM');
 
 export const addError = text => addMessage('error', 'Error', text);
 export const addRawError = error => addMessage('error', 'Error', error.message);
@@ -56,7 +60,10 @@ const reducer = createReducer(
       utilities,
       contents,
     }),
-    [setFiltersAsUseful]: (state, value) => ({ ...state, filters: { ...state.filters, utilities: value } }),
+    [setFiltersAsUseful]: (state: Global, value: ?string) => ({
+      ...state,
+      filters: { ...state.filters, utilities: value },
+    }),
     [setFilters]: (state: Global, { key, value }: KeyValue) => ({
       ...state,
       filters: { ...state.filters, [key]: value },
@@ -68,6 +75,7 @@ const reducer = createReducer(
     utilities: [],
     contents: [],
     filters: {
+      searchTerm: '',
       utilities: null,
       contents: null,
     },
@@ -98,6 +106,12 @@ export const fetchConfigsLogic = createLogic({
       done();
     }
   },
+});
+
+export const searchTermLogic = createLogic({
+  type: setFilters.getType(),
+  // throttle: 750,
+  debounce: 750,
 });
 
 export const initAppDataLogic = createLogic({

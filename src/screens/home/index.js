@@ -9,10 +9,11 @@ import Ads from '../../common/components/ads';
 import CategoryList from './components/categories';
 import ProductList from './components/products';
 import Greeting from './components/greeting';
-import Filters from './components/filters';
+// import Filters from './components/filters';
+import SearchButton from './components/search/button';
 
 import { getProducts } from '../../ducks/products/selectors';
-import { isFilterActive } from '../../ducks/global/selectors';
+import { isFilterActive as getIsFilterActive } from '../../ducks/global/selectors';
 
 export type Props = {
   parent: string,
@@ -26,16 +27,18 @@ class HomeScreen extends React.Component<Props> {
     this.props.navigation.navigate('Browse', { parent: id });
   onNavigateProduct = (id: string) =>
     this.props.navigation.navigate('ProductDetail', { productID: id });
+  onNavigateSearch = () => this.props.navigation.navigate('Search');
   render() {
     const { parent, products, isFilterActive } = this.props;
     return (
       <Container>
         <Content>
+          <SearchButton onPress={this.onNavigateSearch} />
           <Greeting enabled={!parent} />
           <Visible enabled={products.length === 0}>
             <Ads forceLoad={!parent} />
           </Visible>
-          {!parent && <Filters />}
+          {/*{!parent && <Filters />}*/}
           {!isFilterActive && (
             <CategoryList parent={parent} onNavigate={this.onNavigate} />
           )}
@@ -54,7 +57,7 @@ const mapStateToProps = (state, props) => {
   return {
     parent,
     products: getProducts(state, parent),
-    isFilterActive: isFilterActive(state),
+    isFilterActive: getIsFilterActive(state),
   };
 };
 export default connect(mapStateToProps)(HomeScreen);

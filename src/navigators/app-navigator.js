@@ -6,6 +6,7 @@ import { Icon } from 'native-base';
 
 import SettingsScreen from '../screens/settings';
 import HomeScreen from '../screens/home';
+import SearchScreen from '../screens/home/search';
 import ProfileScreen from '../screens/profile';
 import ProductDetailScreen from '../screens/product-detail';
 import CartScreen from '../screens/cart';
@@ -65,10 +66,12 @@ const BrowseStack = StackNavigator({
   },
   Browse: { screen: HomeScreen },
   ProductDetail: { screen: ProductDetailScreen },
+  Search: { screen: SearchScreen },
 }, {
   cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
+
 
 const AddressesStack = StackNavigator({
   Addresses: {
