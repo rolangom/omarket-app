@@ -34,6 +34,28 @@ export const getPriceWithCurrency = (
   pCurrency: string = currency,
 ) => `${pCurrency} ${price || 0}`;
 
+export function getOfferPrice(price: number, offer: Offer) {
+  switch (offer.type) {
+    case 'percentage':
+      return price - (price * offer.discount * 0.01);
+    case 'fixedAmount':
+      return price - offer.discount;
+    default:
+      return price;
+  }
+}
+
+export const isOfferDiscount = (offer: Offer) => {
+  switch (offer.type) {
+    case 'percentage':
+    case 'fixedAmount':
+      return true;
+    default:
+      return false;
+  }
+};
+
+
 export function padStart(num: number, places: number, char: string = '0') {
   const zero = places - num.toString().length + 1;
   return Array(+(zero > 0 && zero)).join(char) + num;

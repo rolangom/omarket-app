@@ -17,4 +17,6 @@ export const currency: string = 'RD$';
 
 export const AD_RATIO = 0.4629;
 
+export const defaultEmptyArr = [];
+
 export default null;

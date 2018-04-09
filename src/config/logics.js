@@ -9,6 +9,7 @@ import { loginWithFacebookLogic, logoutLogic, postUserLogic, getUserLogic } from
 import { fetchAddressesLogic, postAddressLogic, deleteAddressLogic } from '../ducks/addresses';
 import { fetchCreditcardsLogic, postCreditcardLogic, deleteCreditcardLogic } from '../ducks/credit-cards';
 import { postOrderRequestLogic, postOrderReqRatingLogic } from '../ducks/order-requests';
+import { fetchOffersLogic } from '../ducks/offers';
 
 export default [
   fetchAdsLogic,
@@ -31,4 +32,5 @@ export default [
   deleteCreditcardLogic,
   postOrderRequestLogic,
   postOrderReqRatingLogic,
+  fetchOffersLogic,
 ];

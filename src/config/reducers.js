@@ -8,6 +8,7 @@ import user from '../ducks/user';
 import addresses from '../ducks/addresses';
 import creditCards from '../ducks/credit-cards';
 import orders from '../ducks/order-requests';
+import offers from '../ducks/offers';
 
 const reducers = {
   nav,
@@ -20,6 +21,7 @@ const reducers = {
   addresses,
   creditCards,
   orders,
+  offers,
 };
 
 export default reducers;

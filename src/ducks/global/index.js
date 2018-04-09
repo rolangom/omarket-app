@@ -9,6 +9,7 @@ import { fetchProducts } from '../products';
 import { getUser } from '../user';
 import { fetchAddresses } from '../addresses';
 import { fetchCreditcards } from '../credit-cards';
+import { fetchOffers } from '../offers';
 
 export const setIsLoading = createAction('SET_IS_LOADING');
 export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({
@@ -124,6 +125,7 @@ export const initAppDataLogic = createLogic({
     dispatch(getUser());
     dispatch(fetchAddresses());
     dispatch(fetchCreditcards());
+    dispatch(fetchOffers());
     done();
   },
 });

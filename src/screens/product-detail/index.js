@@ -8,12 +8,13 @@ import { Container, Content, Text, View, Separator, H3 } from 'native-base';
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
 import CondContent from '../../common/components/cond-content';
-import { currency, darkGray } from '../../common/utils/constants';
-import type { Product, State } from '../../common/types';
+import {currency, darkGray, defaultEmptyArr} from '../../common/utils/constants';
+import type { Product, State, Offer } from '../../common/types';
 import { postCartProduct } from '../../ducks/cart';
 import { getRelatedProducts } from '../../ducks/products/selectors';
 import ProductList from '../home/components/products';
 import Visible from '../../common/components/visible';
+import {getOfferPrice, isOfferDiscount} from "../../common/utils";
 
 const { width } = Dimensions.get('window');
 
@@ -27,6 +28,15 @@ const styles = {
     alignItems: 'flex-end',
     backgroundColor: 'white',
     padding: 10,
+  },
+  priceReg: {
+    backgroundColor: 'white',
+    fontSize: 16,
+    paddingRight: 10,
+    textDecorationLine: 'line-through',
+    color: darkGray,
+    fontFamily: 'Roboto_regular',
+    textAlign: 'right',
   },
   priceCurr: {
     fontSize: 12,
@@ -62,6 +72,7 @@ const styles = {
 export type Props = {
   product: Product,
   relatedProducts: Product[],
+  offer: Offer,
   onSubmit: number => void,
   navigation: { navigate: (string, Object) => void },
 };
@@ -71,6 +82,7 @@ class ProductDetailScreen extends React.Component<Props> {
   render() {
     const {
       product: { price, name, descr, qty, fileURL },
+      offer,
       relatedProducts,
       onSubmit,
     } = this.props;
@@ -78,15 +90,25 @@ class ProductDetailScreen extends React.Component<Props> {
     return (
       <Container>
         <Content>
-          <View style={styles.priceView}>
-            <Text style={styles.priceValue}>{price}</Text>
-            <Text style={styles.priceCurr}>{currency}</Text>
+          <View>
+            <View style={styles.priceView}>
+              <Text style={styles.priceValue}>
+                {offer
+                  ? getOfferPrice(price, offer)
+                  : price
+                }
+              </Text>
+              <Text style={styles.priceCurr}>{currency}</Text>
+            </View>
+            {offer && isOfferDiscount(offer) &&
+              <Text style={styles.priceReg}>{price}</Text>
+            }
           </View>
           <View style={styles.center}>
             <OptImage uri={fileURL} size={width} imgStyle={styles.image} />
           </View>
           <View style={styles.detail}>
-            <Text style={styles.detailTitle}>{name}</Text>
+            <Text style={styles.detailTitle}>{offer ? offer.title : name}</Text>
             <Text style={styles.detailSubtitle}>{descr}</Text>
           </View>
           <CondContent
@@ -112,10 +134,14 @@ class ProductDetailScreen extends React.Component<Props> {
 const mapStateToProps = (
   state: State,
   { navigation: { state: { params: { productID } } } },
-) => ({
-  product: state.products.byId[productID],
-  relatedProducts: getRelatedProducts(productID, state),
-});
+) => {
+  const [offerId] = state.offers.rel[productID] || defaultEmptyArr;
+  return {
+    offer: state.offers.byId[offerId],
+    product: state.products.byId[productID],
+    relatedProducts: getRelatedProducts(productID, state),
+  };
+};
 const mapDispatchToProps = (
   dispatch,
   { navigation: { state: { params: { productID } } } },

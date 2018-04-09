@@ -25,6 +25,7 @@ class ProductList extends React.Component<Props> {
   keyExtractor = (item: Product) => item.id;
   renderItem = ({ item }: ItemProps) => (
     <ProductListItem
+      id={item.id}
       key={item.id}
       value={item.id}
       title={item.name}

@@ -39,6 +39,17 @@ export type Product = {
   },
 };
 
+export type Offer = {
+  id?: ?string,
+  title: string,
+  productId: string,
+  type: 'fixedAmount' | 'percentage' | 'freeIncluded',
+  discount: number,
+  includedProducts: string[],
+  beginDate: Date,
+  endDate: Date,
+};
+
 export type CartItem = {
   productID: string,
   qty: number,
@@ -169,6 +180,12 @@ export type Normalizd<T> = {
   allIds: string[],
 };
 
+export type NormalizdRel<T> = {
+  byId: KeysOf<T>,
+  allIds: string[],
+  rel: KeysOf<string[]>,
+};
+
 export type State = {
   global: Global,
   categories: Normalizd<Category>,
@@ -178,5 +195,6 @@ export type State = {
   addresses: Normalizd<Address>,
   creditCards: Normalizd<CreditCard>,
   orders: Normalizd<OrderRequest>,
+  offers: NormalizdRel<Offer>,
   user: ?User,
 };
