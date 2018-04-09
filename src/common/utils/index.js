@@ -1,7 +1,13 @@
 // @flow
 
 import { currency } from './constants';
-import type {CreditCard, CreditCardForm, OrderStatus, PaymentMethod} from '../types';
+import type {
+  CreditCard,
+  CreditCardForm,
+  OrderStatus,
+  PaymentMethod,
+  Offer,
+} from '../types';
 
 export function getFmtDocs(querySnapshot) {
   return querySnapshot && querySnapshot.docs
@@ -19,7 +25,11 @@ export function getRealtDocs(snapshot) {
 }
 
 export const getNavParamsFromProp = (props: Object) =>
-  (props && props.navigation && props.navigation.state && props.navigation.state.params) || {};
+  (props &&
+    props.navigation &&
+    props.navigation.state &&
+    props.navigation.state.params) ||
+  {};
 
 const sortFnAsc = (attr: string) => (a, b) =>
   (a[attr] || 100) - (b[attr] || 100);
@@ -66,8 +76,9 @@ export const getLast4Chars = (number: string) => number.slice(-4);
 export const replaceSpace = (str: string, replacement = '') =>
   str.replace(/ /g, replacement);
 
-export const impureSetObjKey = (obj: Object) => (acc: Object, key: string) =>
-  (acc[key] = obj[key], acc);
+export const impureSetObjKey = (obj: Object) => (acc: Object, key: string) => (
+  (acc[key] = obj[key]), acc
+);
 
 export const reduceFnByID = (acc: Object, it: Object) => {
   acc[it.id] = it;
@@ -106,7 +117,10 @@ export const inputIsPropValid = (object: CreditCardForm) =>
 export const parseCreditCardFormValue = (form: CreditCardForm) =>
   form && form.values;
 export const parseCreditCardNumber = (form: CreditCardForm) =>
-  form && { ...form, values: { ...form.values, number: replaceSpace(form.values.number) } };
+  form && {
+    ...form,
+    values: { ...form.values, number: replaceSpace(form.values.number) },
+  };
 
 export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined);
@@ -184,20 +198,22 @@ export const mapCreditCardTypeName = (type: string) => {
 
 export const getOrderStatusText = (status: OrderStatus) => {
   switch (status) {
-    case 'reviewed': return 'Revisada';
-    case 'sent': return 'Enviada';
-    case 'completed': return 'Entregada';
+    case 'reviewed':
+      return 'Revisada';
+    case 'sent':
+      return 'Enviada';
+    case 'completed':
+      return 'Entregada';
     case 'placed':
-    default: return 'Recibida';
+    default:
+      return 'Recibida';
   }
 };
 
 export const isOrderCompleted = (status: OrderStatus) => status === 'completed';
 
 export const getPaymentMethodText = (paymentMethod: PaymentMethod) =>
-  paymentMethod === 'cash'
-    ? 'Efectivo'
-    : 'Tarjeta de crédito';
+  paymentMethod === 'cash' ? 'Efectivo' : 'Tarjeta de crédito';
 
 export const formatCreditCardText = (creditCard: CreditCard) =>
   `${mapCreditCardTypeName(creditCard.type)} ...- ${getLast4Chars(
