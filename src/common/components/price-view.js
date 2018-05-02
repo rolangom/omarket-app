@@ -11,8 +11,8 @@ import {
 } from '../utils/constants';
 
 export type Props = {
-  value?: number,
-  currency?: string,
+  value: number,
+  currency: string,
 };
 
 const styles = {

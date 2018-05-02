@@ -3,11 +3,11 @@ import React from 'react';
 import { Image, View } from 'react-native';
 import { Icon } from 'native-base';
 
-import { lighterGray } from '../../utils/constants';
+import { lightGray } from '../../utils/constants';
 
 export type Props = {
   uri: string,
-  size: number,
+  size?: number,
   imgStyle: {
     width: number,
     height: number,
@@ -32,11 +32,15 @@ const OptImage = ({ uri, size, imgStyle }: Props) => (
       :
       <Icon
         name="ios-image"
-        color={lighterGray}
-        style={{ fontSize: size, color: lighterGray }}
+        color={lightGray}
+        style={{ fontSize: size, color: lightGray }}
       />
     }
   </View>
 );
+
+OptImage.defaultProps = {
+  size: 24,
+};
 
 export default OptImage;

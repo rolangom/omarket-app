@@ -3,18 +3,22 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
-import { Container, Content, Text, View, Separator, H3 } from 'native-base';
+import { Container, Content, Text, View } from 'native-base';
 
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
 import CondContent from '../../common/components/cond-content';
-import {currency, darkGray, defaultEmptyArr} from '../../common/utils/constants';
+import {
+  darkGray,
+  defaultEmptyArr,
+} from '../../common/utils/constants';
 import type { Product, State, Offer } from '../../common/types';
 import { postCartProduct } from '../../ducks/cart';
 import { getRelatedProducts } from '../../ducks/products/selectors';
-import ProductList from '../home/components/products';
-import Visible from '../../common/components/visible';
-import {getOfferPrice, isOfferDiscount} from "../../common/utils";
+import { getOfferPrice, isOfferDiscount, isOfferFreeIncluded } from '../../common/utils';
+import Price from './components/Price';
+import FreeIncludedList from '../../common/components/FreeIncludedList';
+import HorizProductList from '../../common/components/HorizProductList';
 
 const { width } = Dimensions.get('window');
 
@@ -22,31 +26,6 @@ const styles = {
   image: {
     width: width - 10,
     height: (width - 10) * 1.15,
-  },
-  priceView: {
-    flexDirection: 'row-reverse',
-    alignItems: 'flex-end',
-    backgroundColor: 'white',
-    padding: 10,
-  },
-  priceReg: {
-    backgroundColor: 'white',
-    fontSize: 16,
-    paddingRight: 10,
-    textDecorationLine: 'line-through',
-    color: darkGray,
-    fontFamily: 'Roboto_regular',
-    textAlign: 'right',
-  },
-  priceCurr: {
-    fontSize: 12,
-    color: darkGray,
-    fontFamily: 'Roboto_regular',
-  },
-  priceValue: {
-    fontSize: 20,
-    color: darkGray,
-    fontFamily: 'Roboto_regular',
   },
   detail: {
     padding: 10,
@@ -78,10 +57,11 @@ export type Props = {
 };
 
 class ProductDetailScreen extends React.Component<Props> {
-  onNavigateProduct = (id: string) => this.props.navigation.navigate('ProductDetail', { productID: id });
+  onNavigateProduct = (id: string) =>
+    this.props.navigation.navigate('ProductDetail', { productID: id });
   render() {
     const {
-      product: { price, name, descr, qty, fileURL },
+      product: { id, price, name, descr, qty, fileURL },
       offer,
       relatedProducts,
       onSubmit,
@@ -91,17 +71,9 @@ class ProductDetailScreen extends React.Component<Props> {
       <Container>
         <Content>
           <View>
-            <View style={styles.priceView}>
-              <Text style={styles.priceValue}>
-                {offer
-                  ? getOfferPrice(price, offer)
-                  : price
-                }
-              </Text>
-              <Text style={styles.priceCurr}>{currency}</Text>
-            </View>
+            <Price amount={offer ? getOfferPrice(price, offer) : price} />
             {offer && isOfferDiscount(offer) &&
-              <Text style={styles.priceReg}>{price}</Text>
+              <Price isSub amount={price} />
             }
           </View>
           <View style={styles.center}>
@@ -109,8 +81,18 @@ class ProductDetailScreen extends React.Component<Props> {
           </View>
           <View style={styles.detail}>
             <Text style={styles.detailTitle}>{offer ? offer.title : name}</Text>
+            {offer &&
+              <Text style={styles.detailSubtitle}>
+                Oferta válida: {offer.beginDate.toLocaleDateString()}
+                - {offer.endDate.toLocaleDateString()}
+              </Text>
+            }
             <Text style={styles.detailSubtitle}>{descr}</Text>
+            {offer && isOfferFreeIncluded(offer) &&
+              <FreeIncludedList offerId={offer.id} />
+            }
           </View>
+          <HorizProductList productId={id} />
           <CondContent
             cond={secureQty > 0}
             defaultText="Existencia 0"
@@ -118,13 +100,6 @@ class ProductDetailScreen extends React.Component<Props> {
           >
             <QtyForm defaultValue={1} max={secureQty} onSubmit={onSubmit} />
           </CondContent>
-          <Separator />
-          <Visible enabled={relatedProducts && relatedProducts.length > 0}>
-            <View style={styles.detail}>
-              <Text style={styles.detailTitle}>Productos complementarios</Text>
-            </View>
-            <ProductList items={relatedProducts} onNavigate={this.onNavigateProduct} />
-          </Visible>
         </Content>
       </Container>
     );
@@ -146,8 +121,18 @@ const mapDispatchToProps = (
   dispatch,
   { navigation: { state: { params: { productID } } } },
 ) => ({
-  onSubmit: (value: number) => dispatch(postCartProduct(productID, value)),
+  onSubmitWithOffer: (value: number, offerID: string) =>
+    dispatch(postCartProduct(productID, value, offerID)),
 });
-export default connect(mapStateToProps, mapDispatchToProps)(
+
+const mergeProps = (stateProps: Props, dispatchProps: Props, ownProps: Props) => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps,
+  onSubmit: (value: number) =>
+    dispatchProps.onSubmitWithOffer(value, (stateProps.offer && stateProps.offer.id) || null),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
   ProductDetailScreen,
 );

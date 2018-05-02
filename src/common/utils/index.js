@@ -65,6 +65,8 @@ export const isOfferDiscount = (offer: Offer) => {
   }
 };
 
+export const isOfferFreeIncluded = (offer: Offer) =>
+  offer.type === 'freeIncluded';
 
 export function padStart(num: number, places: number, char: string = '0') {
   const zero = places - num.toString().length + 1;

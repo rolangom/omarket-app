@@ -2,7 +2,11 @@
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Message as MessageType, Global } from '../../common/types';
+import type {
+  Message as MessageType,
+  Global,
+  CartItem,
+} from '../../common/types';
 import { fetchCategories } from '../categories';
 import { fetchAds } from '../ads';
 import { fetchProducts } from '../products';
@@ -10,6 +14,7 @@ import { getUser } from '../user';
 import { fetchAddresses } from '../addresses';
 import { fetchCreditcards } from '../credit-cards';
 import { fetchOffers } from '../offers';
+import { postCartProduct } from '../cart';
 
 export const setIsLoading = createAction('SET_IS_LOADING');
 export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({
@@ -56,8 +61,10 @@ const reducer = createReducer(
       ...state,
       messages: state.messages.slice(1),
     }),
-    [setConfigs]: (state: Global, { utilities, contents }: Global) => ({
+    [setConfigs]: (state: Global, { utilities, contents, itbis, currency }: Global) => ({
       ...state,
+      itbis,
+      currency,
       utilities,
       contents,
     }),
@@ -69,12 +76,20 @@ const reducer = createReducer(
       ...state,
       filters: { ...state.filters, [key]: value },
     }),
+    [postCartProduct]: (state: Global, item: CartItem) => ({
+      ...state,
+      lastProdIdAdded: item.productID,
+    }),
   },
   {
     isLoading: false,
     messages: [],
     utilities: [],
     contents: [],
+    lastProdIdAdded: null,
+    currency: 'RD$',
+    itbis: 0.18,
+    isRushOrder: false,
     filters: {
       searchTerm: '',
       utilities: null,
@@ -95,6 +110,8 @@ export const fetchConfigsLogic = createLogic({
       }));
       dispatch(
         setConfigs({
+          itbis: configs.itbis.value,
+          currency: configs.currency.value,
           utilities: configs.utilities.value.split(';'),
           contents: configs.contents.value.split(';'),
         }),

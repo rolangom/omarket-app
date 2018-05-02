@@ -1,5 +1,6 @@
 // @flow
-import React from 'react';
+import * as React from 'react';
+import { connect } from 'react-redux';
 import {
   ListItem,
   Text,
@@ -8,11 +9,14 @@ import {
 } from 'native-base';
 import OptThumbnail from '../../../common/components/opt-thumbnail';
 import QtyInput from '../../../common/components/qty-input/index';
-import type { CartItem, Product } from '../../../common/types';
-import { lightGray } from '../../../common/utils/constants';
+import type { CartItem, Product, Offer, State } from '../../../common/types';
+import {currency, defaultEmptyArr, lightGray} from '../../../common/utils/constants';
+import {getOfferPrice, isOfferFreeIncluded} from "../../../common/utils";
+import FreeIncludedList from '../../../common/components/FreeIncludedList';
 
 export type Props = {
   item: CartItem,
+  offer: ?Offer,
   product: Product,
   onChange: (string, number) => void,
   onEditPress: (string) => void,
@@ -40,7 +44,7 @@ class CartListItem extends React.Component<Props> {
   onChange = (qty: number) => this.props.onChange(this.props.item.productID, qty);
   onEditPress = () => this.props.onEditPress(this.props.item.productID);
   render() {
-    const { product, item } = this.props;
+    const { product, item, offer } = this.props;
     return (
       <ListItem button onPress={this.onEditPress}>
         <OptThumbnail
@@ -51,8 +55,16 @@ class CartListItem extends React.Component<Props> {
           style={styles.image}
         />
         <Body>
-          <Text>{product.name}</Text>
-          <Text note>{product.descr}</Text>
+          <Text>
+            {offer ? offer.title : product.name}
+          </Text>
+          <Text note>
+            {currency}{offer ? getOfferPrice(product.price, offer) : product.price}{'-'}
+            {product.descr}
+          </Text>
+          {offer && isOfferFreeIncluded(offer) &&
+            <FreeIncludedList offerId={offer.id} />
+          }
           <Text note>{item.descr}</Text>
         </Body>
         <Right>
@@ -68,4 +80,11 @@ class CartListItem extends React.Component<Props> {
   }
 }
 
-export default CartListItem;
+const mapStateToProps = (state: State, { product: { id } }) => {
+  const [offerId] = state.offers.rel[id] || defaultEmptyArr;
+  return {
+    offer: state.offers.byId[offerId],
+  };
+};
+
+export default connect(mapStateToProps)(CartListItem);

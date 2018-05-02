@@ -20,7 +20,6 @@ const styles = {
   container: {
     flex: 1,
     alignSelf: 'stretch',
-    backgroundColor: 'white',
   },
   label: {
     fontSize: 17,
@@ -117,7 +116,7 @@ class DropDown extends React.Component<Props, State> {
     this.setState((state: State) => ({ isOpen: !state.isOpen }));
   onChange = (value: any) => {
     const { onChange } = this.props;
-    !this.props.closeOnChange && this.onToggleVisible();
+    this.props.closeOnChange && this.onToggleVisible();
     onChange(value);
   };
   keyExtractor = (it: OptionProps) => it.value;

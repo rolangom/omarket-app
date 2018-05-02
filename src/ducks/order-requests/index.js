@@ -5,7 +5,7 @@ import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
 import { postAddress } from '../addresses';
-import type {OrderRequest, KeysOf, State, Rating} from '../../common/types';
+import type { OrderRequest, KeysOf, State, Rating } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import {
   reduceFnByID, setImmutable,

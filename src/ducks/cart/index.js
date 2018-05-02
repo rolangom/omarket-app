@@ -13,7 +13,7 @@ import {
 
 export const postCartProduct = createAction(
   'POST_CART_PRODUCT',
-  (productID: string, qty: number) => ({ productID, qty }),
+  (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
 );
 export const changeCartProductQty = createAction(
   'CHANGE_CART_PRODUCT_QTY',

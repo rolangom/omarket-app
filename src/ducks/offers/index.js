@@ -15,8 +15,13 @@ export const fetchOffersLogic = createLogic({
   process: async ({ db }, dispatch, done) => {
     dispatch(setIsLoading(true));
     try {
-      const docsSnapshots = await db.collection('offers').get();
-      const offers = getFmtDocs(docsSnapshots);
+      const today = new Date();
+      const docsSnapshots = await db
+        .collection('offers')
+        .where('endDate', '>', today)
+        .get();
+      const offers = getFmtDocs(docsSnapshots)
+        .filter(it => it.beginDate < today);
       console.log('fetchOffers', offers);
       dispatch(setOffers(offers));
     } catch (error) {

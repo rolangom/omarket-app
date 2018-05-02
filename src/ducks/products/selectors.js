@@ -22,7 +22,11 @@ export function getProducts(state: State, category: string): Product[] {
 export function getRelatedProducts(prodId: string, state: State): Product[] {
   const product: Product = state.products.byId[prodId];
   const relatedProdsId: string[] = Object.keys(product.relatedProds);
-  return relatedProdsId.map(pid => state.products.byId[pid]);
+  return relatedProdsId.reduce((acc: Product[], pid: string) => {
+    const prod: ?Product = state.products.byId[pid];
+    if (prod) acc.push(prod);
+    return acc;
+  }, []);
 }
 
 export default null;

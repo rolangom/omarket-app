@@ -52,7 +52,10 @@ export type Offer = {
 
 export type CartItem = {
   productID: string,
+  offerID: ?string,
+  offer: ?Offer,
   qty: number,
+  price?: number,
   descr?: string,
   product?: Product,
 };
@@ -164,6 +167,10 @@ export type Global = {
   messages: Array<Message>,
   utilities: string[],
   contents: string[],
+  lastProdIdAdded: ?string,
+  currency: ?string,
+  itbis: ?string,
+  isRushOrder: boolean,
   filters: {
     searchTerm: string,
     utilities: string,

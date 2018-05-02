@@ -45,6 +45,12 @@ const styles = {
   },
 };
 
+const paymentMethods = [
+  { value: '', label: 'Seleccione' },
+  { value: 'cash', label: 'Efectivo' },
+  { value: 'credit-card', label: 'Tarjeta de crédito' },
+];
+
 class OrderRequestEditor extends React.Component<Props> {
   render() {
     const { addresses, creditCards, onSubmit } = this.props;
@@ -58,11 +64,6 @@ class OrderRequestEditor extends React.Component<Props> {
         value: it.id,
         label: formatCreditCardText(it),
       })),
-    ];
-    const paymentMethods = [
-      { value: '', label: 'Seleccione' },
-      { value: 'cash', label: 'Efectivo' },
-      { value: 'credit-card', label: 'Tarjeta de crédito' },
     ];
     return (
       <Container>
