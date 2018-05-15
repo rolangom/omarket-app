@@ -142,13 +142,9 @@ export type User = {
   birthday: string,
   photoURL: string,
   taxInfo: {
-    ced_rnc: string,
-    nombre_razonSocial: string,
-    nombreComercial: string,
-    category: string,
-    regPag: string,
-    status: string,
-    ecoAct: string,
+    id: string,
+    name: string,
+    commercialName: string,
   },
 };
 

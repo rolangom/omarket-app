@@ -18,6 +18,7 @@ import DatePicker from 'react-native-datepicker';
 import { Form as FinalForm, Field } from 'react-final-form';
 import DropDown from '../../common/components/drop-down';
 import Visible from '../../common/components/visible';
+import VisibleIfFieldEq from '../../common/components/visible-if-field-eq';
 import type { State, User } from '../../common/types';
 import {
   logout,
@@ -78,6 +79,37 @@ const UserInfoView = ({
             <Text note>{user.email}</Text>
           </Body>
         </ListItem>
+        <Field
+          name="taxInfo.id"
+          render={({ input, meta: { touched, error } }) => (
+            <Item
+              stackedLabel
+              error={touched && !!error}
+            >
+              <Label>Cédula\RNC</Label>
+              <Input
+                value={input.value}
+                onChange={input.onChange}
+              />
+            </Item>
+          )}
+        />
+        {user.taxInfo &&
+          <VisibleIfFieldEq name="taxInfo" notEmpty>
+            {user.taxInfo.name &&
+              <Item stackedLabel>
+                <Label>Nombre legal</Label>
+                <Input value={user.taxInfo.name} editable={false} />
+              </Item>
+            }
+            {user.taxInfo.commercialName &&
+              <Item stackedLabel>
+                <Label>Nombre comercial</Label>
+                <Input value={user.taxInfo.commercialName} editable={false} />
+              </Item>
+            }
+          </VisibleIfFieldEq>
+        }
         <Field
           name="gender"
           render={({ input, meta: { touched, error } }) => (

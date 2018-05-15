@@ -63,6 +63,7 @@ export const getUserLogic = createLogic({
   },
 });
 
+
 export const postUserLogic = createLogic({
   type: postUser.getType(),
   process: async ({ firebase, db, action }, dispatch, done) => {
@@ -71,9 +72,14 @@ export const postUserLogic = createLogic({
       dispatch(setIsLoading(true));
       const { currentUser: { uid } } = firebase.auth();
       const { uid: _, ...data } = action.payload;
-      await upsertDoc(firebase, `users/${uid}`, { key: 'user', ...data });
+      const { taxInfo: { id } = {} } = action.payload;
+
+      const resp = await fetch(`https://us-central1-shop-f518d.cloudfunctions.net/queryDgiiBy?id=${id}`);
+      const { name, commercialName } = await resp.json();
+      const taxInfo = resp.ok ? { id, name, commercialName } : {};
+      await upsertDoc(firebase, `users/${uid}`, { key: 'user', ...data, taxInfo });
       // await db.collection('users').doc(uid).set(data);
-      dispatch(mergeUser(action.payload));
+      dispatch(mergeUser({ ...action.payload, taxInfo }));
     } catch (err) {
       console.warn('postUserLogic error', err);
       dispatch(addError(err.message));
