@@ -7,9 +7,16 @@ import type { KeysOf, Product } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import { getFmtDocs, reduceFnByID, sortBy } from '../../common/utils';
 
+/**
+ * @deprecated use listener
+ */
 export const fetchProducts = createAction('FETCH_PRODUCTS', (force: boolean = false) => ({ force }));
 export const setProducts = createAction('SET_PRODUCTS');
 
+
+/**
+ * @deprecated use listener
+ */
 export const fetchProductsLogic = createLogic({
   type: fetchProducts.getType(),
   validate({ action }, allow, reject) {

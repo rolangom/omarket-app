@@ -6,7 +6,7 @@ import type {
   CreditCardForm,
   OrderStatus,
   PaymentMethod,
-  Offer,
+  Offer, CartItem, KeysOf,
 } from '../types';
 
 export function getFmtDocs(querySnapshot) {
@@ -17,10 +17,9 @@ export function getFmtDocs(querySnapshot) {
 
 export function getRealtDocs(snapshot) {
   const data = [];
-  snapshot.forEach(docSnapshot => {
-    console.log('docSnapshot', docSnapshot.key);
-    data.push({ id: docSnapshot.key, ...docSnapshot.val() });
-  });
+  snapshot.forEach(docSnapshot => (
+    data.push({ id: docSnapshot.key, ...docSnapshot.val() }), false
+  ));
   return data;
 }
 
@@ -222,4 +221,11 @@ export const formatCreditCardText = (creditCard: CreditCard) =>
     creditCard.number,
   )}`;
 
+export const assert = (cond: boolean, errMsg: string) => {
+  if (!cond) {
+    throw new Error(errMsg);
+  }
+};
+export const multiDispatch = (dispatch, ...actions) =>
+  actions.forEach(action => dispatch(action));
 export default null;

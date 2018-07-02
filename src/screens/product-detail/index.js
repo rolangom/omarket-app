@@ -13,7 +13,7 @@ import {
   defaultEmptyArr,
 } from '../../common/utils/constants';
 import type { Product, State, Offer } from '../../common/types';
-import { postCartProduct } from '../../ducks/cart';
+import { reqPostCartProduct, postCartProduct } from '../../ducks/cart';
 import { getRelatedProducts } from '../../ducks/products/selectors';
 import { getOfferPrice, isOfferDiscount, isOfferFreeIncluded } from '../../common/utils';
 import Price from './components/Price';

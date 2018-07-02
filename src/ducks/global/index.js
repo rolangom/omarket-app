@@ -35,6 +35,7 @@ export const setFiltersAsUseful = createAction('SET_FILTERS_UTIL');
 // export const setSearchTerm = createAction('SET_SEARCH_TERM');
 
 export const addError = text => addMessage('error', 'Error', text);
+export const addInfo = text => addMessage('info', 'Info', text);
 export const addRawError = error => addMessage('error', 'Error', error.message);
 
 type KeyValue = {

@@ -3,7 +3,7 @@ import { combineReducers } from 'redux';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
-import type { Offer, KeysOf, Rel } from '../../common/types';
+import type { Offer, KeysOf, NormalizdRel } from '../../common/types';
 import { setIsLoading, addError } from '../global';
 import { getFmtDocs, reduceFnByID } from '../../common/utils';
 
@@ -45,7 +45,7 @@ const allIds = createReducer({
 }, []);
 
 const rel = createReducer({
-  [setOffers]: (state: Rel, offers: Offer[]) =>
+  [setOffers]: (state: NormalizdRel<Offer>, offers: Offer[]) =>
     offers.reduce((acc, it) => (Object.assign(acc, {
       [it.productId]: (acc[it.productId] || []).concat(it.id),
     })), {}),
