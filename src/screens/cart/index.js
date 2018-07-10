@@ -16,6 +16,7 @@ import {
 } from '../../ducks/cart/selectors';
 import { changeCartProductQty, changeCartProductDescr } from '../../ducks/cart';
 import Prompt from '../../libs/react-native-prompt';
+import ArchiveView from './components/ArchiveView';
 
 export type Props = {
   currency: string,
@@ -105,6 +106,7 @@ class CartScreen extends React.Component<Props, CompState> {
               <Text>Continuar comprando</Text>
             </Button>
           </View>
+          <ArchiveView disabled={items.length <= 0} />
         </Content>
         <Prompt
           title="Nota adicional"
@@ -117,7 +119,7 @@ class CartScreen extends React.Component<Props, CompState> {
   }
 }
 
-const mapStateToProps = (state: State, { navigation }) => ({
+const mapStateToProps = (state: State, { navigation }): Props => ({
   currency: state.global.currency,
   itbisFactor: parseFloat(state.global.itbis),
   items: getCartItems(state),

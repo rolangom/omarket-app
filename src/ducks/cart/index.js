@@ -11,7 +11,13 @@ import {
   uniqFilterFn,
   assert,
 } from '../../common/utils';
-import { addError, addInfo, setIsLoading } from '../global';
+import {
+  addError,
+  addInfo,
+  setIsLoading,
+  setReserveConfirmVisible,
+} from '../global';
+import { postCurrentCart } from '../savedCarts';
 
 export const reqPostCartProduct = createAction(
   'REQ_POST_CART_PRODUCT',
@@ -33,12 +39,14 @@ export const deleteCartProduct = createAction('DELETE_CART_PRODUCT');
 export const clearCartItems = createAction('CLEAR_CART_ITEMS');
 export const setCartProducts = createAction('SET_CART_PRODS');
 export const reserveCartProducts = createAction('RESERVE_CART_PRODUCTS');
-// export const preAlertNoReserveCartProducts = createAction('PREALERT_RESERVE_CART_PRODUCTS');
-// export const reverseCartProducts = createAction('REVERSE_CART_PRODUCTS');
+export const preAlertNoReserveCartProducts = createAction(
+  'PREALERT_RESERVE_CART_PROD',
+);
 
 const byId = createReducer(
   {
-    [setCartProducts]: (state: KeysOf<CartItem>, cart: KeysOf<CartItem>) => cart,
+    [setCartProducts]: (state: KeysOf<CartItem>, cart: KeysOf<CartItem>) =>
+      cart,
     [postCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => ({
       ...state,
       [item.productID]: item,
@@ -60,7 +68,8 @@ const byId = createReducer(
 
 const allIds = createReducer(
   {
-    [setCartProducts]: (state: string[], cart: KeysOf<CartItem>) => Object.keys(cart),
+    [setCartProducts]: (state: string[], cart: KeysOf<CartItem>) =>
+      Object.keys(cart),
     [postCartProduct]: (state: string[], item: CartItem) =>
       state.concat(item.productID).filter(uniqFilterFn),
     // [changeCartProductQty]: (state: string[]) => state,
@@ -85,7 +94,7 @@ export const postCardProductLogic = createLogic({
       ...action,
       payload: {
         ...action.payload,
-        offer: getState().offers.byId[action.payload.offerID],
+        offer: getState().offers.byId[action.payload.offerID] || null,
       },
     });
   },
@@ -99,21 +108,20 @@ const deleteCartItemsIfEmpty = (getState, dispatch) => {
   const cartItems: CartItem[] = Object.values(getState().cartItems.byId);
   cartItems
     .filter(it => it.qty <= 0)
-    .forEach(it =>
-      dispatch(deleteCartProduct(it.productID)),
-    );
+    .forEach(it => dispatch(deleteCartProduct(it.productID)));
 };
 
 export const requestReserveCartProdLogic = createLogic({
   type: reserveCartProducts.getType(),
-  // throttle: 2500,
   debounce: 2500,
-  process: async ({ getState, firebase }, dispatch, done) => {
+  process: async ({ getState, firebase, action }, dispatch, done) => {
     try {
       dispatch(setIsLoading(true));
       const { cartItems: { byId: cart }, user } = getState();
       deleteCartItemsIfEmpty(getState, dispatch);
-      if (!(user && user.uid)) { return; }
+      if (!(user && user.uid)) {
+        return;
+      }
       const token = await firebase.auth().currentUser.getIdToken();
       const resp = await fetch(
         'https://us-central1-shop-f518d.cloudfunctions.net/reserveProducts',
@@ -136,6 +144,8 @@ export const requestReserveCartProdLogic = createLogic({
       errors.map(productID =>
         dispatch(addInfo(`No quedan ${getProdName(productID)} suficientes.`)),
       );
+      const { noPreAlert = false } = action.payload || {};
+      !noPreAlert && dispatch(preAlertNoReserveCartProducts());
     } catch (err) {
       console.warn(err.message);
       dispatch(addError(err.message));
@@ -154,13 +164,26 @@ export const reserveCartLogic = createLogic({
   },
 });
 
-
-// export const preAlertNoReserveCartLogic = createLogic({
-//   type: preAlertNoReserveCartProducts.getType(),
-//   debounce: 10000, // 5 * 60 * 1000, // 5 mins
-//   process({ action, getState }, dispatch, done) {
-//
-//   },
-// });
+export const preAlertNoReserveCartLogic = createLogic({
+  type: preAlertNoReserveCartProducts.getType(),
+  debounce: 5 * 60 * 1000, // 5 mins
+  latest: true,
+  process({ getState }, dispatch, done) {
+    try {
+      console.log('preAlertNoReserveCartProducts start');
+      const onNeutral = (_getState, _dispatch, _done) => {
+        const { reserveModalVisible } = _getState().global;
+        reserveModalVisible && _dispatch(postCurrentCart());
+        _done();
+      };
+      dispatch(setReserveConfirmVisible(true));
+      setTimeout(onNeutral, 5000, getState, dispatch, done);
+    } catch (err) {
+      console.warn('preAlertNoReserveCartLogic', err);
+      dispatch(addError(err.message));
+      done();
+    }
+  },
+});
 
 export default reducer;

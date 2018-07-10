@@ -4,6 +4,7 @@ import categories from '../ducks/categories';
 import products from '../ducks/products';
 import ads from '../ducks/ads';
 import cartItems from '../ducks/cart';
+import savedCarts from '../ducks/savedCarts';
 import user from '../ducks/user';
 import addresses from '../ducks/addresses';
 import creditCards from '../ducks/credit-cards';
@@ -22,6 +23,7 @@ const reducers = {
   creditCards,
   orders,
   offers,
+  savedCarts,
 };
 
 export default reducers;

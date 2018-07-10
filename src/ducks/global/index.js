@@ -81,6 +81,10 @@ const reducer = createReducer(
       ...state,
       lastProdIdAdded: item.productID,
     }),
+    [setReserveConfirmVisible]: (state: Global, reserveModalVisible: boolean) => ({
+      ...state,
+      reserveModalVisible,
+    }),
   },
   {
     isLoading: false,
@@ -96,6 +100,7 @@ const reducer = createReducer(
       utilities: null,
       contents: null,
     },
+    reserveModalVisible: false,
   },
 );
 

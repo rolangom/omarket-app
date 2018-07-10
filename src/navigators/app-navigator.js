@@ -18,6 +18,7 @@ import OrderRequestEditorScreen from '../screens/order-request/editor';
 import OrderRequestResultScreen from '../screens/order-request/result';
 import OrderRequestDetailScreen from '../screens/order-request/detail';
 import OrderListScreen from '../screens/orders/list';
+import SavedCartListScreen from '../screens/savedCarts/list';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -126,6 +127,19 @@ const CartStack = StackNavigator({
   navigationOptions: defaultNavigationOptions(false),
 });
 
+// SavedCartListScreen
+const SavedCartStack = StackNavigator({
+  SavedCartList: {
+    screen: SavedCartListScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+    }),
+  },
+}, {
+  cardStyle: getCardStyle(),
+  navigationOptions: defaultNavigationOptions(true),
+});
+
 const AppNavigator = DrawerNavigator({
   Start: {
     screen: BrowseStack,
@@ -184,6 +198,18 @@ const AppNavigator = DrawerNavigator({
       drawerIcon: ({ tintColor }) => (
         <Icon
           name="md-list-box"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
+  SavedCart: {
+    screen: SavedCartStack,
+    navigationOptions: {
+      drawerLabel: 'Listas guardadas',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="ios-archive"
           style={{ color: tintColor }}
         />
       ),

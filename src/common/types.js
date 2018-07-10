@@ -172,6 +172,7 @@ export type Global = {
     utilities: string,
     contents: string,
   },
+  reserveModalVisible: boolean,
 };
 
 export type KeysOf<T> = {
@@ -189,12 +190,20 @@ export type NormalizdRel<T> = {
   rel: KeysOf<string[]>,
 };
 
+export type Cart = {
+  id: ?string,
+  name: string,
+  createdAt: Date,
+  content: KeysOf<CartItem>,
+};
+
 export type State = {
   global: Global,
   categories: Normalizd<Category>,
   products: Normalizd<Product>,
   ads: Ad[],
   cartItems: Normalizd<CartItem>,
+  savedCarts: Normalizd<Cart>,
   addresses: Normalizd<Address>,
   creditCards: Normalizd<CreditCard>,
   orders: Normalizd<OrderRequest>,

@@ -13,6 +13,7 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-24.0.0.tar.gz",
     "react-native-credit-card-input": "^0.4.1",
     "react-native-datepicker": "^1.6.0",
+    "react-native-simple-dialogs": "^0.3.1",
     "react-native-star-rating": "^1.0.9",
     "react-native-swiper": "^1.5.13",
     "react-navigation": "^1.0.0-beta.21",

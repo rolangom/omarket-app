@@ -5605,6 +5605,12 @@ react-native-branch@2.0.0-beta.3:
   version "2.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/react-native-branch/-/react-native-branch-2.0.0-beta.3.tgz#2167af86bbc9f964bd45bd5f37684e5b54965e32"
 
+react-native-button@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-button/-/react-native-button-2.3.0.tgz#7d0a90095d415b0edf98a904556a7c4439646568"
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-credit-card-input@^0.4.1:
   version "0.4.1"
   resolved "https://registry.yarnpkg.com/react-native-credit-card-input/-/react-native-credit-card-input-0.4.1.tgz#e62dd1a9beeab6787e5373ba23b93831cbf5f3de"
@@ -5711,6 +5717,18 @@ react-native-scripts@1.7.0:
     rimraf "^2.6.1"
     xdl "46.0.1"
 
+react-native-simple-dialogs@^0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-simple-dialogs/-/react-native-simple-dialogs-0.3.1.tgz#8b7cee294c6c2b140f3fd3c75f87b178e229936e"
+
+react-native-star-rating@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/react-native-star-rating/-/react-native-star-rating-1.0.9.tgz#b25ea19d4494cd1c7b14e931f99e92ddce3ef70d"
+  dependencies:
+    prop-types "^15.5.10"
+    react-native-button "^2.3.0"
+    react-native-vector-icons "^4.5.0"
+
 "react-native-svg@https://github.com/expo/react-native-svg/archive/5.5.1-exp.1.tar.gz":
   version "5.5.1"
   resolved "https://github.com/expo/react-native-svg/archive/5.5.1-exp.1.tar.gz#0c6e373dbe63cfcbdd465f5b2965ebe011c8962f"
@@ -5733,6 +5751,14 @@ react-native-tab-view@^0.0.70:
 react-native-vector-icons@4.4.2, react-native-vector-icons@~4.4.2:
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.4.2.tgz#090f42ee0396c4cc4eae0ddaa518028ba8df40c7"
+  dependencies:
+    lodash "^4.0.0"
+    prop-types "^15.5.10"
+    yargs "^8.0.2"
+
+react-native-vector-icons@^4.5.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/react-native-vector-icons/-/react-native-vector-icons-4.6.0.tgz#e4014311ffa6de397d914ffc31b7097a874cc8d5"
   dependencies:
     lodash "^4.0.0"
     prop-types "^15.5.10"
