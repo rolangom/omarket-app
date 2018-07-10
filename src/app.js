@@ -18,6 +18,7 @@ const App = () => (
   <View style={styles.main}>
     <AppWithNavigationState />
     <Messages />
+    <ConfirmReserveModal />
     <LoadingModal />
   </View>
 );

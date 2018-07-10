@@ -15,6 +15,7 @@ import { fetchAddresses } from '../addresses';
 import { fetchCreditcards } from '../credit-cards';
 import { fetchOffers } from '../offers';
 import { postCartProduct } from '../cart';
+import { multiDispatch } from '../../common/utils';
 
 export const setIsLoading = createAction('SET_IS_LOADING');
 export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({
@@ -136,19 +137,21 @@ export const searchTermLogic = createLogic({
   type: setFilters.getType(),
   // throttle: 750,
   debounce: 750,
+  latest: true,
 });
 
 export const initAppDataLogic = createLogic({
   type: initAppData.getType(),
   process(_, dispatch, done) {
-    dispatch(fetchAds(true));
-    dispatch(fetchCategories(true));
-    dispatch(fetchProducts(true));
-    dispatch(fetchConfigs());
-    dispatch(getUser());
-    dispatch(fetchAddresses());
-    dispatch(fetchCreditcards());
-    dispatch(fetchOffers());
+    multiDispatch(dispatch,
+      fetchAds(true),
+      fetchCategories(true),
+      fetchConfigs(),
+      getUser(),
+      fetchAddresses(),
+      fetchCreditcards(),
+      fetchOffers(),
+    );
     done();
   },
 });

@@ -20,7 +20,7 @@ const CartListItem = (props: Props) => (
     component={ListItem}
     button
     to="SavedCartDetail"
-    params={{ cartID: props.id }}
+    params={{ cartId: props.id }}
   >
     <Body>
       <Text>{props.name}</Text>

@@ -2,23 +2,24 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ListItem, Text, Body, Right } from 'native-base';
-import OptThumbnail from '../../../common/components/opt-thumbnail';
-import QtyInput from '../../../common/components/qty-input/index';
-import type { CartItem, Product, Offer, State } from '../../../common/types';
+import OptThumbnail from '../../../../common/components/opt-thumbnail';
+import type { CartItem, Product, Offer, State } from '../../../../common/types';
 import {
   currency,
   defaultEmptyArr,
   lightGray,
-} from '../../../common/utils/constants';
-import { getOfferPrice, isOfferFreeIncluded } from '../../../common/utils';
-import FreeIncludedList from '../../../common/components/FreeIncludedList';
+} from '../../../../common/utils/constants';
+import {
+  getOfferPrice,
+  getPriceWithCurrency,
+  isOfferFreeIncluded,
+} from '../../../../common/utils';
+import FreeIncludedList from '../../../../common/components/FreeIncludedList';
 
 export type Props = {
   item: CartItem,
   offer: ?Offer,
   product: Product,
-  onChange?: (string, number) => void,
-  onEditPress?: string => void,
 };
 
 const styles = {
@@ -40,13 +41,10 @@ const styles = {
 };
 
 class CartListItem extends React.Component<Props> {
-  onChange = (qty: number) =>
-    this.props.onChange(this.props.item.productID, qty);
-  onEditPress = () => this.props.onEditPress(this.props.item.productID);
   render() {
     const { product, item, offer } = this.props;
     return (
-      <ListItem button onPress={this.onEditPress}>
+      <ListItem>
         <OptThumbnail
           uri={product.fileURL}
           size={45}
@@ -69,21 +67,19 @@ class CartListItem extends React.Component<Props> {
           <Text note>{item.descr}</Text>
         </Body>
         <Right>
-          <QtyInput
-            styled
-            value={item.qty}
-            max={product.qty}
-            onChange={this.onChange}
-          />
+          <Text>{item.qty} x</Text>
+          <Text>{getPriceWithCurrency(product.price)}</Text>
+          <Text>{getPriceWithCurrency(product.price * item.qty)}</Text>
         </Right>
       </ListItem>
     );
   }
 }
 
-const mapStateToProps = (state: State, { product: { id } }) => {
-  const [offerId] = state.offers.rel[id] || defaultEmptyArr;
+const mapStateToProps = (state: State, { item: { productID } }: Props) => {
+  const [offerId] = state.offers.rel[productID] || defaultEmptyArr;
   return {
+    product: state.products.byId[productID],
     offer: state.offers.byId[offerId],
   };
 };

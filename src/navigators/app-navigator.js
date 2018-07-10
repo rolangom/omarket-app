@@ -19,6 +19,7 @@ import OrderRequestResultScreen from '../screens/order-request/result';
 import OrderRequestDetailScreen from '../screens/order-request/detail';
 import OrderListScreen from '../screens/orders/list';
 import SavedCartListScreen from '../screens/savedCarts/list';
+import SavedCartDetailScreen from '../screens/savedCarts/detail';
 
 import HeaderTitle from '../common/components/header-title';
 import IconButtonCart from '../common/components/icon-button-cart';
@@ -135,6 +136,7 @@ const SavedCartStack = StackNavigator({
       headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
     }),
   },
+  SavedCartDetail: { screen: SavedCartDetailScreen },
 }, {
   cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
