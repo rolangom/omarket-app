@@ -9,7 +9,7 @@ import {
   setImmutable,
   deleteImmutable,
   uniqFilterFn,
-  assert,
+  assert, multiDispatch,
 } from '../../common/utils';
 import {
   addError,
@@ -139,10 +139,18 @@ export const requestReserveCartProdLogic = createLogic({
       assert(resp.ok, jsonResp.message);
       console.log('calcReserveCartLogic resp', jsonResp);
       const { errors = [] } = jsonResp;
-      const getProdName = productID =>
-        getState().products.byId[productID] || '[???]';
+      const getProd = productID =>
+        (getState().products.byId[productID] || { id: productID, name: '[???]', qty: 0 });
+      const getProdName = prod => prod.name;
       errors.map(productID =>
-        dispatch(addInfo(`No quedan ${getProdName(productID)} suficientes.`)),
+        dispatch(addInfo(`No quedan ${getProdName(getProd(productID))} suficientes.`)),
+      );
+      multiDispatch(
+        dispatch,
+        ...errors.map((productId) => {
+          const prod = getProd(productId);
+          return changeCartProductQty(productId, prod.qty);
+        }),
       );
       const { noPreAlert = false } = action.payload || {};
       !noPreAlert && dispatch(preAlertNoReserveCartProducts());

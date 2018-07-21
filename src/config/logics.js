@@ -10,7 +10,7 @@ import { fetchAddressesLogic, postAddressLogic, deleteAddressLogic } from '../du
 import { fetchCreditcardsLogic, postCreditcardLogic, deleteCreditcardLogic } from '../ducks/credit-cards';
 import { postOrderRequestLogic, postOrderReqRatingLogic } from '../ducks/order-requests';
 import { fetchOffersLogic } from '../ducks/offers';
-import { fetchCartsLogic, deleteCartLogic, postCartLogic, postCurrentCartLogic } from '../ducks/savedCarts';
+import { fetchCartsLogic, deleteCartLogic, postCartLogic, postCurrentCartLogic, applyProductsToCartLogic } from '../ducks/savedCarts';
 
 export default [
   fetchAdsLogic,
@@ -36,5 +36,5 @@ export default [
   reserveCartLogic,
   requestReserveCartProdLogic,
   fetchCartsLogic, deleteCartLogic, postCartLogic, postCurrentCartLogic,
-  preAlertNoReserveCartLogic,
+  preAlertNoReserveCartLogic, applyProductsToCartLogic,
 ];

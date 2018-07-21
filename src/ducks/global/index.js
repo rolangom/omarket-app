@@ -6,10 +6,10 @@ import type {
   Message as MessageType,
   Global,
   CartItem,
+  ConfirmConfig,
 } from '../../common/types';
 import { fetchCategories } from '../categories';
 import { fetchAds } from '../ads';
-import { fetchProducts } from '../products';
 import { getUser } from '../user';
 import { fetchAddresses } from '../addresses';
 import { fetchCreditcards } from '../credit-cards';
@@ -33,6 +33,9 @@ export const setFilters = createAction('SET_FILTERS', (key, value) => ({
   value,
 }));
 export const setFiltersAsUseful = createAction('SET_FILTERS_UTIL');
+export const showConfirm = createAction('SHOW_CONFIRM');
+export const hideConfirm = createAction('HIDE_CONFIRM');
+export const setReserveConfirmVisible = createAction('RESERVE_CONFIRM_VISIBLE');
 // export const setSearchTerm = createAction('SET_SEARCH_TERM');
 
 export const addError = text => addMessage('error', 'Error', text);
@@ -82,6 +85,23 @@ const reducer = createReducer(
       ...state,
       lastProdIdAdded: item.productID,
     }),
+    [showConfirm]: (state: Global, config: ConfirmConfig) => ({
+      ...state,
+      confirmModal: {
+        ...state.confirmModal,
+        ...config,
+        visible: true,
+      },
+    }),
+    [hideConfirm]: (state: Global) => ({
+      ...state,
+      confirmModal: {
+        ...state.confirmModal,
+        acceptActionType: 'NOTHING',
+        acceptPayload: [],
+        visible: false,
+      },
+    }),
     [setReserveConfirmVisible]: (state: Global, reserveModalVisible: boolean) => ({
       ...state,
       reserveModalVisible,
@@ -102,6 +122,16 @@ const reducer = createReducer(
       contents: null,
     },
     reserveModalVisible: false,
+    confirmModal: {
+      visible: true,
+      title: 'Title',
+      message: 'Message',
+      acceptButtonText: 'OK',
+      acceptActionType: 'NOTHING',
+      acceptPayload: undefined,
+      cancelButtonText: 'Cancelar',
+      cancelActionType: 'NOTHING',
+    },
   },
 );
 

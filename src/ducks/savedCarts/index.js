@@ -15,7 +15,7 @@ import {
   queryDoc, assert,
 } from '../../common/utils';
 import { addError, setIsLoading } from '../global';
-import { clearCartItems, reserveCartProducts } from '../cart';
+import {clearCartItems, reserveCartProducts, setCartProducts} from '../cart';
 
 export const postCart = createAction(
   'POST_SAVED_CART',
@@ -28,6 +28,7 @@ export const setSavedCarts = createAction('SET_SAVED_CARTS');
 export const saveCart = createAction('SAVE_CART');
 export const deleteCart = createAction('DELETE_CART');
 export const requestDeleteCart = createAction('REQ_DELETE_CART', (arg) => arg, (arg, goBack) => ({ goBack }));
+export const applyProductsToCart = createAction('APPLY_PRODS_2CART', (arg) => arg, (arg, remove) => ({ remove }));
 
 const byId = createReducer(
   {
@@ -173,11 +174,33 @@ export const deleteCartLogic = createLogic({
       dispatch(setIsLoading(true));
       const { user: { uid } } = getState();
       const { payload: id, meta: { goBack = true } = {} } = action;
+      goBack && dispatch(NavigationActions.back());
       await deleteDoc(firebase, `users/${uid}/savedCarts/${id}`);
       dispatch(deleteCart(id));
-      goBack && dispatch(NavigationActions.back());
     } catch (error) {
       console.warn('deleteCartLogic error', error);
+      dispatch(addError(error.message));
+    } finally {
+      dispatch(setIsLoading(false));
+      done();
+    }
+  },
+});
+
+export const applyProductsToCartLogic = createLogic({
+  type: applyProductsToCart.getType(),
+  process: async ({ getState, action }, dispatch, done) => {
+    try {
+      dispatch(setIsLoading(true));
+      const id = action.payload;
+      const { remove } = action.meta;
+      const savedCart: Cart = getState().savedCarts.byId[id];
+      dispatch(setCartProducts(savedCart.content));
+      remove && dispatch(requestDeleteCart(id, true));
+      dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
+      dispatch(reserveCartProducts());
+    } catch (error) {
+      console.warn('applyProductsToCartLogic error', error);
       dispatch(addError(error.message));
     } finally {
       dispatch(setIsLoading(false));

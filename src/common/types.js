@@ -158,6 +158,16 @@ export type Message = {
   text: string,
 };
 
+export type ConfirmConfig = {
+  visible: boolean,
+  title: string,
+  message: string,
+  acceptButtonText: string,
+  acceptActionType?: ?string,
+  cancelButtonText: string,
+  cancelActionType?: ?string,
+};
+
 export type Global = {
   isLoading: boolean,
   messages: Array<Message>,
@@ -173,6 +183,7 @@ export type Global = {
     contents: string,
   },
   reserveModalVisible: boolean,
+  confirmModal: ConfirmConfig,
 };
 
 export type KeysOf<T> = {
