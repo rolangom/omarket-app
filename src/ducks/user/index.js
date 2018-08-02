@@ -1,6 +1,6 @@
 // @flow
 // import { combineReducers } from 'redux';
-import { createAction, createReducer, batch } from 'redux-act';
+import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 import Expo from 'expo';
 
@@ -18,6 +18,7 @@ export const setUserLogged = createAction('SET_USER_LOGGED');
 export const postUser = createAction('POST_USER');
 export const getUser = createAction('GET_USER');
 export const mergeUser = createAction('MERGE_USER');
+export const setUseNCF = createAction('SET_USE_NCF');
 
 const requiredKeys = [
   'displayName',
@@ -28,26 +29,29 @@ const requiredKeys = [
   'uid',
   'birthday',
   'taxInfo',
+  'usesNCF',
 ];
 
 const reducer = createReducer(
   {
-    [mergeUser]: (state, user: User) => ({ ...state, ...user }),
+    [mergeUser]: (state: ?User, user: User) => ({ ...state, ...user }),
     [setUserLogged]: (state: ?User, user: ?User) =>
       user ? filterKeys(user, requiredKeys) : null,
+    [setUseNCF]: (state: ?User, usesNCF: boolean) => ({ ...state, usesNCF }),
   },
   null,
 );
 
 const onLoggedInFuncs = async (action, firebase, dispatch) => {
   const { uid } = action.payload || action;
-  const doc = await queryDoc(firebase, `users/${uid}/user`); //.catch(err => { throw err; });
+  const doc = await queryDoc(firebase, `users/${uid}/user`);
   // const doc = await db.collection('users').doc(uid);
   const user = doc.exists && { uid, ...doc.val() };
   // const user = doc.exists && { uid, ...doc.data() };
-  user && multiDispatch(dispatch,
+  user && multiDispatch(
+    dispatch,
     mergeUser(user),
-    reserveCartProducts(),
+    // reserveCartProducts(),
     fetchAddresses(),
     fetchCreditcards(),
   );

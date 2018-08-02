@@ -227,5 +227,5 @@ export const assert = (cond: boolean, errMsg: string) => {
   }
 };
 export const multiDispatch = (dispatch, ...actions) =>
-  actions.forEach(action => dispatch(action));
+  actions.forEach(dispatch);
 export default null;

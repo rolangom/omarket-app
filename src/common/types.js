@@ -115,6 +115,17 @@ export type Rating = {
   message: ?string,
 };
 
+export type TaxInfo = {
+  id: string,
+  name: string,
+  commercialName: string,
+};
+
+export type NCFInfo = TaxInfo & {
+  seq: string,
+  endDate: Date,
+};
+
 export type OrderRequest = {
   createdAt: Date,
   addressID: string,
@@ -131,7 +142,9 @@ export type OrderRequest = {
   itbisFactor?: number,
   subtotal?: number,
   rating: Rating,
+  ncf?: NCFInfo,
 };
+
 
 export type User = {
   uid: string,
@@ -141,11 +154,8 @@ export type User = {
   gender: string,
   birthday: string,
   photoURL: string,
-  taxInfo: {
-    id: string,
-    name: string,
-    commercialName: string,
-  },
+  taxInfo: TaxInfo,
+  usesNCF: boolean,
 };
 
 // ------------------------------------------------ //
@@ -176,6 +186,7 @@ export type Global = {
   lastProdIdAdded: ?string,
   currency: ?string,
   itbis: ?string,
+  rushPrice: string | number,
   isRushOrder: boolean,
   filters: {
     searchTerm: string,

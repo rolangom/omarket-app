@@ -83,7 +83,7 @@ export const postOrderReqRatingLogic = createLogic({
 
 export const postOrderRequestLogic = createLogic({
   type: postOrderRequest.getType(),
-  transform({ action }, next) {
+  transform({ action, getState }, next) {
     const { payload } = action;
     next({
       ...action,
@@ -97,6 +97,8 @@ export const postOrderRequestLogic = createLogic({
           payload.creditCardID || payload.paymentMethod === 'cash'
             ? undefined
             : payload.creditCard.values,
+        isRushOrder: getState().global.isRushOrder,
+        usesNCF: getState().user.usesNCF,
         cashFor: payload.paymentMethod === 'cash' ? payload.cashFor : undefined,
       },
     });

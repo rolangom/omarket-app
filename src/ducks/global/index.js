@@ -17,7 +17,7 @@ import { fetchOffers } from '../offers';
 import { postCartProduct } from '../cart';
 import { multiDispatch } from '../../common/utils';
 
-export const setIsLoading = createAction('SET_IS_LOADING');
+// export const setIsLoading = createAction('SET_IS_LOADING');
 export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({
   type,
   title,
@@ -28,19 +28,52 @@ export const initAppData = createAction('INIT_APP_DATA');
 
 export const fetchConfigs = createAction('FECTH_CONFIGS');
 export const setConfigs = createAction('SET_CONFIGS');
+export const setConfig = createAction('SET_CONFIG');
 export const setFilters = createAction('SET_FILTERS', (key, value) => ({
   key,
   value,
 }));
 export const setFiltersAsUseful = createAction('SET_FILTERS_UTIL');
-export const showConfirm = createAction('SHOW_CONFIRM');
-export const hideConfirm = createAction('HIDE_CONFIRM');
-export const setReserveConfirmVisible = createAction('RESERVE_CONFIRM_VISIBLE');
+// export const setConfirmModalConfig = createAction('SET_CONFIRM_MODAL_CFG');
+// export const setReserveConfirmVisible = createAction('RESERVE_CONFIRM_VISIBLE');
 // export const setSearchTerm = createAction('SET_SEARCH_TERM');
 
 export const addError = text => addMessage('error', 'Error', text);
 export const addInfo = text => addMessage('info', 'Info', text);
 export const addRawError = error => addMessage('error', 'Error', error.message);
+
+const getEmptyConfirmObj = (visible: boolean): ConfirmConfig => ({
+  visible,
+  title: 'Confirmar',
+  message: '¿Está seguro que desea realizar la acción solicitada?',
+  acceptButtonText: 'OK',
+  acceptActionType: '',
+  acceptPayload: undefined,
+  cancelButtonText: 'Cancelar',
+  cancelActionType: '',
+});
+
+const setConfirmModalConfig = (config: ConfirmConfig) =>
+  setConfig({ key: 'confirmModal', value: config });
+
+export const hideConfirm = (config: ConfirmConfig) => setConfirmModalConfig({
+  ...getEmptyConfirmObj(false),
+  ...config,
+});
+
+export const showConfirm = (config: ConfirmConfig) => setConfirmModalConfig({
+  ...getEmptyConfirmObj(true),
+  ...config,
+});
+
+export const setIsLoading = (isLoading: boolean) =>
+  setConfig({ key: 'isLoading', value: isLoading });
+
+export const setReserveConfirmVisible = (visible: boolean) =>
+  setConfig({ key: 'reserveModalVisible', value: visible });
+
+export const setIsRushService = (isRush: boolean) =>
+  setConfig({ key: 'isRushOrder', value: isRush });
 
 type KeyValue = {
   key: string,
@@ -54,10 +87,6 @@ type Filter = {
 
 const reducer = createReducer(
   {
-    [setIsLoading]: (state: Global, isLoading: boolean) => ({
-      ...state,
-      isLoading,
-    }),
     [addMessage]: (state: Global, message: MessageType) => ({
       ...state,
       messages: state.messages.concat(message),
@@ -66,12 +95,17 @@ const reducer = createReducer(
       ...state,
       messages: state.messages.slice(1),
     }),
-    [setConfigs]: (state: Global, { utilities, contents, itbis, currency }: Global) => ({
+    [setConfigs]: (state: Global, { utilities, contents, itbis, currency, rushPrice }: Global) => ({
       ...state,
+      rushPrice,
       itbis,
       currency,
       utilities,
       contents,
+    }),
+    [setConfig]: (state: Global, { key, value }: KeyValue) => ({
+      ...state,
+      [key]: value,
     }),
     [setFiltersAsUseful]: (state: Global, value: ?string) => ({
       ...state,
@@ -85,27 +119,6 @@ const reducer = createReducer(
       ...state,
       lastProdIdAdded: item.productID,
     }),
-    [showConfirm]: (state: Global, config: ConfirmConfig) => ({
-      ...state,
-      confirmModal: {
-        ...state.confirmModal,
-        ...config,
-        visible: true,
-      },
-    }),
-    [hideConfirm]: (state: Global) => ({
-      ...state,
-      confirmModal: {
-        ...state.confirmModal,
-        acceptActionType: 'NOTHING',
-        acceptPayload: [],
-        visible: false,
-      },
-    }),
-    [setReserveConfirmVisible]: (state: Global, reserveModalVisible: boolean) => ({
-      ...state,
-      reserveModalVisible,
-    }),
   },
   {
     isLoading: false,
@@ -115,6 +128,7 @@ const reducer = createReducer(
     lastProdIdAdded: null,
     currency: 'RD$',
     itbis: 0.18,
+    rushPrice: 350,
     isRushOrder: false,
     filters: {
       searchTerm: '',
@@ -122,16 +136,7 @@ const reducer = createReducer(
       contents: null,
     },
     reserveModalVisible: false,
-    confirmModal: {
-      visible: true,
-      title: 'Title',
-      message: 'Message',
-      acceptButtonText: 'OK',
-      acceptActionType: 'NOTHING',
-      acceptPayload: undefined,
-      cancelButtonText: 'Cancelar',
-      cancelActionType: 'NOTHING',
-    },
+    confirmModal: getEmptyConfirmObj(false),
   },
 );
 
@@ -144,11 +149,12 @@ export const fetchConfigsLogic = createLogic({
       const configs = docSnapshots.docs.reduce((acc, it) => ({
         ...acc,
         [it.id]: it.data(),
-      }));
+      }), {});
       dispatch(
         setConfigs({
           itbis: configs.itbis.value,
           currency: configs.currency.value,
+          rushPrice: configs.rushPrice.value,
           utilities: configs.utilities.value.split(';'),
           contents: configs.contents.value.split(';'),
         }),
@@ -173,7 +179,8 @@ export const searchTermLogic = createLogic({
 export const initAppDataLogic = createLogic({
   type: initAppData.getType(),
   process(_, dispatch, done) {
-    multiDispatch(dispatch,
+    multiDispatch(
+      dispatch,
       fetchAds(true),
       fetchCategories(true),
       fetchConfigs(),

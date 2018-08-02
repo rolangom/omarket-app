@@ -81,9 +81,10 @@ class CartListItem extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = (state: State, { product: { id } }) => {
+const mapStateToProps = (state: State, { productId: id }) => {
   const [offerId] = state.offers.rel[id] || defaultEmptyArr;
   return {
+    product: state.products.byId[id],
     offer: state.offers.byId[offerId],
   };
 };

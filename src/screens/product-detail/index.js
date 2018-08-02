@@ -14,7 +14,7 @@ import {
 } from '../../common/utils/constants';
 import type { Product, State, Offer } from '../../common/types';
 import { reqPostCartProduct, postCartProduct } from '../../ducks/cart';
-import { getRelatedProducts } from '../../ducks/products/selectors';
+// import { getRelatedProducts } from '../../ducks/products/selectors';
 import { getOfferPrice, isOfferDiscount, isOfferFreeIncluded } from '../../common/utils';
 import Price from './components/Price';
 import FreeIncludedList from '../../common/components/FreeIncludedList';
@@ -50,7 +50,6 @@ const styles = {
 
 export type Props = {
   product: Product,
-  relatedProducts: Product[],
   offer: Offer,
   onSubmit: number => void,
   navigation: { navigate: (string, Object) => void },
@@ -63,7 +62,6 @@ class ProductDetailScreen extends React.Component<Props> {
     const {
       product: { id, price, name, descr, qty, fileURL },
       offer,
-      relatedProducts,
       onSubmit,
     } = this.props;
     const secureQty = parseInt(qty, 10);
@@ -114,7 +112,6 @@ const mapStateToProps = (
   return {
     offer: state.offers.byId[offerId],
     product: state.products.byId[productID],
-    relatedProducts: getRelatedProducts(productID, state),
   };
 };
 const mapDispatchToProps = (

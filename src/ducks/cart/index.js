@@ -26,10 +26,12 @@ export const reqPostCartProduct = createAction(
 export const postCartProduct = createAction(
   'POST_CART_PRODUCT',
   (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
+  () => ({ prevent: false }),
 );
 export const changeCartProductQty = createAction(
   'CHANGE_CART_PRODUCT_QTY',
   (productID: string, qty: number) => ({ productID, qty }),
+  (p, q, prevent) => ({ prevent }),
 );
 export const changeCartProductDescr = createAction(
   'CHANGE_CART_PRODUCT_DESCR',
@@ -88,6 +90,8 @@ const reducer = combineReducers({
 export const postCardProductLogic = createLogic({
   type: postCartProduct.getType(),
   validate({ action, getState }, allow, reject) {
+    console.log('postCardProductLogic action', action);
+    // allow(action);
     (action.payload && action.payload.qty && action.payload.qty > 0
       ? allow
       : reject)({
@@ -99,6 +103,7 @@ export const postCardProductLogic = createLogic({
     });
   },
   process(_, dispatch, done) {
+    console.log('postCardProductLogic process');
     dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
     done();
   },
@@ -149,13 +154,14 @@ export const requestReserveCartProdLogic = createLogic({
         dispatch,
         ...errors.map((productId) => {
           const prod = getProd(productId);
-          return changeCartProductQty(productId, prod.qty);
+          return changeCartProductQty(productId, prod.qty, true);
         }),
       );
+      deleteCartItemsIfEmpty(getState, dispatch);
       const { noPreAlert = false } = action.payload || {};
       !noPreAlert && dispatch(preAlertNoReserveCartProducts());
     } catch (err) {
-      console.warn(err.message);
+      console.warn('requestReserveCartProdLogic', err.message);
       dispatch(addError(err.message));
     } finally {
       dispatch(setIsLoading(false));
@@ -166,7 +172,15 @@ export const requestReserveCartProdLogic = createLogic({
 
 export const reserveCartLogic = createLogic({
   type: [postCartProduct.getType(), changeCartProductQty.getType()],
+  validate({ action }, next, reject) {
+    console.log('reserveCartLogic', action);
+    const { prevent = false } = action.meta;
+    prevent
+      ? reject(action)
+      : next(action);
+  },
   process({ action }, dispatch, done) {
+    console.log('reserveCartLogic reserveCartLogic');
     dispatch(reserveCartProducts(action.payload));
     done();
   },
@@ -185,7 +199,7 @@ export const preAlertNoReserveCartLogic = createLogic({
         _done();
       };
       dispatch(setReserveConfirmVisible(true));
-      setTimeout(onNeutral, 5000, getState, dispatch, done);
+      setTimeout(onNeutral, 10000, getState, dispatch, done);
     } catch (err) {
       console.warn('preAlertNoReserveCartLogic', err);
       dispatch(addError(err.message));

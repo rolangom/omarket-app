@@ -56,6 +56,7 @@ class OrderRequestDetailScreen extends React.Component<Props> {
         cashFor,
         paymentMethod,
         rating,
+        ncf,
       },
       onRatingChange,
     } = this.props;
@@ -87,6 +88,7 @@ class OrderRequestDetailScreen extends React.Component<Props> {
             paymentMethod={paymentMethod}
             creditCard={creditCard}
             cashFor={cashFor}
+            ncf={ncf}
           />
           <AddressDetail address={address} />
         </Content>

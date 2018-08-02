@@ -6,6 +6,7 @@ import { Form as FinalForm } from 'react-final-form';
 
 import UserContent from '../../../common/components/user-content/index';
 import OrderRequestForm from './components/form';
+import NCFOrderSwitch from './components/NCFOrderSwitch';
 import { formatCreditCardText } from '../../../common/utils/index';
 import type {
   Address,
@@ -79,6 +80,7 @@ class OrderRequestEditor extends React.Component<Props> {
                     creditCards={ccToRender}
                     paymentMethods={paymentMethods}
                   />
+                  <NCFOrderSwitch />
                   <View style={styles.padding}>
                     <Button
                       block

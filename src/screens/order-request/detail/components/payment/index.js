@@ -1,22 +1,28 @@
 // @flow
 
 import * as React from 'react';
-import { View, H2, H3, Text, List, ListItem, Left, Body } from 'native-base';
-import type { CreditCard, PaymentMethod } from '../../../../../common/types';
-import {getPaymentMethodText, mapCreditCardTypeAsIconName} from '../../../../../common/utils';
-import Visible from '../../../../../common/components/visible';
 import { FontAwesome } from '@expo/vector-icons';
+import { View, H2, H3, Text, List, ListItem, Left, Body } from 'native-base';
+import type { CreditCard, PaymentMethod, NCFInfo as NCFType } from '../../../../../common/types';
+import {
+  getPaymentMethodText,
+  mapCreditCardTypeAsIconName,
+} from '../../../../../common/utils';
+import NCFInfo from '../NCFInfo';
+import Visible from '../../../../../common/components/visible';
 
 type Props = {
   paymentMethod: PaymentMethod,
   cashFor: number | string,
   creditCard: CreditCard,
+  ncf: NCFType,
 };
 
 const OrderRequestDetailPayment = ({
   paymentMethod,
   cashFor,
   creditCard,
+  ncf,
 }: Props) => (
   <List>
     <ListItem itemDivider first>
@@ -49,6 +55,9 @@ const OrderRequestDetailPayment = ({
           <Text>{creditCard.number}</Text>
         </Body>
       </ListItem>
+    </Visible>
+    <Visible enabled={!!ncf}>
+      <NCFInfo ncf={ncf} />
     </Visible>
   </List>
 );

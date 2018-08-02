@@ -9,7 +9,7 @@ import PriceView from '../../common/components/price-view';
 import Ads from '../../common/components/ads';
 import Link from '../../common/components/link';
 import HorizProductList from '../../common/components/HorizProductList';
-import type { CartItem, Product, State } from '../../common/types';
+import type { CartItem, State } from '../../common/types';
 import {
   getCartItems,
   getCartItemsSubTotalPrice,
@@ -17,6 +17,7 @@ import {
 import { changeCartProductQty, changeCartProductDescr } from '../../ducks/cart';
 import Prompt from '../../libs/react-native-prompt';
 import ArchiveView from './components/ArchiveView';
+import ExpressSwitch from './components/ExpressSwitch';
 
 export type Props = {
   currency: string,
@@ -24,7 +25,6 @@ export type Props = {
   items: CartItem,
   subTotal: number,
   lastProdIdAdded: ?string,
-  productById: string => Product,
   onChangeQty: (string, number) => void,
   onChangeDescr: (string, string) => void,
   onContinueShopping: () => void,
@@ -58,7 +58,7 @@ class CartScreen extends React.Component<Props, CompState> {
     <CartListItem
       key={item.productID}
       item={item}
-      product={this.props.productById(item.productID)}
+      productId={item.productID}
       onChange={this.props.onChangeQty}
       onEditPress={this.onEditPress}
     />
@@ -73,7 +73,7 @@ class CartScreen extends React.Component<Props, CompState> {
       itbisFactor,
     } = this.props;
     const { editingProdID } = this.state;
-    const itbis = subTotal * itbisFactor;
+    const itbis = (subTotal) * itbisFactor;
     return (
       <Container>
         <Content whiteBackground>
@@ -84,6 +84,7 @@ class CartScreen extends React.Component<Props, CompState> {
             renderRow={this.renderItem}
             style={styles.list}
           />
+          <ExpressSwitch />
           <PriceView value={subTotal} currency={currency} />
           <PriceView
             value={itbis}
@@ -123,8 +124,11 @@ const mapStateToProps = (state: State, { navigation }): Props => ({
   currency: state.global.currency,
   itbisFactor: parseFloat(state.global.itbis),
   items: getCartItems(state),
-  subTotal: getCartItemsSubTotalPrice(state),
-  productById: (id: string) => state.products.byId[id],
+  subTotal:
+    getCartItemsSubTotalPrice(state)
+      + (state.global.isRushOrder
+        ? parseFloat(state.global.rushPrice)
+        : 0),
   lastProdIdAdded: state.global.lastProdIdAdded,
   onContinueShopping: () => navigation.goBack(null),
 });
