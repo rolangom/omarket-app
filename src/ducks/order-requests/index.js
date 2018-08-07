@@ -6,12 +6,10 @@ import { NavigationActions } from 'react-navigation';
 
 import { postAddress } from '../addresses';
 import type { OrderRequest, KeysOf, State, Rating } from '../../common/types';
-import { setIsLoading, addError } from '../global';
-import {
-  reduceFnByID, setImmutable,
-  upsertDoc,
-} from '../../common/utils';
+import { setIsLoading, addError, setUsePoints } from '../global';
+import { reduceFnByID, setImmutable, upsertDoc } from '../../common/utils';
 import { clearCartItems } from '../cart';
+import { getPoints } from '../user';
 
 // export const getSubtotal: number = (state: State, orderRequestID) =>
 //   state.orders.byId[orderRequestID].items.reduce(
@@ -21,7 +19,10 @@ import { clearCartItems } from '../cart';
 
 export const setOrderRequests = createAction('SET_ORDER_REQUESTS');
 export const postOrderRequest = createAction('POST_ORDER_REQUEST');
-export const postOrderRequestRating = createAction('POST_ORDER_REQ_RATING', (id: string, rating: Rating) => ({ id, rating }));
+export const postOrderRequestRating = createAction(
+  'POST_ORDER_REQ_RATING',
+  (id: string, rating: Rating) => ({ id, rating }),
+);
 
 const byId = createReducer(
   {
@@ -29,8 +30,10 @@ const byId = createReducer(
       state: KeysOf<OrderRequest>,
       orderRequests: OrderRequest[],
     ) => orderRequests.reduce(reduceFnByID, {}),
-    [postOrderRequestRating]: (state: State, { id, rating }: { id: string, rating: Rating }) =>
-      setImmutable(state, `${id}.rating`, rating),
+    [postOrderRequestRating]: (
+      state: State,
+      { id, rating }: { id: string, rating: Rating },
+    ) => setImmutable(state, `${id}.rating`, rating),
   },
   {},
 );
@@ -85,6 +88,10 @@ export const postOrderRequestLogic = createLogic({
   type: postOrderRequest.getType(),
   transform({ action, getState }, next) {
     const { payload } = action;
+    const {
+      user: { usesNCF },
+      global: { isRushOrder, usePoints },
+    } = getState();
     next({
       ...action,
       payload: {
@@ -97,8 +104,9 @@ export const postOrderRequestLogic = createLogic({
           payload.creditCardID || payload.paymentMethod === 'cash'
             ? undefined
             : payload.creditCard.values,
-        isRushOrder: getState().global.isRushOrder,
-        usesNCF: getState().user.usesNCF,
+        isRushOrder,
+        usesNCF,
+        usePoints,
         cashFor: payload.paymentMethod === 'cash' ? payload.cashFor : undefined,
       },
     });
@@ -144,11 +152,13 @@ export const postOrderRequestLogic = createLogic({
           message,
         },
       });
+      dispatch(getPoints());
       const navActionSucc = NavigationActions.reset({
         index: 0,
         actions: [defaultAction],
       });
       dispatch(isError ? defaultAction : navActionSucc);
+      dispatch(setUsePoints(false));
     } catch (error) {
       console.warn('postOrderRequestLogic error', error);
       dispatch(addError(error.message));

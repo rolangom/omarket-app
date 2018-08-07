@@ -79,6 +79,10 @@ const UserInfoView = ({
             <Text note>{user.email}</Text>
           </Body>
         </ListItem>
+        <ListItem>
+          <Text note>Puntos de lealtad: </Text>
+          <Text>{user.points || 0}</Text>
+        </ListItem>
         <Field
           name="taxInfo.id"
           render={({ input, meta: { touched, error } }) => (

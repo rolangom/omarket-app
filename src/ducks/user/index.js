@@ -6,7 +6,12 @@ import Expo from 'expo';
 
 import type { User } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { filterKeys, queryDoc, upsertDoc, multiDispatch } from '../../common/utils';
+import {
+  filterKeys,
+  queryDoc,
+  upsertDoc,
+  multiDispatch,
+} from '../../common/utils';
 import { FACEBOOK_APPID } from '../../common/utils/constants';
 import { setAddresses, fetchAddresses } from '../addresses';
 import { setCreditcards, fetchCreditcards } from '../credit-cards';
@@ -19,6 +24,7 @@ export const postUser = createAction('POST_USER');
 export const getUser = createAction('GET_USER');
 export const mergeUser = createAction('MERGE_USER');
 export const setUseNCF = createAction('SET_USE_NCF');
+export const getPoints = createAction('GET_USERS_POINTS');
 
 const requiredKeys = [
   'displayName',
@@ -30,31 +36,44 @@ const requiredKeys = [
   'birthday',
   'taxInfo',
   'usesNCF',
+  'points',
 ];
 
 const reducer = createReducer(
   {
     [mergeUser]: (state: ?User, user: User) => ({ ...state, ...user }),
     [setUserLogged]: (state: ?User, user: ?User) =>
-      user ? filterKeys(user, requiredKeys) : null,
+      (user ? filterKeys(user, requiredKeys) : null),
     [setUseNCF]: (state: ?User, usesNCF: boolean) => ({ ...state, usesNCF }),
   },
   null,
 );
 
+const getUserPoints = async (firebase, uid) => {
+  console.log('getUserPoints', uid);
+  const docPtsSnapshot = await firebase
+    .firestore()
+    .doc(`users/${uid}`)
+    .get();
+  console.log('docPtsSnapshot exists', docPtsSnapshot.exists);
+  return (docPtsSnapshot.exists && docPtsSnapshot.data().points) || 0;
+};
+
 const onLoggedInFuncs = async (action, firebase, dispatch) => {
   const { uid } = action.payload || action;
   const doc = await queryDoc(firebase, `users/${uid}/user`);
   // const doc = await db.collection('users').doc(uid);
-  const user = doc.exists && { uid, ...doc.val() };
+  const points = await getUserPoints(firebase, uid);
+  const user = doc.exists && { uid, points, ...doc.val() };
   // const user = doc.exists && { uid, ...doc.data() };
-  user && multiDispatch(
-    dispatch,
-    mergeUser(user),
-    // reserveCartProducts(),
-    fetchAddresses(),
-    fetchCreditcards(),
-  );
+  user &&
+    multiDispatch(
+      dispatch,
+      mergeUser(user),
+      // reserveCartProducts(),
+      fetchAddresses(),
+      fetchCreditcards(),
+    );
   firebase
     .database()
     .ref(`users/${uid}/cart`)
@@ -67,11 +86,32 @@ const onLoggedInFuncs = async (action, firebase, dispatch) => {
 
 const onLoggedOutFuncs = (action, firebase) => {
   const { uid } = action;
-  uid && firebase
-    .database()
-    .ref(`users/${uid}/cart`)
-    .off();
+  uid &&
+    firebase
+      .database()
+      .ref(`users/${uid}/cart`)
+      .off();
 };
+
+export const getPointsLogic = createLogic({
+  type: getPoints.getType(),
+  process: async ({ firebase, getState }, dispatch, done) => {
+    try {
+      console.log('getPointsLogic process');
+      const { user } = getState();
+      const points = await getUserPoints(firebase, user.uid);
+      console.log('getPointsLogic points', points);
+      dispatch(mergeUser({
+        points,
+      }));
+    } catch (err) {
+      console.warn('postUserLogic error', err);
+      dispatch(addError(err.message));
+    } finally {
+      done();
+    }
+  },
+});
 
 export const getUserLogic = createLogic({
   type: setUserLogged.getType(),
@@ -106,12 +146,10 @@ export const postUserLogic = createLogic({
       console.log('action', action);
       dispatch(setIsLoading(true));
       const { currentUser: { uid } } = firebase.auth();
-      const { uid: _, ...data } = action.payload;
+      const { uid: _, points, ...data } = action.payload;
       const { taxInfo: { id } = {} } = action.payload;
 
-      const resp = await fetch(
-        `https://us-central1-shop-f518d.cloudfunctions.net/queryDgiiBy?id=${id}`,
-      );
+      const resp = await fetch(`https://us-central1-shop-f518d.cloudfunctions.net/queryDgiiBy?id=${id}`);
       const { name, commercialName } = await resp.json();
       const taxInfo = resp.ok ? { id, name, commercialName } : {};
       await upsertDoc(firebase, `users/${uid}`, {

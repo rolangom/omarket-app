@@ -16,6 +16,7 @@ type Props = {
   cashFor: number | string,
   creditCard: CreditCard,
   ncf: NCFType,
+  points: number,
 };
 
 const OrderRequestDetailPayment = ({
@@ -23,6 +24,7 @@ const OrderRequestDetailPayment = ({
   cashFor,
   creditCard,
   ncf,
+  points,
 }: Props) => (
   <List>
     <ListItem itemDivider first>
@@ -39,6 +41,14 @@ const OrderRequestDetailPayment = ({
         <Body>
           <Text note>Devuelta para</Text>
           <Text>{cashFor}</Text>
+        </Body>
+      </ListItem>
+    </Visible>
+    <Visible enabled={points > 0}>
+      <ListItem>
+        <Body>
+          <Text note>Puntos de lealtad canjeados</Text>
+          <Text>{points}</Text>
         </Body>
       </ListItem>
     </Visible>

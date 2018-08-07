@@ -75,6 +75,9 @@ export const setReserveConfirmVisible = (visible: boolean) =>
 export const setIsRushService = (isRush: boolean) =>
   setConfig({ key: 'isRushOrder', value: isRush });
 
+export const setUsePoints = (usePoints: boolean) =>
+  setConfig({ key: 'usePoints', value: usePoints });
+
 type KeyValue = {
   key: string,
   value: any,
@@ -135,6 +138,7 @@ const reducer = createReducer(
       utilities: null,
       contents: null,
     },
+    usePoints: false,
     reserveModalVisible: false,
     confirmModal: getEmptyConfirmObj(false),
   },

@@ -43,7 +43,7 @@ const PriceView = ({ value, currency }: Props) => (
   <View style={styles.priceView}>
     <View style={styles.priceContainer}>
       <Text style={styles.priceCurr}>{currency}{' '}</Text>
-      <Text style={styles.priceValue}>{value.toLocaleString('en')}</Text>
+      <Text style={styles.priceValue}>{value.toFixed(2)}</Text>
     </View>
   </View>
 );

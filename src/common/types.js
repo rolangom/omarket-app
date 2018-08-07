@@ -143,6 +143,9 @@ export type OrderRequest = {
   subtotal?: number,
   rating: Rating,
   ncf?: NCFInfo,
+  points: number,
+  discounts: number,
+  usePoints: boolean,
 };
 
 
@@ -156,6 +159,7 @@ export type User = {
   photoURL: string,
   taxInfo: TaxInfo,
   usesNCF: boolean,
+  points: number,
 };
 
 // ------------------------------------------------ //
@@ -193,6 +197,7 @@ export type Global = {
     utilities: string,
     contents: string,
   },
+  usePoints: boolean,
   reserveModalVisible: boolean,
   confirmModal: ConfirmConfig,
 };

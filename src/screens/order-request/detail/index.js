@@ -57,6 +57,8 @@ class OrderRequestDetailScreen extends React.Component<Props> {
         paymentMethod,
         rating,
         ncf,
+        discounts,
+        points,
       },
       onRatingChange,
     } = this.props;
@@ -83,12 +85,17 @@ class OrderRequestDetailScreen extends React.Component<Props> {
             value={itbis}
             currency={`ITBIS ${itbisFactor * 100}% ${currency}`}
           />
-          <PriceView value={subtotal + itbis} currency={`TOTAL ${currency}`} />
+          <PriceView
+            value={discounts}
+            currency={`- Desc. ${currency}`}
+          />
+          <PriceView value={(subtotal + itbis) - discounts} currency={`TOTAL ${currency}`} />
           <OrderRequestDetailPayment
             paymentMethod={paymentMethod}
             creditCard={creditCard}
             cashFor={cashFor}
             ncf={ncf}
+            points={points}
           />
           <AddressDetail address={address} />
         </Content>

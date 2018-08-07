@@ -1,11 +1,9 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Switch } from 'react-native';
-import { ListItem, Body, Text, Right } from 'native-base';
-import { darkGray, lightGray } from '../../../common/utils/constants';
 import type { State } from '../../../common/types';
 import { setIsRushService } from '../../../ducks/global';
+import CommonSwitch from './CommonSwitch';
 
 type Props = {
   value: boolean,
@@ -15,23 +13,12 @@ type Props = {
 };
 
 const ExpressSwitch = ({ value, onChange, currency, price }: Props) => (
-  <ListItem>
-    <Body>
-      <Text>Servicio Rush</Text>
-      <Text note>
-        {' '}
-        + {currency} {price}
-      </Text>
-    </Body>
-    <Right>
-      <Switch
-        value={value}
-        onValueChange={onChange}
-        onTintColor={lightGray}
-        thumbTintColor={darkGray}
-      />
-    </Right>
-  </ListItem>
+  <CommonSwitch
+    title="Servicio Rush"
+    subtitle={`+ ${currency} ${price}`}
+    value={value}
+    onChange={onChange}
+  />
 );
 
 export default connect(

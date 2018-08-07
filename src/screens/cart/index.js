@@ -18,12 +18,16 @@ import { changeCartProductQty, changeCartProductDescr } from '../../ducks/cart';
 import Prompt from '../../libs/react-native-prompt';
 import ArchiveView from './components/ArchiveView';
 import ExpressSwitch from './components/ExpressSwitch';
+import UsePointsSwitch from './components/UsePointsSwitch';
+import Visible from '../../common/components/visible';
 
 export type Props = {
   currency: string,
   itbisFactor: number,
   items: CartItem,
   subTotal: number,
+  usePoints: boolean,
+  points: number,
   lastProdIdAdded: ?string,
   onChangeQty: (string, number) => void,
   onChangeDescr: (string, string) => void,
@@ -71,9 +75,12 @@ class CartScreen extends React.Component<Props, CompState> {
       lastProdIdAdded,
       currency,
       itbisFactor,
+      usePoints,
+      points,
     } = this.props;
     const { editingProdID } = this.state;
-    const itbis = (subTotal) * itbisFactor;
+    const discounts = usePoints && subTotal > points ? points : 0;
+    const itbis = subTotal * itbisFactor;
     return (
       <Container>
         <Content whiteBackground>
@@ -85,13 +92,19 @@ class CartScreen extends React.Component<Props, CompState> {
             style={styles.list}
           />
           <ExpressSwitch />
+          <Visible enabled={subTotal > points}>
+            <UsePointsSwitch />
+          </Visible>
           <PriceView value={subTotal} currency={currency} />
           <PriceView
             value={itbis}
             currency={`ITBIS ${itbisFactor * 100}% ${currency}`}
           />
+          <Visible enabled={discounts > 0}>
+            <PriceView value={discounts} currency={`- Desc. ${currency}`} />
+          </Visible>
           <PriceView
-            value={subTotal + itbis}
+            value={subTotal + itbis - discounts}
             currency={`TOTAL ${currency}`}
           />
           <View style={styles.buttons}>
@@ -123,12 +136,12 @@ class CartScreen extends React.Component<Props, CompState> {
 const mapStateToProps = (state: State, { navigation }): Props => ({
   currency: state.global.currency,
   itbisFactor: parseFloat(state.global.itbis),
+  usePoints: state.global.usePoints,
+  points: (state.user && state.user.points) || 0,
   items: getCartItems(state),
   subTotal:
-    getCartItemsSubTotalPrice(state)
-      + (state.global.isRushOrder
-        ? parseFloat(state.global.rushPrice)
-        : 0),
+    getCartItemsSubTotalPrice(state) +
+    (state.global.isRushOrder ? parseFloat(state.global.rushPrice) : 0),
   lastProdIdAdded: state.global.lastProdIdAdded,
   onContinueShopping: () => navigation.goBack(null),
 });
