@@ -16,6 +16,7 @@ import { FACEBOOK_APPID } from '../../common/utils/constants';
 import { setAddresses, fetchAddresses } from '../addresses';
 import { setCreditcards, fetchCreditcards } from '../credit-cards';
 import { setCartProducts, reserveCartProducts } from '../cart';
+import { fetchOffers } from '../offers';
 
 export const loginWithFacebook = createAction('LOG_IN_WITH_FACEBOOK');
 export const logout = createAction('LOG_OUT');
@@ -43,19 +44,17 @@ const reducer = createReducer(
   {
     [mergeUser]: (state: ?User, user: User) => ({ ...state, ...user }),
     [setUserLogged]: (state: ?User, user: ?User) =>
-      (user ? filterKeys(user, requiredKeys) : null),
+      user ? filterKeys(user, requiredKeys) : null,
     [setUseNCF]: (state: ?User, usesNCF: boolean) => ({ ...state, usesNCF }),
   },
   null,
 );
 
 const getUserPoints = async (firebase, uid) => {
-  console.log('getUserPoints', uid);
   const docPtsSnapshot = await firebase
     .firestore()
     .doc(`users/${uid}`)
     .get();
-  console.log('docPtsSnapshot exists', docPtsSnapshot.exists);
   return (docPtsSnapshot.exists && docPtsSnapshot.data().points) || 0;
 };
 
@@ -73,6 +72,7 @@ const onLoggedInFuncs = async (action, firebase, dispatch) => {
       // reserveCartProducts(),
       fetchAddresses(),
       fetchCreditcards(),
+      fetchOffers(),
     );
   firebase
     .database()
@@ -84,26 +84,27 @@ const onLoggedInFuncs = async (action, firebase, dispatch) => {
     );
 };
 
-const onLoggedOutFuncs = (action, firebase) => {
+const onLoggedOutFuncs = (action, firebase, dispatch) => {
   const { uid } = action;
   uid &&
     firebase
       .database()
       .ref(`users/${uid}/cart`)
       .off();
+  dispatch(fetchOffers());
 };
 
 export const getPointsLogic = createLogic({
   type: getPoints.getType(),
   process: async ({ firebase, getState }, dispatch, done) => {
     try {
-      console.log('getPointsLogic process');
       const { user } = getState();
       const points = await getUserPoints(firebase, user.uid);
-      console.log('getPointsLogic points', points);
-      dispatch(mergeUser({
-        points,
-      }));
+      dispatch(
+        mergeUser({
+          points,
+        }),
+      );
     } catch (err) {
       console.warn('postUserLogic error', err);
       dispatch(addError(err.message));
@@ -128,7 +129,7 @@ export const getUserLogic = createLogic({
     try {
       action.isLogged
         ? await onLoggedInFuncs(action, firebase, dispatch)
-        : onLoggedOutFuncs(action, firebase);
+        : onLoggedOutFuncs(action, firebase, dispatch);
     } catch (err) {
       console.warn('getUserLogic error', err);
       dispatch(addError(err.message));
@@ -149,7 +150,9 @@ export const postUserLogic = createLogic({
       const { uid: _, points, ...data } = action.payload;
       const { taxInfo: { id } = {} } = action.payload;
 
-      const resp = await fetch(`https://us-central1-shop-f518d.cloudfunctions.net/queryDgiiBy?id=${id}`);
+      const resp = await fetch(
+        `https://us-central1-shop-f518d.cloudfunctions.net/queryDgiiBy?id=${id}`,
+      );
       const { name, commercialName } = await resp.json();
       const taxInfo = resp.ok ? { id, name, commercialName } : {};
       await upsertDoc(firebase, `users/${uid}`, {

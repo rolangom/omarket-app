@@ -189,9 +189,6 @@ export const initAppDataLogic = createLogic({
       fetchCategories(true),
       fetchConfigs(),
       getUser(),
-      fetchAddresses(),
-      fetchCreditcards(),
-      fetchOffers(),
     );
     done();
   },
