@@ -1,4 +1,5 @@
 // @flow
+import type { Location } from '../types';
 
 export const rowHeight: number = 54;
 
@@ -18,5 +19,10 @@ export const currency: string = 'RD$';
 export const AD_RATIO = 0.4629;
 
 export const defaultEmptyArr = [];
+
+export const mainCityLocation: Location = {
+  latitude: 18.50012,
+  longitude: -69.98857,
+};
 
 export default null;

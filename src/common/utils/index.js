@@ -110,6 +110,11 @@ export const filterKeys = (obj: Object, keys: string[]) =>
 export const uniqFilterFn = (value: any, index: number, arr: Array<any>) =>
   arr.indexOf(value) === index;
 
+export const inputLocationRequired = value => (
+  value && value.latitude
+    ? undefined
+    : 'Required'
+);
 export const inputRequired = value => (value ? undefined : 'Required');
 export const inputCVCValidate = (value: string) =>
   value && value.length >= 3 ? undefined : 'Required';

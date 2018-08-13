@@ -48,6 +48,8 @@ export type Offer = {
   includedProducts: string[],
   beginDate: Date,
   endDate: Date,
+  isBirthday: boolean,
+  toGender: 'all'|'F'|'M',
 };
 
 export type CartItem = {
@@ -64,6 +66,11 @@ export type Location = {
   latitude: number,
   longitude: number,
 };
+
+export type MapRegion = Location & {
+  latitudeDelta: number,
+  longitudeDelta: number,
+}
 
 export type Address = {
   id?: string,
