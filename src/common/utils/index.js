@@ -9,6 +9,21 @@ import type {
   Offer, CartItem, KeysOf,
 } from '../types';
 
+type Timestamp = {
+  seconds: number,
+  nanoseconds: number,
+};
+
+const toLocalStrEsDo = (date: Date) =>
+  date.toLocaleString('es-DO');
+
+export const tsToDateStr = (timestamp: Timestamp | Date) =>
+  timestamp instanceof Date
+    ? toLocalStrEsDo(timestamp)
+    : timestamp.toDate !== undefined
+    ? toLocalStrEsDo(timestamp.toDate())
+    : toLocalStrEsDo(new Date(timestamp.seconds * 1000));
+
 export function getFmtDocs(querySnapshot) {
   return querySnapshot && querySnapshot.docs
     ? querySnapshot.docs.map(it => ({ id: it.id, ...it.data() }))

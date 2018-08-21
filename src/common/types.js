@@ -27,10 +27,12 @@ export type Product = {
   category: string,
   name: string,
   descr?: ?string,
+  brand: ?string,
   fileURL?: ?string,
   isActive?: boolean,
   orderID: number,
   price: number,
+  taxFactor: number,
   qty: number,
   contents: string[],
   usefulAs: string[],
@@ -207,6 +209,7 @@ export type Global = {
   usePoints: boolean,
   reserveModalVisible: boolean,
   confirmModal: ConfirmConfig,
+  showRelatedProdId: ?string,
 };
 
 export type KeysOf<T> = {

@@ -78,6 +78,9 @@ export const setIsRushService = (isRush: boolean) =>
 export const setUsePoints = (usePoints: boolean) =>
   setConfig({ key: 'usePoints', value: usePoints });
 
+export const setShowRelatedProdId = (prodId: ?string) =>
+  setConfig({ key: 'showRelatedProdId', value: prodId });
+
 type KeyValue = {
   key: string,
   value: any,
@@ -141,6 +144,7 @@ const reducer = createReducer(
     usePoints: false,
     reserveModalVisible: false,
     confirmModal: getEmptyConfirmObj(false),
+    showRelatedProdId: null,
   },
 );
 

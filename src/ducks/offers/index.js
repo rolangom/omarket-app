@@ -26,7 +26,7 @@ export const fetchOffersLogic = createLogic({
         .get();
       const state = getState();
       const isUserBirthday = isTodayUserBirthday(state);
-      const userGender = state.user.gender;
+      const userGender = (state && state.user && state.user.gender) || 'all';
       const offers: Offer[] = getFmtDocs(docsSnapshots)
         .filter(it => it.beginDate <= today)
         .filter(

@@ -5,7 +5,7 @@ import { ListItem, Text, Body, Right, Icon } from 'native-base';
 import Link from '../../../../common/components/link';
 import type { OrderRequest } from '../../../../common/types';
 import { lightGray } from '../../../../common/utils/constants';
-import { getOrderStatusText } from '../../../../common/utils';
+import { getOrderStatusText, tsToDateStr } from '../../../../common/utils';
 
 type Props = OrderRequest;
 
@@ -24,7 +24,9 @@ const OrderListItem = (props: Props) => (
     params={{ orderRequestID: props.id }}
   >
     <Body>
-      <Text>{props.createdAt && props.createdAt.toLocaleString('es-DO')}</Text>
+      <Text>
+        {tsToDateStr(props.createdAt)}
+      </Text>
       <Text note>{getOrderStatusText(props.status)}</Text>
     </Body>
     <Right>

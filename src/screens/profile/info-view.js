@@ -175,7 +175,7 @@ const UserInfoView = ({
                 primary
                 block
                 onPress={handleSubmit}
-                disabled={isLoading || invalid}
+                disabled={isLoading}
               >
                 <Text>Guardar</Text>
               </Button>

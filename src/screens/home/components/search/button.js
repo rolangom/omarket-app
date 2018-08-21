@@ -13,6 +13,8 @@ const styles = {
     flexDirection: 'row',
     backgroundColor: 'white',
     alignItems: 'center',
+    borderBottomColor: 'rgba(0,0,0,.15)',
+    borderBottomWidth: 2,
   },
 };
 

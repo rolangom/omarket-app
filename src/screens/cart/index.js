@@ -2,17 +2,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List, Button, Text, View } from 'native-base';
-// import Prompt from 'react-native-prompt';
 
 import CartListItem from './components/list-item';
 import PriceView from '../../common/components/price-view';
 import Ads from '../../common/components/ads';
 import Link from '../../common/components/link';
-import HorizProductList from '../../common/components/HorizProductList';
 import type { CartItem, State } from '../../common/types';
 import {
   getCartItems,
   getCartItemsSubTotalPrice,
+  getCartTaxTotal,
 } from '../../ducks/cart/selectors';
 import { changeCartProductQty, changeCartProductDescr } from '../../ducks/cart';
 import Prompt from '../../libs/react-native-prompt';
@@ -23,9 +22,9 @@ import Visible from '../../common/components/visible';
 
 export type Props = {
   currency: string,
-  itbisFactor: number,
   items: CartItem,
   subTotal: number,
+  taxTotal: number,
   usePoints: boolean,
   points: number,
   lastProdIdAdded: ?string,
@@ -71,21 +70,18 @@ class CartScreen extends React.Component<Props, CompState> {
     const {
       items,
       subTotal,
+      taxTotal,
       onContinueShopping,
-      lastProdIdAdded,
       currency,
-      itbisFactor,
       usePoints,
       points,
     } = this.props;
     const { editingProdID } = this.state;
     const discounts = usePoints && subTotal > points ? points : 0;
-    const itbis = subTotal * itbisFactor;
     return (
       <Container>
         <Content whiteBackground>
           <Ads visible forceLoad={false} />
-          <HorizProductList productId={lastProdIdAdded} />
           <List
             dataArray={items}
             renderRow={this.renderItem}
@@ -96,15 +92,15 @@ class CartScreen extends React.Component<Props, CompState> {
             <UsePointsSwitch />
           </Visible>
           <PriceView value={subTotal} currency={currency} />
-          <PriceView
-            value={itbis}
-            currency={`ITBIS ${itbisFactor * 100}% ${currency}`}
-          />
           <Visible enabled={discounts > 0}>
             <PriceView value={discounts} currency={`- Desc. ${currency}`} />
           </Visible>
           <PriceView
-            value={subTotal + itbis - discounts}
+            value={taxTotal}
+            currency={`ITBIS ${currency}`}
+          />
+          <PriceView
+            value={(subTotal - discounts) + taxTotal}
             currency={`TOTAL ${currency}`}
           />
           <View style={styles.buttons}>
@@ -135,10 +131,10 @@ class CartScreen extends React.Component<Props, CompState> {
 
 const mapStateToProps = (state: State, { navigation }): Props => ({
   currency: state.global.currency,
-  itbisFactor: parseFloat(state.global.itbis),
   usePoints: state.global.usePoints,
   points: (state.user && state.user.points) || 0,
   items: getCartItems(state),
+  taxTotal: getCartTaxTotal(state),
   subTotal:
     getCartItemsSubTotalPrice(state) +
     (state.global.isRushOrder ? parseFloat(state.global.rushPrice) : 0),

@@ -26,9 +26,18 @@ export default class OrderListScreen extends React.Component<Props> {
   }
   unsubscr = null;
   renderRow = ({ id, status, createdAt }: OrderRequest) => (
-    <Item id={id} status={status} createdAt={createdAt} />
+    <Item
+      id={id}
+      status={status}
+      createdAt={createdAt}
+    />
   );
   render() {
-    return <List dataArray={this.props.items} renderRow={this.renderRow} />;
+    return (
+      <List
+        dataArray={this.props.items}
+        renderRow={this.renderRow}
+      />
+    );
   }
 }

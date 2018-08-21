@@ -16,11 +16,13 @@ import type {
 } from '../../../common/types';
 import { darkGray } from '../../../common/utils/constants';
 import { postOrderRequest } from '../../../ducks/order-requests/index';
+import { addError } from '../../../ducks/global';
 
 type Props = {
   addresses: Address[],
   creditCards: CreditCard[],
   onSubmit: OrderRequest => void,
+  onError: string => void,
 };
 
 const styles = {
@@ -54,7 +56,7 @@ const paymentMethods = [
 
 class OrderRequestEditor extends React.Component<Props> {
   render() {
-    const { addresses, creditCards, onSubmit } = this.props;
+    const { addresses, creditCards, onSubmit, onError } = this.props;
     const addressesToRender = [
       { value: '', label: 'Seleccione' },
       ...addresses.map(it => ({ value: it.id, label: it.name })),
@@ -79,6 +81,7 @@ class OrderRequestEditor extends React.Component<Props> {
                     addresses={addressesToRender}
                     creditCards={ccToRender}
                     paymentMethods={paymentMethods}
+                    onError={onError}
                   />
                   <NCFOrderSwitch />
                   <View style={styles.padding}>
@@ -105,7 +108,8 @@ const mapStateToProps = (state: State) => ({
   addresses: Object.values(state.addresses.byId),
   creditCards: Object.values(state.creditCards.byId),
 });
-const mapDispatchToProps = dispatch => ({
-  onSubmit: (values: OrderRequest) => dispatch(postOrderRequest(values)),
-});
+const mapDispatchToProps = {
+  onSubmit: postOrderRequest,
+  onError: addError,
+};
 export default connect(mapStateToProps, mapDispatchToProps)(OrderRequestEditor);

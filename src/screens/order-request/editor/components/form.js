@@ -53,12 +53,14 @@ type Props = {
   addresses: ItemProps[],
   creditCards: ItemProps[],
   paymentMethods: ItemProps[],
+  onError: string => void,
 };
 
 const OrderRequestForm = ({
   addresses,
   creditCards,
   paymentMethods,
+  onError,
 }: Props) => (
   <View>
     <Field
@@ -86,7 +88,7 @@ const OrderRequestForm = ({
     />
 
     <VisibleIfFieldEq name="addressID" value="">
-      <PlainAddressForm prefix="address." />
+      <PlainAddressForm prefix="address." onError={onError} />
       <Field
         name="doSaveAddress"
         render={({ input }) => (

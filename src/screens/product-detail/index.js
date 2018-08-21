@@ -1,5 +1,4 @@
 // @flow
-
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
@@ -8,17 +7,17 @@ import { Container, Content, Text, View } from 'native-base';
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
 import CondContent from '../../common/components/cond-content';
+import RelatedProductsDialog from '../../common/components/RelatedProductsDialog';
 import {
   darkGray,
   defaultEmptyArr,
 } from '../../common/utils/constants';
 import type { Product, State, Offer } from '../../common/types';
-import { reqPostCartProduct, postCartProduct } from '../../ducks/cart';
-// import { getRelatedProducts } from '../../ducks/products/selectors';
+import { postCartProduct } from '../../ducks/cart';
 import { getOfferPrice, isOfferDiscount, isOfferFreeIncluded } from '../../common/utils';
 import Price from './components/Price';
 import FreeIncludedList from '../../common/components/FreeIncludedList';
-import HorizProductList from '../../common/components/HorizProductList';
+import BrandRelatedHList from '../../common/components/BrandRelatedHList';
 
 const { width } = Dimensions.get('window');
 
@@ -53,6 +52,7 @@ export type Props = {
   offer: Offer,
   onSubmit: number => void,
   navigation: { navigate: (string, Object) => void },
+  doHaveRelated: boolean,
 };
 
 class ProductDetailScreen extends React.Component<Props> {
@@ -90,7 +90,7 @@ class ProductDetailScreen extends React.Component<Props> {
               <FreeIncludedList offerId={offer.id} />
             }
           </View>
-          <HorizProductList productId={id} />
+          <BrandRelatedHList productId={id} />
           <CondContent
             cond={secureQty > 0}
             defaultText="Existencia 0"
@@ -98,6 +98,7 @@ class ProductDetailScreen extends React.Component<Props> {
           >
             <QtyForm defaultValue={1} max={secureQty} onSubmit={onSubmit} />
           </CondContent>
+          <RelatedProductsDialog />
         </Content>
       </Container>
     );
@@ -108,18 +109,21 @@ const mapStateToProps = (
   state: State,
   { navigation: { state: { params: { productID } } } },
 ) => {
+  const product = state.products.byId[productID];
+  const doHaveRelated = Object.keys(product.relatedProds).length > 0;
   const [offerId] = state.offers.rel[productID] || defaultEmptyArr;
   return {
     offer: state.offers.byId[offerId],
-    product: state.products.byId[productID],
+    product,
+    doHaveRelated,
   };
 };
 const mapDispatchToProps = (
   dispatch,
   { navigation: { state: { params: { productID } } } },
 ) => ({
-  onSubmitWithOffer: (value: number, offerID: string) =>
-    dispatch(postCartProduct(productID, value, offerID)),
+  onSubmitWithOffer: (value: number, offerID: string, noNavigate: boolean) =>
+    dispatch(postCartProduct(productID, value, offerID, noNavigate)),
 });
 
 const mergeProps = (stateProps: Props, dispatchProps: Props, ownProps: Props) => ({
@@ -127,7 +131,11 @@ const mergeProps = (stateProps: Props, dispatchProps: Props, ownProps: Props) =>
   ...dispatchProps,
   ...ownProps,
   onSubmit: (value: number) =>
-    dispatchProps.onSubmitWithOffer(value, (stateProps.offer && stateProps.offer.id) || null),
+    dispatchProps.onSubmitWithOffer(
+      value,
+      (stateProps.offer && stateProps.offer.id) || null,
+      stateProps.doHaveRelated,
+    ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(

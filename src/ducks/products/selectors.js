@@ -29,4 +29,15 @@ export function getRelatedProducts(prodId: string, state: State): Product[] {
   }, []);
 }
 
+export function getBrandRelatedProducts(prodId: string, state: State): Product[] {
+  const product: Product = state.products.byId[prodId];
+  return Object
+    .values(state.products.byId)
+    .filter((it: Product) =>
+      it.id !== prodId &&
+        it.brand !== undefined &&
+        it.brand === product.brand
+    );
+}
+
 export default null;

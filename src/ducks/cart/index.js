@@ -15,6 +15,7 @@ import {
   addError,
   addInfo,
   setIsLoading,
+  setShowRelatedProdId,
   setReserveConfirmVisible,
 } from '../global';
 import { postCurrentCart } from '../savedCarts';
@@ -26,7 +27,7 @@ export const reqPostCartProduct = createAction(
 export const postCartProduct = createAction(
   'POST_CART_PRODUCT',
   (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
-  () => ({ prevent: false }),
+  (p, q, o, noNavigate) => ({ prevent: false, noNavigate }),
 );
 export const changeCartProductQty = createAction(
   'CHANGE_CART_PRODUCT_QTY',
@@ -102,9 +103,12 @@ export const postCardProductLogic = createLogic({
       },
     });
   },
-  process(_, dispatch, done) {
+  process({ action }, dispatch, done) {
     console.log('postCardProductLogic process');
-    dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
+    const { noNavigate } = action.meta;
+    const { productID } = action.payload;
+    !noNavigate && dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
+    noNavigate && dispatch(setShowRelatedProdId(productID));
     done();
   },
 });
