@@ -9,9 +9,10 @@ import MapLocator from '../MapLocator';
 
 type Props = {
   prefix?: ?string,
+  onError: string => void,
 };
 
-const PlainForm = ({ prefix }: Props) => (
+const PlainForm = ({ prefix, onError }: Props) => (
   <Form>
     <Field
       name={`${prefix}location`}
@@ -23,6 +24,7 @@ const PlainForm = ({ prefix }: Props) => (
           <MapLocator
             location={input.value}
             onChange={input.onChange}
+            onError={onError}
             error={!!(touched && error)}
           />
         </View>

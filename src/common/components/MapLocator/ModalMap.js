@@ -2,13 +2,14 @@
 import * as React from 'react';
 import { Button, Text, Icon } from 'native-base';
 import { View, Modal } from 'react-native';
+import { Location as LocationService, Permissions } from 'expo';
 import type { Location } from '../../types';
 import MapView from '../MapView';
-import { Location as LocationService, Permissions } from 'expo';
 
 type Props = {
   location: Location,
   onChange: Location => void,
+  onError: string => void,
   visible: boolean,
   onHide: () => void,
 };
@@ -33,6 +34,10 @@ const styles = {
   },
 };
 
+type Ref<T> = {
+  current: T,
+};
+
 class ModalMap extends React.Component<Props, State> {
   state = {
     location: {
@@ -40,10 +45,6 @@ class ModalMap extends React.Component<Props, State> {
       longitude: this.props.location.longitude,
     },
     locating: false,
-  };
-  mapRef: MapView = null;
-  setMapRef = (ref: React.Node) => {
-    this.mapRef = ref;
   };
   onChange = ({ latitude, longitude }: Location) =>
     this.setState({
@@ -62,28 +63,30 @@ class ModalMap extends React.Component<Props, State> {
       });
     this.props.onHide();
   };
+  onRequestClose = () => {};
   getCurrLocationAsync = async () => {
     if (this.state.locating) {
       return;
     }
     this.setState({ locating: true });
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    const { onError } = this.props;
     if (status !== 'granted') {
-      alert('Permission to access location was denied');
+      onError('Permission to access location was denied');
     }
 
     try {
       const location = await LocationService.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
-      this.mapRef.setLocation({ latitude, longitude });
+      this.mapRef.current.setLocation({ latitude, longitude });
     } catch (err) {
       console.warn(err.message);
-      alert(err.message);
+      onError(err.message);
     } finally {
       this.setState({ locating: false });
     }
   };
-  onRequestClose = () => {};
+  mapRef: Ref<MapView> = React.createRef();
 
   render() {
     const { location, locating } = this.state;
@@ -96,7 +99,7 @@ class ModalMap extends React.Component<Props, State> {
       >
         <View style={styles.main}>
           <MapView
-            ref={this.setMapRef}
+            ref={this.mapRef}
             location={location}
             onChange={this.onChange}
           />
@@ -116,5 +119,9 @@ class ModalMap extends React.Component<Props, State> {
     );
   }
 }
+
+ModalMap.defaultProps = {
+  onError: alert,
+};
 
 export default ModalMap;

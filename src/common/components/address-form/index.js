@@ -16,6 +16,7 @@ type Props = {
   onSubmit: (Address) => void,
   values: Address,
   onDelete: () => void,
+  onError: string => void,
   isLoading: boolean,
 };
 
@@ -24,6 +25,7 @@ const AddressForm = ({
   values,
   onDelete,
   isLoading,
+  onError,
 }: Props) => (
   <Form
     onSubmit={onSubmit}
@@ -31,7 +33,7 @@ const AddressForm = ({
     render={({ handleSubmit, pristine, invalid }) => (
       <List white>
         <ListItem>
-          <PlainForm />
+          <PlainForm onError={onError} />
         </ListItem>
         <ListItem>
           <Body>

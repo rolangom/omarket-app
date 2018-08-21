@@ -51,7 +51,6 @@ class OrderRequestDetailScreen extends React.Component<Props> {
         address,
         subtotal,
         itbis,
-        itbisFactor,
         creditCard,
         cashFor,
         paymentMethod,
@@ -67,7 +66,7 @@ class OrderRequestDetailScreen extends React.Component<Props> {
         <Content whiteBackground>
           <View style={styles.basic}>
             <Text style={styles.createdAt}>
-              {createdAt && createdAt.toLocaleString('es-DO')}
+              {createdAt && createdAt.toDate().toLocaleString('es-DO')}
             </Text>
             <Badge primary style={styles.status}>
               <Text>{getOrderStatusText(status)}</Text>
@@ -82,14 +81,14 @@ class OrderRequestDetailScreen extends React.Component<Props> {
           <List dataArray={cartItems} renderRow={this.renderItem} />
           <PriceView value={subtotal} currency={`Sub-total ${currency}`} />
           <PriceView
-            value={itbis}
-            currency={`ITBIS ${itbisFactor * 100}% ${currency}`}
-          />
-          <PriceView
             value={discounts}
             currency={`- Desc. ${currency}`}
           />
-          <PriceView value={(subtotal + itbis) - discounts} currency={`TOTAL ${currency}`} />
+          <PriceView
+            value={itbis}
+            currency={`+ ITBIS ${currency}`}
+          />
+          <PriceView value={(subtotal - discounts) + itbis} currency={`= TOTAL ${currency}`} />
           <OrderRequestDetailPayment
             paymentMethod={paymentMethod}
             creditCard={creditCard}
