@@ -1,15 +1,12 @@
 import React from 'react';
-import { BackHandler } from 'react-native';
 import { connect } from 'react-redux';
-import {
-  addNavigationHelpers,
-  NavigationActions,
-} from 'react-navigation';
-import AppNavigator from './app-navigator';
+import { BackHandler } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import { AppNavigator } from '.';
 
 type Props = {
   dispatch: () => void,
-  nav: any,
+  state: Object,
 };
 
 class AppWithNavigationState extends React.Component<Props> {
@@ -20,8 +17,8 @@ class AppWithNavigationState extends React.Component<Props> {
     BackHandler.removeEventListener('hardwareBackPress', this.onBackPress);
   }
   onBackPress = () => {
-    const { dispatch, nav } = this.props;
-    if (nav.index === 0) {
+    const { dispatch, state } = this.props;
+    if (state.index === 0) {
       return false;
     }
     dispatch(NavigationActions.back());
@@ -29,16 +26,16 @@ class AppWithNavigationState extends React.Component<Props> {
   };
 
   render() {
-    const { dispatch, nav } = this.props;
-    const navigation = addNavigationHelpers({
-      dispatch,
-      state: nav,
-    });
-
-    return <AppNavigator navigation={navigation} />;
+    return (
+      <AppNavigator
+        state={this.props.state}
+        dispatch={this.props.dispatch}
+      />
+    );
   }
 }
 
-const mapStateToProps = state => ({ nav: state.nav });
-
+const mapStateToProps = state => ({
+  state: state.nav,
+});
 export default connect(mapStateToProps)(AppWithNavigationState);

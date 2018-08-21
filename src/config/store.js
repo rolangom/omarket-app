@@ -4,6 +4,7 @@ import logger from 'redux-logger';
 import { createLogicMiddleware } from 'redux-logic';
 import { persistStore, persistCombineReducers } from 'redux-persist';
 import storage from 'redux-persist/es/storage';
+import { middleware as navMiddleware } from '../navigators';
 
 import reducers from './reducers';
 import logics from './logics';
@@ -32,6 +33,7 @@ const configureStore = () => {
     reducer,
     applyMiddleware(
       logger,
+      navMiddleware,
       createLogicMiddleware(logics, { firebase, db }),
     ),
   );

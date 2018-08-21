@@ -13,9 +13,8 @@ import {
   Button,
   Icon,
 } from 'native-base';
-import { NavigationNavigatorProps } from 'react-navigation/src/TypeDefinition';
 
-const SettingsScreen = ({ navigation }: NavigationNavigatorProps) => (
+const SettingsScreen = () => (
   <Container>
     <Content>
       <Text>

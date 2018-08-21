@@ -38,7 +38,7 @@ const styles = {
   },
 };
 
-const navActionSucc = NavigationActions.reset({
+const navActionSucc = NavigationActions.navigate({
   index: 0,
   actions: [NavigationActions.navigate({ routeName: 'Cart' })],
 });

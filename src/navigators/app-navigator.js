@@ -1,6 +1,6 @@
 // @flow
 import React from 'react';
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import { createStackNavigator, createDrawerNavigator } from 'react-navigation';
 import { Platform, StatusBar } from 'react-native';
 import { Icon } from 'native-base';
 
@@ -34,115 +34,95 @@ const defaultNavigationOptions = (shouldNavigateCart = true) => ({
   headerRight: <IconButtonCart destRoute="Cart" shouldNavigate={shouldNavigateCart} />,
 });
 
-const getCardStyle = () => ({
-  paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight,
-});
-
-const getStackScreen = (routeName: string, screen, drawerLabel: string, iconName: string, shouldNavigateCart: boolean) => ({
-  screen: StackNavigator({
-    [routeName]: {
-      screen,
-      navigationOptions: ({ navigation }) => ({
-        ...defaultNavigationOptions(shouldNavigateCart),
-        headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
-        drawerLabel,
-        drawerIcon: ({ tintColor }) => (
-          <Icon
-            name={iconName}
-            style={{ color: tintColor }}
-          />
-        ),
-      }),
-    },
-  }, {
-    cardStyle: getCardStyle(),
-  }),
-});
-
-const BrowseStack = StackNavigator({
+const BrowseStack = createStackNavigator({
   Start: {
     screen: HomeScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   Browse: { screen: HomeScreen },
   ProductDetail: { screen: ProductDetailScreen },
   Search: { screen: SearchScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
 
 
-const AddressesStack = StackNavigator({
+const AddressesStack = createStackNavigator({
   Addresses: {
     screen: AddressListScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   AddressEditor: { screen: AddressEditorScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
 
-const CreditCardStack = StackNavigator({
+const CreditCardStack = createStackNavigator({
   Creditcards: {
     screen: CreditCardListScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   CreditcardEditor: { screen: CreditCardEditorScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
 
-const OrdersStack = StackNavigator({
+const OrdersStack = createStackNavigator({
   Orders: {
     screen: OrderListScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   OrdersRequestDetail: { screen: OrderRequestDetailScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
 
-const CartStack = StackNavigator({
+const CartStack = createStackNavigator({
   Cart: {
     screen: CartScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   OrderRequest: { screen: OrderRequestEditorScreen },
   OrderRequestResult: { screen: OrderRequestResultScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(false),
 });
 
 // SavedCartListScreen
-const SavedCartStack = StackNavigator({
+const SavedCartStack = createStackNavigator({
   SavedCartList: {
     screen: SavedCartListScreen,
     navigationOptions: ({ navigation }) => ({
-      headerLeft: <HambMenuIcon onPress={() => navigation.navigate('DrawerOpen')} />,
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
     }),
   },
   SavedCartDetail: { screen: SavedCartDetailScreen },
 }, {
-  cardStyle: getCardStyle(),
   navigationOptions: defaultNavigationOptions(true),
 });
 
-const AppNavigator = DrawerNavigator({
+const ProfileStack = createStackNavigator({
+  Profile: {
+    screen: ProfileScreen,
+    navigationOptions: ({ navigation }) => ({
+      headerLeft: <HambMenuIcon onPress={navigation.openDrawer} />,
+    }),
+  },
+}, {
+  navigationOptions: defaultNavigationOptions(true),
+});
+
+const AppNavigator = createDrawerNavigator({
   Start: {
     screen: BrowseStack,
     navigationOptions: {
@@ -155,8 +135,20 @@ const AppNavigator = DrawerNavigator({
       ),
     },
   },
-  Profile: getStackScreen('Profile', ProfileScreen, 'Perfil', 'ios-contact', true),
-  Settings: getStackScreen('Settings', SettingsScreen, 'Configuración', 'ios-cog', true),
+  // Profile: getStackScreen('Profile', ProfileScreen, 'Perfil', 'md-contact', true),
+  Profile: {
+    screen: ProfileStack,
+    navigationOptions: {
+      drawerLabel: 'Perfil',
+      drawerIcon: ({ tintColor }) => (
+        <Icon
+          name="ios-contact"
+          style={{ color: tintColor }}
+        />
+      ),
+    },
+  },
+  // Settings: getStackScreen('Settings', SettingsScreen, 'Configuración', 'ios-cog', true),
   Cart: {
     screen: CartStack,
     navigationOptions: {

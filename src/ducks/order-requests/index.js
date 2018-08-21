@@ -2,7 +2,7 @@
 import { combineReducers } from 'redux';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
-import { NavigationActions } from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 
 import { postAddress } from '../addresses';
 import type { OrderRequest, KeysOf, State, Rating } from '../../common/types';
@@ -153,7 +153,7 @@ export const postOrderRequestLogic = createLogic({
         },
       });
       dispatch(getPoints());
-      const navActionSucc = NavigationActions.reset({
+      const navActionSucc = StackActions.reset({
         index: 0,
         actions: [defaultAction],
       });
