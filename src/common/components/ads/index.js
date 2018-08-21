@@ -1,6 +1,6 @@
 import React from 'react';
 import { Image, Dimensions, View } from 'react-native';
-import Swiper from 'react-native-swiper';
+import SwiperFlatList from 'react-native-swiper-flatlist';
 
 import { connect } from 'react-redux';
 import { Ad as AdType, State } from '../../types';
@@ -29,22 +29,22 @@ type Props = {
 };
 
 class Ads extends React.Component<Props> {
-  renderItem = (ad: AdType) => (
-    <CarouseItem
-      key={ad.id}
-      ad={ad}
-    />
+  keyExtractor = (it: AdType) => it.id;
+  renderItem = ({ item: ad }: { item: AdType }) => (
+    <CarouseItem ad={ad} />
   );
   render() {
     return (
       <View style={styles.item}>
-        <Swiper
-          showsPagination
-          autoPlay
-          activeDotColor={darkGray}
-        >
-          {this.props.ads.map(this.renderItem)}
-        </Swiper>
+        <SwiperFlatList
+          showPagination
+          autoplay
+          autoplayLoop
+          paginationDefaultColor={darkGray}
+          data={this.props.ads}
+          keyExtractor={this.keyExtractor}
+          renderItem={this.renderItem}
+        />
       </View>
     );
   }
