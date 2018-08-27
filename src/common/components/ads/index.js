@@ -5,6 +5,7 @@ import SwiperFlatList from 'react-native-swiper-flatlist';
 import { connect } from 'react-redux';
 import { Ad as AdType, State } from '../../types';
 import { darkGray, AD_RATIO } from '../../utils/constants';
+import { visibleIf } from '../visible';
 
 const { width } = Dimensions.get('window');
 
@@ -17,10 +18,7 @@ const styles = {
 
 const CarouseItem = ({ ad }: { ad: AdType }) => (
   <View style={styles.item}>
-    <Image
-      source={{ uri: ad.fileURL }}
-      style={styles.item}
-    />
+    <Image source={{ uri: ad.fileURL }} style={styles.item} />
   </View>
 );
 
@@ -30,9 +28,7 @@ type Props = {
 
 class Ads extends React.Component<Props> {
   keyExtractor = (it: AdType) => it.id;
-  renderItem = ({ item: ad }: { item: AdType }) => (
-    <CarouseItem ad={ad} />
-  );
+  renderItem = ({ item: ad }: { item: AdType }) => <CarouseItem ad={ad} />;
   render() {
     return (
       <View style={styles.item}>
@@ -50,6 +46,5 @@ class Ads extends React.Component<Props> {
   }
 }
 
-
 const mapStateToProps = (state: State) => ({ ads: state.ads });
-export default connect(mapStateToProps)(Ads);
+export default connect(mapStateToProps)(visibleIf(Ads));

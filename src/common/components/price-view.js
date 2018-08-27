@@ -1,14 +1,12 @@
 // @flow
 import React from 'react';
-import {
-  View,
-  Text,
-} from 'native-base';
+import { View, Text } from 'native-base';
 import {
   currency as defaultCurrency,
   darkGray,
   lighterGray,
 } from '../utils/constants';
+import { visibleIf } from './visible';
 
 export type Props = {
   value: number,
@@ -42,7 +40,7 @@ const styles = {
 const PriceView = ({ value, currency }: Props) => (
   <View style={styles.priceView}>
     <View style={styles.priceContainer}>
-      <Text style={styles.priceCurr}>{currency}{' '}</Text>
+      <Text style={styles.priceCurr}>{currency} </Text>
       <Text style={styles.priceValue}>{value.toFixed(2)}</Text>
     </View>
   </View>
@@ -53,4 +51,5 @@ PriceView.dafaultProps = {
   currency: defaultCurrency,
 };
 
+export const CondPriceView = visibleIf(PriceView);
 export default PriceView;

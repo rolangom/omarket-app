@@ -3,7 +3,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Container, Content } from 'native-base';
 import type { Product } from '../../common/types';
-import Visible from '../../common/components/visible';
 
 import Ads from '../../common/components/ads';
 import CategoryList from './components/categories';
@@ -35,13 +34,16 @@ class HomeScreen extends React.Component<Props> {
         <Content>
           <SearchButton onPress={this.onNavigateSearch} />
           <Greeting enabled={!parent} />
-          <Visible enabled={products.length === 0}>
-            <Ads forceLoad={!parent} />
-          </Visible>
+          <Ads
+            visible={products.length === 0}
+            forceLoad={!parent}
+          />
           {/*{!parent && <Filters />}*/}
-          {!isFilterActive && (
-            <CategoryList parent={parent} onNavigate={this.onNavigate} />
-          )}
+          <CategoryList
+            visible={!isFilterActive}
+            parent={parent}
+            onNavigate={this.onNavigate}
+          />
           <ProductList items={products} onNavigate={this.onNavigateProduct} />
         </Content>
       </Container>

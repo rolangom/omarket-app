@@ -39,7 +39,7 @@ const RelatedProductsDialog = ({
       onPress: onCancel,
     }}
   >
-    {productId && <HorizProductList productId={productId} />}
+    <HorizProductList visible={!!productId} productId={productId} />
   </ConfirmDialog>
 );
 

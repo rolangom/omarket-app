@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { State } from '../../../common/types';
-import Visible from '../../../common/components/visible';
+import { visibleIf } from '../../../common/components/visible';
 import { setUsePoints } from '../../../ducks/global';
 import CommonSwitch from './CommonSwitch';
 
@@ -14,14 +14,12 @@ type Props = {
 };
 
 const UsePointsSwitch = ({ value, onChange, currency, points }: Props) => (
-  <Visible enabled={points > 0}>
-    <CommonSwitch
-      title="Usar puntos de lealtad"
-      subtitle={`- ${currency} ${points}`}
-      value={value}
-      onChange={onChange}
-    />
-  </Visible>
+  <CommonSwitch
+    title="Usar puntos de lealtad"
+    subtitle={`- ${currency} ${points}`}
+    value={value}
+    onChange={onChange}
+  />
 );
 
 export default connect(
@@ -33,4 +31,4 @@ export default connect(
   {
     onChange: setUsePoints,
   },
-)(UsePointsSwitch);
+)(visibleIf(UsePointsSwitch));

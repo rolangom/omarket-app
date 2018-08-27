@@ -1,10 +1,11 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
+import { NavigationActions, StackActions } from 'react-navigation';
 import { Container, Content, List, Button, Text, View } from 'native-base';
 
 import CartListItem from './components/list-item';
-import PriceView from '../../common/components/price-view';
+import PriceView, { CondPriceView } from '../../common/components/price-view';
 import Ads from '../../common/components/ads';
 import Link from '../../common/components/link';
 import type { CartItem, State } from '../../common/types';
@@ -18,7 +19,6 @@ import Prompt from '../../libs/react-native-prompt';
 import ArchiveView from './components/ArchiveView';
 import ExpressSwitch from './components/ExpressSwitch';
 import UsePointsSwitch from './components/UsePointsSwitch';
-import Visible from '../../common/components/visible';
 
 export type Props = {
   currency: string,
@@ -88,13 +88,16 @@ class CartScreen extends React.Component<Props, CompState> {
             style={styles.list}
           />
           <ExpressSwitch />
-          <Visible enabled={subTotal > points}>
-            <UsePointsSwitch />
-          </Visible>
-          <PriceView value={subTotal} currency={currency} />
-          <Visible enabled={discounts > 0}>
-            <PriceView value={discounts} currency={`- Desc. ${currency}`} />
-          </Visible>
+          <UsePointsSwitch visible={subTotal > points && points > 0} />
+          <PriceView
+            value={subTotal}
+            currency={currency}
+          />
+          <CondPriceView
+            visible={discounts > 0}
+            value={discounts}
+            currency={`- Desc. ${currency}`}
+          />
           <PriceView
             value={taxTotal}
             currency={`ITBIS ${currency}`}
@@ -139,7 +142,13 @@ const mapStateToProps = (state: State, { navigation }): Props => ({
     getCartItemsSubTotalPrice(state) +
     (state.global.isRushOrder ? parseFloat(state.global.rushPrice) : 0),
   lastProdIdAdded: state.global.lastProdIdAdded,
-  onContinueShopping: () => navigation.goBack(null),
+  onContinueShopping: () => {
+    const actionToDispatch = NavigationActions.navigate({
+      routeName: 'Start',
+      action: StackActions.popToTop(),
+    });
+    navigation.dispatch(actionToDispatch);
+  },
 });
 
 const mapDispatchToProps = dispatch => ({

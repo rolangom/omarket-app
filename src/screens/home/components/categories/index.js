@@ -5,10 +5,11 @@ import { List } from 'native-base';
 import CategoryListItem from './list-item';
 import type { Category, State } from '../../../../common/types';
 import { getCategories } from '../../../../ducks/categories/selectors';
+import { visibleIf } from '../../../../common/components/visible';
 
 export type Props = {
   items: Category[],
-  onNavigate: (string) => void,
+  onNavigate: string => void,
 };
 
 class CategoryList extends React.Component<Props> {
@@ -23,17 +24,11 @@ class CategoryList extends React.Component<Props> {
   );
   render() {
     const { items } = this.props;
-    return (
-      <List
-        dataArray={items}
-        renderRow={this.renderItem}
-      />
-    );
+    return <List dataArray={items} renderRow={this.renderItem} />;
   }
 }
 
 const mapStateToProps = (state: State, props: Props) => ({
   items: getCategories(state, props.parent),
 });
-export default connect(mapStateToProps)(CategoryList);
-
+export default connect(mapStateToProps)(visibleIf(CategoryList));

@@ -17,4 +17,14 @@ class Visible extends React.Component<Props> {
   }
 }
 
+type HOCProps = {
+  visible: boolean,
+};
+
+export const visibleIf = (WrapedVisibleIfComponent: React.Node<*>) => (props: HOCProps) => {
+  return props.visible
+    ? <WrapedVisibleIfComponent {...props} />
+    : null;
+};
+
 export default Visible;
