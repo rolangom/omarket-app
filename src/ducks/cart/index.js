@@ -29,6 +29,11 @@ export const postCartProduct = createAction(
   (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
   (p, q, o, noNavigate) => ({ prevent: false, noNavigate }),
 );
+export const incrCartProduct = createAction(
+  'INCR_CART_PRODUCT',
+  (productID: string, offerID: ?string) => ({ productID, offerID }),
+  () => ({ prevent: false }),
+);
 export const changeCartProductQty = createAction(
   'CHANGE_CART_PRODUCT_QTY',
   (productID: string, qty: number) => ({ productID, qty }),
@@ -58,6 +63,13 @@ const byId = createReducer(
       state: KeysOf<CartItem>,
       { productID, qty }: CartItem,
     ) => setImmutable(state, `${productID}.qty`, qty),
+    [incrCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => ({
+      ...state,
+      [item.productID]: {
+        ...item,
+        qty: ((state[item.productID] && state[item.productID].qty) || 0) + 1,
+      },
+    }),
     [changeCartProductDescr]: (
       state: KeysOf<CartItem>,
       { productID, descr }: CartItem,
@@ -74,6 +86,8 @@ const allIds = createReducer(
     [setCartProducts]: (state: string[], cart: KeysOf<CartItem>) =>
       Object.keys(cart),
     [postCartProduct]: (state: string[], item: CartItem) =>
+      state.concat(item.productID).filter(uniqFilterFn),
+    [incrCartProduct]: (state: string[], item: CartItem) =>
       state.concat(item.productID).filter(uniqFilterFn),
     // [changeCartProductQty]: (state: string[]) => state,
     [deleteCartProduct]: (state: string[], productID: string) =>
@@ -175,7 +189,7 @@ export const requestReserveCartProdLogic = createLogic({
 });
 
 export const reserveCartLogic = createLogic({
-  type: [postCartProduct.getType(), changeCartProductQty.getType()],
+  type: [postCartProduct.getType(), changeCartProductQty.getType(), incrCartProduct.getType()],
   validate({ action }, next, reject) {
     console.log('reserveCartLogic', action);
     const { prevent = false } = action.meta;

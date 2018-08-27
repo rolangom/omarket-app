@@ -34,6 +34,7 @@ class ProductList extends React.Component<Props> {
       qty={item.qty}
       imgURL={item.fileURL}
       onPress={this.props.onNavigate}
+      addButton
     />
   );
   render() {

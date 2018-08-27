@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View, Dimensions, TouchableOpacity } from 'react-native';
-import { Text } from 'native-base';
+import { Text, Button } from 'native-base';
 import OptImage from '../../../../common/components/opt-image';
 import {
   getOfferPrice,
@@ -14,6 +14,7 @@ import {
   defaultEmptyArr,
 } from '../../../../common/utils/constants';
 import type { Offer, State } from '../../../../common/types';
+import { incrCartProduct } from '../../../../ducks/cart';
 
 export type Props = {
   id: string,
@@ -24,7 +25,9 @@ export type Props = {
   price: number,
   qty: number,
   onPress: string => void,
+  add1ToCart: () => void,
   offer?: ?Offer,
+  addButton: boolean,
 };
 
 const { width } = Dimensions.get('window');
@@ -55,6 +58,7 @@ const styles = {
     fontSize: 12,
     flex: 1,
     fontFamily: 'Roboto_regular',
+    fontWeight: 'bold',
     color: darkGray,
   },
   subtitle: {
@@ -73,17 +77,40 @@ const styles = {
     color: darkGray,
     textDecorationLine: 'line-through',
   },
+  addButton: {
+    position: 'absolute',
+    right: 0,
+    top: (size * 1.15) - 30,
+  },
 };
 
 class ProductListItem extends React.Component<Props> {
   onPress = () => this.props.onPress(this.props.value);
   render() {
-    const { title, descr, imgURL, price, offer } = this.props;
+    const {
+      title,
+      descr,
+      imgURL,
+      price,
+      offer,
+      addButton,
+      add1ToCart,
+    } = this.props;
     console.log('Product ', title, offer);
     return (
       <TouchableOpacity onPress={this.onPress} style={styles.container}>
         <View style={styles.item}>
           <OptImage uri={imgURL} size={size} imgStyle={styles.imgStyle} />
+          {addButton && (
+            <Button
+              style={styles.addButton}
+              bordered
+              small
+              onPress={add1ToCart}
+            >
+              <Text>+1</Text>
+            </Button>
+          )}
           <View style={styles.content}>
             <View style={styles.row}>
               <Text style={styles.title} numberOfLines={1}>
@@ -120,4 +147,17 @@ const mapStateToProps = (state: State, { id }: Props) => {
   };
 };
 
-export default connect(mapStateToProps)(ProductListItem);
+const mapDispatchToProps = (dispatch, props: Props) => ({
+  // add1ToCart: (offer: Offer) => dispatch(postCartProduct(props.id, 1, offer, true)),
+  add1ToCart: (offer: Offer) => dispatch(incrCartProduct(props.id, offer && offer.id)),
+});
+
+const mergeProps = (statePros, dispatchProps, ownProps) => ({
+  ...statePros,
+  ...dispatchProps,
+  ...ownProps,
+  add1ToCart: () => dispatchProps.add1ToCart(statePros.offer),
+});
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
+  ProductListItem,
+);
