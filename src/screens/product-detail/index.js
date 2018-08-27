@@ -2,7 +2,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
-import { Container, Content, Text, View } from 'native-base';
+import { Container, Content, Text, View, Footer, FooterTab } from 'native-base';
+import { Constants } from 'expo';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import OptImage from '../../common/components/opt-image';
 import QtyForm from '../../common/components/qty-form';
@@ -22,6 +24,12 @@ import BrandRelatedHList from '../../common/components/BrandRelatedHList';
 const { width } = Dimensions.get('window');
 
 const styles = {
+  content: {
+    flex: 1,
+  },
+  footer: {
+    height: Constants.statusBarHeight * 3,
+  },
   image: {
     width: width - 10,
     height: (width - 10) * 1.15,
@@ -67,30 +75,35 @@ class ProductDetailScreen extends React.Component<Props> {
     const secureQty = parseInt(qty, 10);
     return (
       <Container>
-        <Content>
-          <View>
-            <Price amount={offer ? getOfferPrice(price, offer) : price} />
-            {offer && isOfferDiscount(offer) &&
-              <Price isSub amount={price} />
-            }
+        <KeyboardAwareScrollView>
+          <View style={styles.content}>
+            <View>
+              <Price amount={offer ? getOfferPrice(price, offer) : price} />
+              {offer && isOfferDiscount(offer) &&
+                <Price isSub amount={price} />
+              }
+            </View>
+            <View style={styles.center}>
+              <OptImage uri={fileURL} size={width} imgStyle={styles.image} />
+            </View>
+            <View style={styles.detail}>
+              <Text style={styles.detailTitle}>{offer ? offer.title : name}</Text>
+              {offer &&
+                <Text style={styles.detailSubtitle}>
+                  Oferta válida: {offer.beginDate.toLocaleDateString()}
+                  - {offer.endDate.toLocaleDateString()}
+                </Text>
+              }
+              <Text style={styles.detailSubtitle}>{descr}</Text>
+              {offer && isOfferFreeIncluded(offer) &&
+                <FreeIncludedList offerId={offer.id} />
+              }
+            </View>
+            <BrandRelatedHList productId={id} />
+            <RelatedProductsDialog />
           </View>
-          <View style={styles.center}>
-            <OptImage uri={fileURL} size={width} imgStyle={styles.image} />
-          </View>
-          <View style={styles.detail}>
-            <Text style={styles.detailTitle}>{offer ? offer.title : name}</Text>
-            {offer &&
-              <Text style={styles.detailSubtitle}>
-                Oferta válida: {offer.beginDate.toLocaleDateString()}
-                - {offer.endDate.toLocaleDateString()}
-              </Text>
-            }
-            <Text style={styles.detailSubtitle}>{descr}</Text>
-            {offer && isOfferFreeIncluded(offer) &&
-              <FreeIncludedList offerId={offer.id} />
-            }
-          </View>
-          <BrandRelatedHList productId={id} />
+        </KeyboardAwareScrollView>
+        <View style={styles.footer}>
           <CondContent
             cond={secureQty > 0}
             defaultText="Existencia 0"
@@ -98,8 +111,7 @@ class ProductDetailScreen extends React.Component<Props> {
           >
             <QtyForm defaultValue={1} max={secureQty} onSubmit={onSubmit} />
           </CondContent>
-          <RelatedProductsDialog />
-        </Content>
+        </View>
       </Container>
     );
   }
