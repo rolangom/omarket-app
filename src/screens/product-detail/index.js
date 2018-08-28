@@ -2,7 +2,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Dimensions } from 'react-native';
-import { Container, Content, Text, View, Footer, FooterTab } from 'native-base';
+import { Container, Text, View } from 'native-base';
 import { Constants } from 'expo';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
@@ -64,11 +64,11 @@ export type Props = {
 };
 
 class ProductDetailScreen extends React.Component<Props> {
-  onNavigateProduct = (id: string) =>
-    this.props.navigation.navigate('ProductDetail', { productID: id });
   render() {
     const {
-      product: { id, price, name, descr, qty, fileURL },
+      product: {
+        id, price, name, descr, qty, fileURL,
+      },
       offer,
       onSubmit,
     } = this.props;
@@ -150,6 +150,4 @@ const mergeProps = (stateProps: Props, dispatchProps: Props, ownProps: Props) =>
     ),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  ProductDetailScreen,
-);
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ProductDetailScreen);

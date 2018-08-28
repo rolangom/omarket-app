@@ -16,6 +16,9 @@ const styles = {
     borderBottomColor: 'rgba(0,0,0,.15)',
     borderBottomWidth: 2,
   },
+  icon: {
+    fontSize: 18,
+  },
 };
 
 type Props = {
@@ -30,7 +33,7 @@ const SearchButton = (props: Props) => (
         transparent
         onPress={props.onPress}
       >
-        <Icon name="ios-search" />
+        <Icon name="ios-search" style={styles.icon} />
       </Button>
       <Text>Buscar...</Text>
     </View>

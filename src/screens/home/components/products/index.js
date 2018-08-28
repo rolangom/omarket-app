@@ -7,7 +7,8 @@ import type { Product } from '../../../../common/types';
 
 export type Props = {
   items: Product[],
-  onNavigate: (string) => void,
+  addButton: boolean,
+  navigation: { navigate(string, Object): void },
 };
 
 export type ItemProps = {
@@ -33,8 +34,7 @@ class ProductList extends React.Component<Props> {
       price={item.price}
       qty={item.qty}
       imgURL={item.fileURL}
-      onPress={this.props.onNavigate}
-      addButton
+      addButton={this.props.addButton}
     />
   );
   render() {

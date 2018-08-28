@@ -1,4 +1,6 @@
+// @flow
 import * as React from 'react';
+import { withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
 import { View, Dimensions, TouchableOpacity } from 'react-native';
 import { Text, Button } from 'native-base';
@@ -15,6 +17,7 @@ import {
 } from '../../../../common/utils/constants';
 import type { Offer, State } from '../../../../common/types';
 import { incrCartProduct } from '../../../../ducks/cart';
+import { setShowRelatedProdId } from '../../../../ducks/global';
 
 export type Props = {
   id: string,
@@ -28,6 +31,8 @@ export type Props = {
   add1ToCart: () => void,
   offer?: ?Offer,
   addButton: boolean,
+  navigation: { navigate(string, Object): void },
+  hideRelatedProductIdModal(): void,
 };
 
 const { width } = Dimensions.get('window');
@@ -80,12 +85,17 @@ const styles = {
   addButton: {
     position: 'absolute',
     right: 0,
-    top: (size * 1.15) - 30,
+    top: size * 1.15 - 30,
   },
 };
 
 class ProductListItem extends React.Component<Props> {
-  onPress = () => this.props.onPress(this.props.value);
+  onNavigateProduct = () => {
+    this.props.navigation.navigate('ProductDetail', {
+      productID: this.props.id,
+    });
+    this.props.hideRelatedProductIdModal();
+  };
   render() {
     const {
       title,
@@ -98,7 +108,10 @@ class ProductListItem extends React.Component<Props> {
     } = this.props;
     console.log('Product ', title, offer);
     return (
-      <TouchableOpacity onPress={this.onPress} style={styles.container}>
+      <TouchableOpacity
+        onPress={this.onNavigateProduct}
+        style={styles.container}
+      >
         <View style={styles.item}>
           <OptImage uri={imgURL} size={size} imgStyle={styles.imgStyle} />
           {addButton && (
@@ -148,8 +161,9 @@ const mapStateToProps = (state: State, { id }: Props) => {
 };
 
 const mapDispatchToProps = (dispatch, props: Props) => ({
-  // add1ToCart: (offer: Offer) => dispatch(postCartProduct(props.id, 1, offer, true)),
-  add1ToCart: (offer: Offer) => dispatch(incrCartProduct(props.id, offer && offer.id)),
+  hideRelatedProductIdModal: () => dispatch(setShowRelatedProdId(false)),
+  add1ToCart: (offer: Offer) =>
+    dispatch(incrCartProduct(props.id, offer && offer.id)),
 });
 
 const mergeProps = (statePros, dispatchProps, ownProps) => ({
@@ -159,5 +173,5 @@ const mergeProps = (statePros, dispatchProps, ownProps) => ({
   add1ToCart: () => dispatchProps.add1ToCart(statePros.offer),
 });
 export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  ProductListItem,
+  withNavigation(ProductListItem),
 );
