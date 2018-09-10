@@ -14,23 +14,28 @@ type Timestamp = {
   nanoseconds: number,
 };
 
-const toLocalStrEsDo = (date: Date) =>
+export const toDate = (timestamp: Timestamp | Date): Date =>
+  timestamp instanceof Date
+    ? timestamp
+    : timestamp.toDate();
+
+const toLocalStrEsDo = (date: Date): string =>
   date.toLocaleString('es-DO');
 
-export const tsToDateStr = (timestamp: Timestamp | Date) =>
+export const tsToDateStr = (timestamp: Timestamp | Date): string =>
   timestamp instanceof Date
     ? toLocalStrEsDo(timestamp)
     : timestamp.toDate !== undefined
     ? toLocalStrEsDo(timestamp.toDate())
     : toLocalStrEsDo(new Date(timestamp.seconds * 1000));
 
-export function getFmtDocs(querySnapshot) {
+export function getFmtDocs(querySnapshot): Array {
   return querySnapshot && querySnapshot.docs
     ? querySnapshot.docs.map(it => ({ id: it.id, ...it.data() }))
     : [];
 }
 
-export function getRealtDocs(snapshot) {
+export function getRealtDocs(snapshot): Array {
   const data = [];
   snapshot.forEach(docSnapshot => (
     data.push({ id: docSnapshot.key, ...docSnapshot.val() }), false
@@ -38,7 +43,7 @@ export function getRealtDocs(snapshot) {
   return data;
 }
 
-export const getNavParamsFromProp = (props: Object) =>
+export const getNavParamsFromProp = (props: Object): Object =>
   (props &&
     props.navigation &&
     props.navigation.state &&
@@ -50,16 +55,16 @@ const sortFnAsc = (attr: string) => (a, b) =>
 const sortFnDesc = (attr: string) => (a, b) =>
   (b[attr] || 100) - (a[attr] || 100);
 
-export const sortBy = (data: Array<any>, attr: string, asc: boolean = true) =>
+export const sortBy = (data: Array<any>, attr: string, asc: boolean = true): Array<any> =>
   data.sort((asc ? sortFnAsc : sortFnDesc)(attr));
 
 export const getPriceWithCurrency = (
   price: number,
   pCurrency: string = currency,
-) => `${pCurrency} ${price || 0}`;
+): string => `${pCurrency} ${price || 0}`;
 
-export function getOfferPrice(price: number, offer: Offer) {
-  switch (offer.type) {
+export function getOfferPrice(price: number, offer: ?Offer): number {
+  switch (offer && offer.type) {
     case 'percentage':
       return price - (price * offer.discount * 0.01);
     case 'fixedAmount':
@@ -69,8 +74,29 @@ export function getOfferPrice(price: number, offer: Offer) {
   }
 }
 
-export const isOfferDiscount = (offer: Offer) => {
-  switch (offer.type) {
+export const getSecureTaxB1 = (taxFactor: ?number): number =>
+  (taxFactor === undefined)
+    ? 0
+    : taxFactor > 1
+    ? taxFactor * 0.01
+    : taxFactor;
+
+export const round2 = (num: number): number =>
+  Math.round(num * 100) / 100;
+
+export const getPriceWithTax = (
+  price: number,
+  taxFactor: ?number,
+  offer: ?Offer,
+  withCurrency: boolean = false,
+): number => {
+  const priceWithOffer = offer ? getOfferPrice(price, offer) : price;
+  const priceRounded = round2(priceWithOffer * (1 + getSecureTaxB1(taxFactor)));
+  return withCurrency ? getPriceWithCurrency(priceRounded) : priceRounded;
+};
+
+export const isOfferDiscount = (offer: ?Offer): boolean => {
+  switch (offer && offer.type) {
     case 'percentage':
     case 'fixedAmount':
       return true;
@@ -79,29 +105,29 @@ export const isOfferDiscount = (offer: Offer) => {
   }
 };
 
-export const isOfferFreeIncluded = (offer: Offer) =>
-  offer.type === 'freeIncluded';
+export const isOfferFreeIncluded = (offer: Offer): boolean =>
+  offer && offer.type === 'freeIncluded';
 
-export function padStart(num: number, places: number, char: string = '0') {
+export function padStart(num: number, places: number, char: string = '0'): string {
   const zero = places - num.toString().length + 1;
   return Array(+(zero > 0 && zero)).join(char) + num;
 }
 
-export const getLast4Chars = (number: string) => number.slice(-4);
+export const getLast4Chars = (number: string): string => number.slice(-4);
 
-export const replaceSpace = (str: string, replacement = '') =>
+export const replaceSpace = (str: string, replacement = ''): string =>
   str.replace(/ /g, replacement);
 
-export const impureSetObjKey = (obj: Object) => (acc: Object, key: string) => (
+export const impureSetObjKey = (obj: Object) => (acc: Object, key: string): string => (
   (acc[key] = obj[key]), acc
 );
 
-export const reduceFnByID = (acc: Object, it: Object) => {
+export const reduceFnByID = (acc: Object, it: Object): Object => {
   acc[it.id] = it;
   return acc;
 };
 
-export function setImmutable(obj: any, attr: string, value: any) {
+export function setImmutable(obj: Object, attr: string, value: any): Object|Array {
   const attrArr = attr.split('.');
   const [tattr, nattr] = attrArr;
   return Object.assign({}, obj, {
@@ -111,33 +137,33 @@ export function setImmutable(obj: any, attr: string, value: any) {
   });
 }
 
-export function deleteImmutable(obj: Object, key: string) {
+export function deleteImmutable(obj: Object, key: string): Object|Array {
   const newObj = { ...obj };
   delete newObj[key];
   return newObj;
 }
 
-export const filterKeys = (obj: Object, keys: string[]) =>
+export const filterKeys = (obj: Object, keys: string[]): Object =>
   Object.keys(obj)
     .filter((key: string) => !!obj[key] && keys.includes(key))
     .reduce(impureSetObjKey(obj), {});
 
-export const uniqFilterFn = (value: any, index: number, arr: Array<any>) =>
+export const uniqFilterFn = (value: any, index: number, arr: Array<any>): boolean =>
   arr.indexOf(value) === index;
 
-export const inputLocationRequired = value => (
+export const inputLocationRequired = (value: ?Object): ?string =>
   value && value.latitude
     ? undefined
-    : 'Required'
-);
-export const inputRequired = value => (value ? undefined : 'Required');
-export const inputCVCValidate = (value: string) =>
+    : 'Required';
+
+export const inputRequired = (value: ?any): ?string => (value ? undefined : 'Required');
+export const inputCVCValidate = (value: ?string) =>
   value && value.length >= 3 ? undefined : 'Required';
-export const inputIsPropValid = (object: CreditCardForm) =>
+export const inputIsPropValid = (object: ?CreditCardForm) =>
   object && object.valid ? undefined : 'Tarjeta inválida.';
-export const parseCreditCardFormValue = (form: CreditCardForm) =>
+export const parseCreditCardFormValue = (form: ?CreditCardForm) =>
   form && form.values;
-export const parseCreditCardNumber = (form: CreditCardForm) =>
+export const parseCreditCardNumber = (form: ?CreditCardForm) =>
   form && {
     ...form,
     values: { ...form.values, number: replaceSpace(form.values.number) },
@@ -146,17 +172,17 @@ export const parseCreditCardNumber = (form: CreditCardForm) =>
 export const composeValidators = (...validators) => value =>
   validators.reduce((error, validator) => error || validator(value), undefined);
 
-export const queryDoc: Promise = (firebase: Firebase, path: string) =>
+export const queryDoc = (firebase: Firebase, path: string): Promise =>
   firebase
     .database()
     .ref(path)
     .once('value');
 
-export const upsertDoc: Promise = (
+export const upsertDoc = (
   firebase,
   path: string,
   { key, ...data }: Object,
-) =>
+): Promise =>
   key
     ? firebase
         .database()
@@ -168,18 +194,18 @@ export const upsertDoc: Promise = (
         .ref(path)
         .push(data);
 
-export const deleteDoc: Promise = (firebase, path: string) =>
+export const deleteDoc = (firebase, path: string): Promise =>
   firebase
     .database()
     .ref(path)
     .remove();
 
-export const upsertRealtDoc: Promise = (
+export const upsertRealtDoc = (
   { id, ...data }: Object,
   dbRef: Object,
-) => (id ? dbRef.child(id).set(data) : dbRef.push(data));
+): Promise => (id ? dbRef.child(id).set(data) : dbRef.push(data));
 
-export const mapCreditCardTypeAsIconName = (type: string) => {
+export const mapCreditCardTypeAsIconName = (type: string): string => {
   switch (type) {
     case 'visa':
       return 'cc-visa';
@@ -198,7 +224,7 @@ export const mapCreditCardTypeAsIconName = (type: string) => {
   }
 };
 
-export const mapCreditCardTypeName = (type: string) => {
+export const mapCreditCardTypeName = (type: string): string => {
   switch (type) {
     case 'visa':
       return 'Visa';
@@ -217,7 +243,7 @@ export const mapCreditCardTypeName = (type: string) => {
   }
 };
 
-export const getOrderStatusText = (status: OrderStatus) => {
+export const getOrderStatusText = (status: OrderStatus): string => {
   switch (status) {
     case 'reviewed':
       return 'Revisada';

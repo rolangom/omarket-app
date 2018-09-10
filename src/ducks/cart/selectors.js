@@ -2,28 +2,18 @@
 
 import type { CartItem, State, Product } from '../../common/types';
 import { defaultEmptyArr } from '../../common/utils/constants';
-import { isOfferDiscount, getOfferPrice } from '../../common/utils';
+import { isOfferDiscount, getOfferPrice, getSecureTaxB1 } from '../../common/utils';
 
 export const getCartItems = (state: State): CartItem =>
-  state
-    .cartItems
-    .allIds
-    .map((id: string) => state.cartItems.byId[id]);
-const getOfferPriceOr = (productID: string, state: State) => {
-const getProductTax = (product: Product): number =>
-  (product.taxFactor === undefined)
-    ? 0
-    : product.taxFactor > 1
-    ? product.taxFactor * 0.01
-    : product.taxFactor;
+  Object.values(state.cartItems.byId);
 
 const getOfferPriceOr = (useTax: boolean, productID: string, state: State): number => {
-  const product = state.products.byId[productID];
+  const product: Product = state.products.byId[productID];
   const [offerId] = state.offers.rel[productID] || defaultEmptyArr;
   const offer = state.offers.byId[offerId];
   const taxFactor =
     (useTax)
-      ? getProductTax(product)
+      ? getSecureTaxB1(product.taxFactor)
       : 1;
   return offer && isOfferDiscount(offer)
     ? getOfferPrice(product.price, offer) * taxFactor

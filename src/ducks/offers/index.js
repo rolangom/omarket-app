@@ -1,17 +1,16 @@
 // @flow
 import { combineReducers } from 'redux';
+import { firestore } from 'firebase';
+import type { DocumentSnapshot } from '@firebase/firestore-types';
 import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 
 import type { Offer, KeysOf, NormalizdRel } from '../../common/types';
 import { setIsLoading, addError } from '../global';
-import { getFmtDocs, reduceFnByID } from '../../common/utils';
-import { getUserGender, isTodayUserBirthday } from '../user/selectors';
+import { reduceFnByID, toDate } from '../../common/utils';
+import { isTodayUserBirthday } from '../user/selectors';
 
-export const fetchOffers = createAction(
-  'FETCH_OFFERS',
-  (force: boolean = false) => ({ force }),
-);
+export const fetchOffers = createAction('FETCH_OFFERS');
 export const setOffers = createAction('SET_OFFERS');
 
 export const fetchOffersLogic = createLogic({
@@ -19,7 +18,8 @@ export const fetchOffersLogic = createLogic({
   process: async ({ db, getState }, dispatch, done) => {
     dispatch(setIsLoading(true));
     try {
-      const today = new Date();
+      const today = firestore.Timestamp.now(); // new Date();
+      console.log('fetchOffersLogic');
       const docsSnapshots = await db
         .collection('offers')
         .where('endDate', '>=', today)
@@ -27,14 +27,23 @@ export const fetchOffersLogic = createLogic({
       const state = getState();
       const isUserBirthday = isTodayUserBirthday(state);
       const userGender = (state && state.user && state.user.gender) || 'all';
-      const offers: Offer[] = getFmtDocs(docsSnapshots)
-        .filter(it => it.beginDate <= today)
-        .filter(
-          (it: Offer) => !it.isBirthday || (isUserBirthday && it.isBirthday),
-        )
-        .filter(
-          (it: Offer) => it.toGender === 'all' || it.toGender === userGender,
-        );
+      const reducerFn = (acc: Offer[], it: DocumentSnapshot<Offer>) => {
+        const offer = it.data();
+        const valid: boolean = (offer.beginDate <= today) &&
+          (!offer.isBirthday || (isUserBirthday && offer.isBirthday)) &&
+          (offer.toGender === 'all' || offer.toGender === userGender);
+        valid && acc.push({
+          ...offer,
+          id: it.id,
+          beginDate: toDate(offer.beginDate),
+          endDate: toDate(offer.endDate),
+        });
+        return acc;
+      };
+      const offers: Offer[] = docsSnapshots
+        .docs
+        .reduce(reducerFn, []);
+      console.log('offers filtered', offers);
       dispatch(setOffers(offers));
     } catch (error) {
       console.warn('fetchOffers error', error);

@@ -23,17 +23,11 @@ const styles = {
 };
 
 class ProductList extends React.Component<Props> {
-  keyExtractor = (item: Product) => item.id;
+  keyExtractor = (item: Product): string => item.id;
   renderItem = ({ item }: ItemProps) => (
     <ProductListItem
-      id={item.id}
       key={item.id}
-      value={item.id}
-      title={item.name}
-      descr={item.descr}
-      price={item.price}
-      qty={item.qty}
-      imgURL={item.fileURL}
+      item={item}
       addButton={this.props.addButton}
     />
   );

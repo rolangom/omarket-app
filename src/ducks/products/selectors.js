@@ -13,8 +13,10 @@ export function getProducts(state: State, category: string): Product[] {
     : isPropFiltered
       ? allProducts.filter(
           (it: Product) =>
-            (it.contents && it.contents.includes(state.global.filters.contents)) ||
-            (it.usefulAs && it.usefulAs.includes(state.global.filters.utilities)),
+            (it.contents &&
+              it.contents.includes(state.global.filters.contents)) ||
+            (it.usefulAs &&
+              it.usefulAs.includes(state.global.filters.utilities)),
         )
       : [];
 }
@@ -29,15 +31,21 @@ export function getRelatedProducts(prodId: string, state: State): Product[] {
   }, []);
 }
 
-export function getBrandRelatedProducts(prodId: string, state: State): Product[] {
+export function getOneRelatedProduct(prodId: string, state: State): ?Product {
   const product: Product = state.products.byId[prodId];
-  return Object
-    .values(state.products.byId)
-    .filter((it: Product) =>
-      it.id !== prodId &&
-        it.brand !== undefined &&
-        it.brand === product.brand
-    );
+  const [rpid]: string[] = Object.keys(product.relatedProds);
+  return state.products.byId[rpid];
+}
+
+export function getBrandRelatedProducts(
+  prodId: string,
+  state: State,
+): Product[] {
+  const product: Product = state.products.byId[prodId];
+  return Object.values(state.products.byId).filter(
+    (it: Product) =>
+      it.id !== prodId && it.brand !== undefined && it.brand === product.brand,
+  );
 }
 
 export default null;
