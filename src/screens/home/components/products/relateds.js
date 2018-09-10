@@ -12,7 +12,7 @@ export type Props = {
   visible: boolean,
 };
 
-const mapStateToProps = (state: State, { productId }: Props) => ({
+const mapStateToProps = (state: State, { productId }: Props): Props => ({
   items: productId ? getRelatedProducts(productId, state) : defaultEmptyArr,
 });
 

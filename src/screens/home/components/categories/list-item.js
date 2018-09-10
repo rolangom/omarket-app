@@ -13,7 +13,7 @@ import {
 } from 'native-base';
 
 import OptThumbnail from '../../../../common/components/opt-thumbnail';
-import { lightGray } from '../../../../common/utils/constants';
+import { lightGray, gray } from '../../../../common/utils/constants';
 
 export type Props = {
   imgURL?: ?string,
@@ -29,9 +29,10 @@ const styles = {
     height: 45,
   },
   text: {
-    color: lightGray,
+    color: gray,
     textAlign: 'center',
-    fontSize: 22,
+    fontWeight: 'bold',
+    fontSize: 20,
   },
   image: {
     height: 45,

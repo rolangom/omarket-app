@@ -36,7 +36,7 @@ export type Product = {
   qty: number,
   contents: string[],
   usefulAs: string[],
-  relatedProds: {
+  relatedProds?: {
     [string]: boolean,
   },
 };

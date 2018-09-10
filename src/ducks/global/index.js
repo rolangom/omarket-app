@@ -26,7 +26,7 @@ export const addMessage = createAction('ADD_MESSAGE', (type, title, text) => ({
 export const deleteMessage = createAction('DELETE_MESSAGE');
 export const initAppData = createAction('INIT_APP_DATA');
 
-export const fetchConfigs = createAction('FECTH_CONFIGS');
+export const fetchConfigs = createAction('FETCH_CONFIGS');
 export const setConfigs = createAction('SET_CONFIGS');
 export const setConfig = createAction('SET_CONFIG');
 export const setFilters = createAction('SET_FILTERS', (key, value) => ({

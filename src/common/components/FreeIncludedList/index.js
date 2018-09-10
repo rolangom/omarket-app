@@ -29,7 +29,7 @@ export const FreeIncluded = ({ items }: Props) => (
   </View>
 );
 
-const mapStateToProps = (state: State, { offerId }: Props) => {
+const mapStateToProps = (state: State, { offerId }: Props): Props => {
   const offer = state.offers.byId[offerId];
   return {
     items: (offer.products || defaultEmptyArr).map(

@@ -149,7 +149,8 @@ export default (variables = variable) => {
         ".note": {
           color: variables.listNoteColor,
           fontWeight: "200"
-        }
+        },
+        fontWeight: "bold",
       },
       alignSelf: null,
       alignItems: null
@@ -351,6 +352,7 @@ export default (variables = variable) => {
         "NativeBase.Text": {
           textAlign: "center",
           color: "#8F8E95",
+          fontWeight: 'bold',
           fontSize: 17
         },
         "NativeBase.IconNB": {
