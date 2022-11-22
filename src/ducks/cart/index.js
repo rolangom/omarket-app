@@ -4,12 +4,13 @@ import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 import { NavigationActions } from 'react-navigation';
 
-import type { CartItem, KeysOf } from '../../common/types';
+import type { CartItem, KeysOf, Product } from '../../common/types';
 import {
   setImmutable,
   deleteImmutable,
   uniqFilterFn,
-  assert, multiDispatch,
+  assert,
+  multiDispatch,
 } from '../../common/utils';
 import {
   addError,
@@ -19,11 +20,12 @@ import {
   setReserveConfirmVisible,
 } from '../global';
 import { postCurrentCart } from '../savedCarts';
+import { setProducts } from '../products';
 
-export const reqPostCartProduct = createAction(
-  'REQ_POST_CART_PRODUCT',
-  (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
-);
+// export const reqPostCartProduct = createAction(
+//   'REQ_POST_CART_PRODUCT',
+//   (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
+// );
 export const postCartProduct = createAction(
   'POST_CART_PRODUCT',
   (productID: string, qty: number, offerID) => ({ productID, qty, offerID }),
@@ -53,6 +55,15 @@ export const preAlertNoReserveCartProducts = createAction(
 
 const byId = createReducer(
   {
+    [setProducts]: (state: KeysOf<CartItem>, products: Product[]) => {
+      const productsKeys = products.map(it => it.id);
+      return Object.entries(state).reduce(
+        (acc: KeysOf<CartItem>, [key, value]: [string, CartItem]) =>
+          productsKeys.includes(key)
+            ? Object.assign(acc, { [key]: value }) : acc,
+        {}
+      );
+    },
     [setCartProducts]: (state: KeysOf<CartItem>, cart: KeysOf<CartItem>) =>
       cart,
     [postCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => ({
@@ -62,7 +73,7 @@ const byId = createReducer(
     [changeCartProductQty]: (
       state: KeysOf<CartItem>,
       { productID, qty }: CartItem,
-    ) => setImmutable(state, `${productID}.qty`, qty),
+    ) => setImmutable(state, `${productID}.qty`, state[productID].qty + qty),
     [incrCartProduct]: (state: KeysOf<CartItem>, item: CartItem) => ({
       ...state,
       [item.productID]: {
@@ -83,6 +94,15 @@ const byId = createReducer(
 
 const allIds = createReducer(
   {
+    [setProducts]: (state: string[], products: Product[]) => {
+      const productsKeys = products.map(it => it.id);
+      return Object.entries(state).reduce(
+        (acc: string[], key: string) =>
+          productsKeys.includes(key)
+            ? (acc.push(key), acc) : acc,
+        []
+      );
+    },
     [setCartProducts]: (state: string[], cart: KeysOf<CartItem>) =>
       Object.keys(cart),
     [postCartProduct]: (state: string[], item: CartItem) =>
@@ -102,12 +122,18 @@ const reducer = combineReducers({
   allIds,
 });
 
+const doesRelatedProductExists = (products: KeysOf<Product>, product: Product): boolean => {
+  const [relatedId] = Object.keys(product.relatedProds);
+  return !!products[relatedId];
+};
+
 export const postCardProductLogic = createLogic({
   type: postCartProduct.getType(),
   validate({ action, getState }, allow, reject) {
-    console.log('postCardProductLogic action', action);
     // allow(action);
-    (action.payload && action.payload.qty && action.payload.qty > 0
+    (action.payload &&
+      action.payload.qty &&
+      action.payload.qty > 0
       ? allow
       : reject)({
       ...action,
@@ -117,12 +143,19 @@ export const postCardProductLogic = createLogic({
       },
     });
   },
-  process({ action }, dispatch, done) {
+  process({ action, getState }, dispatch, done) {
     console.log('postCardProductLogic process');
     const { noNavigate } = action.meta;
     const { productID } = action.payload;
-    !noNavigate && dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
-    noNavigate && dispatch(setShowRelatedProdId(productID));
+    const { products: { byId: products } } = getState();
+    const product: Product = products[productID];
+    if (!noNavigate)
+      dispatch(NavigationActions.navigate({ routeName: 'Cart' }));
+    if (
+      // noNavigate &&
+      Object.keys(product.relatedProds).length > 0 &&
+      doesRelatedProductExists(products, product)
+    ) dispatch(setShowRelatedProdId(productID));
     done();
   },
 });
@@ -139,12 +172,10 @@ export const requestReserveCartProdLogic = createLogic({
   debounce: 2500,
   process: async ({ getState, firebase, action }, dispatch, done) => {
     try {
-      dispatch(setIsLoading(true));
+      // dispatch(setIsLoading(true));
       const { cartItems: { byId: cart }, user } = getState();
       deleteCartItemsIfEmpty(getState, dispatch);
-      if (!(user && user.uid)) {
-        return;
-      }
+      if (!(user && user.uid)) return;
       const token = await firebase.auth().currentUser.getIdToken();
       const resp = await fetch(
         'https://us-central1-shop-f518d.cloudfunctions.net/reserveProducts',
@@ -163,14 +194,20 @@ export const requestReserveCartProdLogic = createLogic({
       console.log('calcReserveCartLogic resp', jsonResp);
       const { errors = [] } = jsonResp;
       const getProd = productID =>
-        (getState().products.byId[productID] || { id: productID, name: '[???]', qty: 0 });
+        getState().products.byId[productID] || {
+          id: productID,
+          name: '[???]',
+          qty: 0,
+        };
       const getProdName = prod => prod.name;
       errors.map(productID =>
-        dispatch(addInfo(`No quedan ${getProdName(getProd(productID))} suficientes.`)),
+        dispatch(
+          addInfo(`No quedan ${getProdName(getProd(productID))} suficientes.`),
+        ),
       );
       multiDispatch(
         dispatch,
-        ...errors.map((productId) => {
+        ...errors.map(productId => {
           const prod = getProd(productId);
           return changeCartProductQty(productId, prod.qty, true);
         }),
@@ -182,20 +219,22 @@ export const requestReserveCartProdLogic = createLogic({
       console.warn('requestReserveCartProdLogic', err.message);
       dispatch(addError(err.message));
     } finally {
-      dispatch(setIsLoading(false));
+      // dispatch(setIsLoading(false));
       done();
     }
   },
 });
 
 export const reserveCartLogic = createLogic({
-  type: [postCartProduct.getType(), changeCartProductQty.getType(), incrCartProduct.getType()],
+  type: [
+    postCartProduct.getType(),
+    changeCartProductQty.getType(),
+    incrCartProduct.getType(),
+  ],
   validate({ action }, next, reject) {
     console.log('reserveCartLogic', action);
     const { prevent = false } = action.meta;
-    prevent
-      ? reject(action)
-      : next(action);
+    prevent ? reject(action) : next(action);
   },
   process({ action }, dispatch, done) {
     console.log('reserveCartLogic reserveCartLogic');
@@ -223,6 +262,13 @@ export const preAlertNoReserveCartLogic = createLogic({
       dispatch(addError(err.message));
       done();
     }
+  },
+});
+
+export const setCartProductsLogic = createLogic({
+  type: setCartProducts.getType(),
+  validate({ action }, allow, reject) {
+    action.payload ? allow(action) : reject();
   },
 });
 

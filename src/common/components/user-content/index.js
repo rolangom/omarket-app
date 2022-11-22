@@ -23,8 +23,9 @@ const UserContent = ({
   onLoginWithFacebook,
   children,
 }: Props) => (
-  <View>
-    {user ?
+  //<View>
+  //   {
+    user ?
       children
       :
       <Button
@@ -37,8 +38,8 @@ const UserContent = ({
         <Icon name="logo-facebook" />
         <Text>Iniciar con Facebook</Text>
       </Button>
-    }
-  </View>
+    // }
+  //</View>
 );
 
 

@@ -4,15 +4,15 @@ import { createAction, createReducer } from 'redux-act';
 import { createLogic } from 'redux-logic';
 import Expo from 'expo';
 
-import type { User } from '../../common/types';
+import type { User } from 'src/common/types';
 import { setIsLoading, addError } from '../global';
 import {
   filterKeys,
   queryDoc,
   upsertDoc,
   multiDispatch,
-} from '../../common/utils';
-import { FACEBOOK_APPID } from '../../common/utils/constants';
+} from 'src/common/utils';
+import { FACEBOOK_APPID, defaultEmptyObj } from 'src/common/utils/constants';
 import { setAddresses, fetchAddresses } from '../addresses';
 import { setCreditcards, fetchCreditcards } from '../credit-cards';
 import { setCartProducts, reserveCartProducts } from '../cart';
@@ -26,6 +26,7 @@ export const getUser = createAction('GET_USER');
 export const mergeUser = createAction('MERGE_USER');
 export const setUseNCF = createAction('SET_USE_NCF');
 export const getPoints = createAction('GET_USERS_POINTS');
+export const updateTimeWeekdays = createAction('UPDATE_TIME_WEEKDAYS');
 
 const requiredKeys = [
   'displayName',
@@ -38,6 +39,8 @@ const requiredKeys = [
   'taxInfo',
   'usesNCF',
   'points',
+  'avWds',
+  'avTmByWd',
 ];
 
 const reducer = createReducer(
@@ -65,6 +68,11 @@ const onLoggedInFuncs = async (action, firebase, dispatch) => {
   const points = await getUserPoints(firebase, uid);
   const user = doc.exists && { uid, points, ...doc.val() };
   // const user = doc.exists && { uid, ...doc.data() };
+
+  const onError = (error: Error) => {
+    console.warn('onLoggedInFuncs error', error);
+    dispatch(addError(error.message));
+  };
   user &&
     multiDispatch(
       dispatch,
@@ -80,7 +88,7 @@ const onLoggedInFuncs = async (action, firebase, dispatch) => {
     .on(
       'value',
       snapshot => dispatch(setCartProducts(snapshot.val())),
-      error => dispatch(addError(error.message)),
+      onError,
     );
 };
 
@@ -118,7 +126,7 @@ export const getUserLogic = createLogic({
   type: setUserLogged.getType(),
   validate({ action, getState }, allow) {
     const { user } = getState();
-    const { uid } = user || {};
+    const { uid } = user || defaultEmptyObj;
     allow({
       ...action,
       isLogged: !!action.payload,
@@ -184,7 +192,7 @@ export const loginWithFacebookLogic = createLogic({
       );
       if (type === 'success') {
         const credential = firebase.auth.FacebookAuthProvider.credential(token);
-        await firebase.auth().signInWithCredential(credential);
+        await firebase.auth().signInAndRetrieveDataWithCredential(credential);
       } else {
         dispatch(addError('Solicitud cancelada por usuario.'));
       }
@@ -212,6 +220,30 @@ export const logoutLogic = createLogic({
       dispatch(setIsLoading(false));
       done();
     }
+  },
+});
+
+export const updateTimeWeekdaysLogic = createLogic({
+  type: updateTimeWeekdays.getType(),
+  validate({ action, getState }, allow, reject) {
+    const {
+      avTmByWd: newAvTmByWd,
+      avWds: newAvWds,
+    }: User = action.payload;
+    const {
+      user: {
+        avTmByWd,
+        avWds,
+      },
+    } = getState();
+    console.log(
+      'updateTimeWeekdaysLogic ',
+      newAvTmByWd, avTmByWd, avWds, newAvWds,
+      newAvTmByWd === avTmByWd, newAvWds === avWds
+    );
+    (newAvTmByWd === avTmByWd) && (newAvWds === avWds)
+      ? reject(action)
+      : allow(action);
   },
 });
 

@@ -5,6 +5,9 @@ export default (variables = variable) => {
     color: variables.textColor,
     fontSize: variables.fontSizeH2,
     lineHeight: variables.lineHeightH2,
+    '.bold': {
+      fontWeight: 'bold',
+    },
   };
 
   return h2Theme;

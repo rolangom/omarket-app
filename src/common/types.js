@@ -1,5 +1,20 @@
 // @flow
 
+export type KeysOf<T> = {
+  [key: string]: T,
+};
+
+export type Normalizd<T> = {
+  byId: KeysOf<T>,
+  allIds: string[],
+};
+
+export type NormalizdRel<T> = {
+  byId: KeysOf<T>,
+  allIds: string[],
+  rel: KeysOf<string[]>,
+};
+
 export type onNavigateParams = {
   path: string,
   params?: any,
@@ -27,15 +42,18 @@ export type Product = {
   category: string,
   name: string,
   descr?: ?string,
-  brand: ?string,
+  nutritionFacts?: string,
+  brand?: ?string,
   fileURL?: ?string,
+  nutriFactsURL?: ?string,
   isActive?: boolean,
-  orderID: number,
+  orderID?: ?number,
   price: number,
-  taxFactor: number,
+  pricePer: string,
+  taxFactor?: ?number,
   qty: number,
-  contents: string[],
-  usefulAs: string[],
+  contents?: ?string[],
+  usefulAs?: ?string[],
   relatedProds?: {
     [string]: boolean,
   },
@@ -169,6 +187,8 @@ export type User = {
   taxInfo: TaxInfo,
   usesNCF: boolean,
   points: number,
+  avWds: number[], // Available week days // 0 = Sunday, 1 = Monday; // [1,2,3,4,5]
+  avTmByWd: KeysOf<number|string[]>, // Available times by week day // { 0: [1700,2100] }
 };
 
 // ------------------------------------------------ //
@@ -179,6 +199,16 @@ export type Message = {
   type: MessageMode,
   title?: string,
   text: string,
+};
+
+export type ValueLabel = {
+  value: string,
+  label: string,
+}
+
+export type KeyLabel = {
+  key: string|number,
+  label: string,
 };
 
 export type ConfirmConfig = {
@@ -210,21 +240,6 @@ export type Global = {
   reserveModalVisible: boolean,
   confirmModal: ConfirmConfig,
   showRelatedProdId: ?string,
-};
-
-export type KeysOf<T> = {
-  [key: string]: T,
-};
-
-export type Normalizd<T> = {
-  byId: KeysOf<T>,
-  allIds: string[],
-};
-
-export type NormalizdRel<T> = {
-  byId: KeysOf<T>,
-  allIds: string[],
-  rel: KeysOf<string[]>,
 };
 
 export type Cart = {

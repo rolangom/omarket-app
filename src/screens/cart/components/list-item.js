@@ -1,17 +1,19 @@
 // @flow
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ListItem, Text, Body, Right } from 'native-base';
-import OptThumbnail from '../../../common/components/opt-thumbnail';
-import QtyInput from '../../../common/components/qty-input/index';
-import type { CartItem, Product, Offer, State } from '../../../common/types';
+import { ListItem, Text, Body, Right, View } from 'native-base';
+import OptThumbnail from 'src/common/components/opt-thumbnail';
+import QtyInput from 'src/common/components/qty-input/index';
+import type { CartItem, Product, Offer, State } from 'src/common/types';
 import {
   currency,
   defaultEmptyArr,
   lightGray,
-} from '../../../common/utils/constants';
-import { getOfferPrice, isOfferFreeIncluded } from '../../../common/utils';
-import FreeIncludedList from '../../../common/components/FreeIncludedList';
+  red,
+} from 'src/common/utils/constants';
+import { getOfferPrice, isOfferFreeIncluded, getPriceWithTax } from 'src/common/utils';
+import FreeIncludedList from 'src/common/components/FreeIncludedList';
+import { flex1 } from 'src/common/utils/styles';
 
 export type Props = {
   item: CartItem,
@@ -25,11 +27,18 @@ const styles = {
   row: {
     flexDirection: 'row',
     justifyContent: 'center',
-    height: 45,
+    alignItems: 'center',
+    flex: 0.75,
   },
   text: {
     color: lightGray,
     textAlign: 'center',
+  },
+  subtotal: {
+    flex: 1,
+    textAlign: 'right',
+    fontWeight: 'bold',
+    color: red,
   },
   image: {
     height: 45,
@@ -45,6 +54,8 @@ class CartListItem extends React.Component<Props> {
   onEditPress = () => this.props.onEditPress(this.props.item.productID);
   render() {
     const { product, item, offer } = this.props;
+    const price = getPriceWithTax(product.price, product.taxFactor, offer);
+    const subtotal = getPriceWithTax(product.price, product.taxFactor, offer, null, item.qty);
     return (
       <ListItem button onPress={this.onEditPress}>
         <OptThumbnail
@@ -54,28 +65,21 @@ class CartListItem extends React.Component<Props> {
           square
           style={styles.image}
         />
-        <Body>
-          <Text>{offer ? offer.title : product.name}</Text>
-          <Text note>
-            {currency}
-            {offer ? getOfferPrice(product.price, offer) : product.price}
-            {'-'}
-            {product.descr}
-          </Text>
-          {offer &&
-            isOfferFreeIncluded(offer) && (
-              <FreeIncludedList offerId={offer.id} />
-            )}
-          <Text note>{item.descr}</Text>
+        <Body style={flex1}>
+          <Text numberOfLines={1}>{offer ? offer.title : product.name}</Text>
+          <FreeIncludedList offer={offer} />
+          <Text numberOfLines={1} note>{item.descr || product.descr}</Text>
+          <Text note>${price}</Text>
         </Body>
-        <Right>
+        <View style={styles.row}>
           <QtyInput
-            styled
+            stretch
             value={item.qty}
             max={product.qty}
             onChange={this.onChange}
           />
-        </Right>
+          <Text style={styles.subtotal}>${subtotal}</Text>
+        </View>
       </ListItem>
     );
   }

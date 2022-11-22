@@ -1,28 +1,32 @@
 // @flow
 import React from 'react';
 import { connect } from 'react-redux';
+import { ScrollView } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation';
 import { Container, Content, List, Button, Text, View } from 'native-base';
 
 import CartListItem from './components/list-item';
-import PriceView, { CondPriceView } from '../../common/components/price-view';
-import Ads from '../../common/components/ads';
-import Link from '../../common/components/link';
+import PriceView  from '../../common/components/price-view';
+import Ads from 'src/common/components/ads';
+import Link from 'src/common/components/link';
+import Maybe from 'src/common/components/Maybe';
+import UserContent from 'src/common/components/user-content';
 import type { CartItem, State } from '../../common/types';
 import {
   getCartItems,
   getCartItemsSubTotalPrice,
   getCartTaxTotal,
-} from '../../ducks/cart/selectors';
+} from 'src/ducks/cart/selectors';
 import { changeCartProductQty, changeCartProductDescr } from '../../ducks/cart';
-import Prompt from '../../libs/react-native-prompt';
+import Prompt from 'src/libs/react-native-prompt';
 import ArchiveView from './components/ArchiveView';
 import ExpressSwitch from './components/ExpressSwitch';
 import UsePointsSwitch from './components/UsePointsSwitch';
+import SearchButton from 'src/screens/home/components/search/button';
 
 export type Props = {
   currency: string,
-  items: CartItem,
+  items: CartItem[],
   subTotal: number,
   taxTotal: number,
   usePoints: boolean,
@@ -43,9 +47,9 @@ const styles = {
   },
   buttons: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    // justifyContent: 'space-between',
     padding: 10,
-    marginTop: 25,
+    // marginTop: 25,
   },
 };
 
@@ -80,8 +84,9 @@ class CartScreen extends React.Component<Props, CompState> {
     const discounts = usePoints && subTotal > points ? points : 0;
     return (
       <Container>
+        <SearchButton />
         <Content whiteBackground>
-          <Ads visible forceLoad={false} />
+          {/*<Ads visible forceLoad={false} />*/}
           <List
             dataArray={items}
             renderRow={this.renderItem}
@@ -89,38 +94,57 @@ class CartScreen extends React.Component<Props, CompState> {
           />
           <ExpressSwitch />
           <UsePointsSwitch visible={subTotal > points && points > 0} />
-          <PriceView
-            value={subTotal}
-            currency={currency}
-          />
-          <CondPriceView
-            visible={discounts > 0}
-            value={discounts}
-            currency={`- Desc. ${currency}`}
-          />
-          <PriceView
-            value={taxTotal}
-            currency={`ITBIS ${currency}`}
-          />
-          <PriceView
-            value={(subTotal - discounts) + taxTotal}
-            currency={`TOTAL ${currency}`}
-          />
-          <View style={styles.buttons}>
-            <Link
-              component={Button}
-              light
-              disabled={items.length <= 0}
-              to="OrderRequest"
-            >
-              <Text>Terminar</Text>
-            </Link>
-            <Button primary onPress={onContinueShopping}>
-              <Text>Continuar comprando</Text>
-            </Button>
+          <View paddingH>
+            <PriceView
+              currency={currency}
+              value={subTotal}
+              title="Sub Total: "
+            />
+            <Maybe
+              component={PriceView}
+              visible={discounts > 0}
+              currency={currency}
+              value={discounts}
+              title="Descuento: "
+            />
+            <PriceView
+              currency={currency}
+              value={taxTotal}
+              title="ITBIS: "
+            />
+            <PriceView
+              currency={currency}
+              value={(subTotal - discounts) + taxTotal}
+              title="TOTAL: "
+              isTotal
+            />
           </View>
-          <ArchiveView disabled={items.length <= 0} />
+          <UserContent>
+            <ArchiveView disabled={items.length <= 0} />
+          </UserContent>
         </Content>
+        <View style={styles.buttons}>
+          <Button
+            light
+            flex1
+            block
+            onPress={onContinueShopping}
+          >
+            <Text>Continuar comprando</Text>
+          </Button>
+          <Link
+            component={Button}
+            primary
+            marginLeft
+            flex1
+            block
+            disabled={items.length <= 0}
+            // to="OrderRequest"
+            to="OrdersRequestSummary"
+          >
+            <Text>Pagar</Text>
+          </Link>
+        </View>
         <Prompt
           title="Nota adicional"
           visible={!!editingProdID}
@@ -151,11 +175,14 @@ const mapStateToProps = (state: State, { navigation }): Props => ({
   },
 });
 
-const mapDispatchToProps = dispatch => ({
+// const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = ({
   onChangeQty: (id: string, qty: number) =>
-    dispatch(changeCartProductQty(id, qty)),
+    // dispatch(changeCartProductQty(id, qty)),
+    changeCartProductQty(id, qty),
   onChangeDescr: (id: string, descr: string) =>
-    dispatch(changeCartProductDescr(id, descr)),
+    // dispatch(changeCartProductDescr(id, descr)),
+    changeCartProductDescr(id, descr),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(CartScreen);

@@ -17,6 +17,7 @@ import CreditCardEditorScreen from '../screens/credit-card/editor';
 import OrderRequestEditorScreen from '../screens/order-request/editor';
 import OrderRequestResultScreen from '../screens/order-request/result';
 import OrderRequestDetailScreen from '../screens/order-request/detail';
+import OrderRequestSummaryScreen from '../screens/order-request/summary';
 import OrderListScreen from '../screens/orders/list';
 import SavedCartListScreen from '../screens/savedCarts/list';
 import SavedCartDetailScreen from '../screens/savedCarts/detail';
@@ -81,6 +82,7 @@ const OrdersStack = createStackNavigator({
     }),
   },
   OrdersRequestDetail: { screen: OrderRequestDetailScreen },
+  OrdersRequestSummary: { screen: OrderRequestSummaryScreen },
 }, {
   navigationOptions: defaultNavigationOptions(true),
 });

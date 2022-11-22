@@ -17,11 +17,12 @@ const CondContent = ({
   textStyle,
   children,
 }: Props) => (
-  cond ?
-    children :
-    <View style={containerStyle}>
+  <View style={containerStyle}>
+    {cond ?
+      children :
       <Text style={textStyle}>{defaultText}</Text>
-    </View>
+    }
+  </View>
 );
 
 CondContent.defaultProps = {

@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 import { ListItem, Body, Text, Right } from 'native-base';
-import OptThumbnail from '../../../../../common/components/opt-thumbnail';
-import { getPriceWithCurrency, isOfferFreeIncluded } from '../../../../../common/utils';
-import type { CartItem, Product } from '../../../../../common/types';
-import FreeIncludedList from '../../../../../common/components/FreeIncludedList/Products';
+import OptThumbnail from 'src/common/components/opt-thumbnail';
+import { getPriceWithCurrency } from 'src/common/utils';
+import type { CartItem, Product } from 'src/common/types';
+import FreeIncludedList from 'src/common/components/FreeIncludedList/Products';
+import { defaultEmptyObj } from 'src/common/utils/constants';
 
 type Props = {
   item: CartItem,
@@ -13,9 +14,8 @@ type Props = {
 };
 
 const OrderRequestItem = ({ item, productById }: Props) => {
-  const product = productById(item.productID) || {};
-  const { name, price } = item.product || {};
-  const freeIncludedOffer = item.offer && isOfferFreeIncluded(item.offer) && item.offer;
+  const product = productById(item.productID) || defaultEmptyObj;
+  const { name, price } = item.product || defaultEmptyObj;
   return (
     <ListItem>
       <OptThumbnail uri={product.fileURL} size={45} borderless square />
@@ -23,9 +23,7 @@ const OrderRequestItem = ({ item, productById }: Props) => {
         <Text>{name}</Text>
         <Text note>{product.descr}</Text>
         <Text note>{item.descr}</Text>
-        {freeIncludedOffer &&
-          <FreeIncludedList offer={freeIncludedOffer} />
-        }
+        <FreeIncludedList offer={item.offer} />
       </Body>
       <Right>
         <Text>{item.qty} x</Text>
@@ -38,7 +36,7 @@ const OrderRequestItem = ({ item, productById }: Props) => {
 
 OrderRequestItem.defaultProps = {
   item: {
-    product: {},
+    product: defaultEmptyObj,
   },
 };
 

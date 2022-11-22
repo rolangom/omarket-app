@@ -58,6 +58,8 @@ const mergeProps = (stateProps: ConfirmConfig, dispatchProps, ownProps) => ({
   onCancel: () => dispatchProps.onAction(stateProps.cancelActionType),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  ConfirmModal,
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps
+)(ConfirmModal);

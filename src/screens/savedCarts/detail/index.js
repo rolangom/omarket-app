@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import {
   Container,
@@ -10,26 +11,24 @@ import {
   Icon,
   View,
 } from 'native-base';
-import type { CartItem, Cart, State } from '../../../common/types';
+import type { CartItem, Cart, State } from 'src/common/types';
 import Item from './components/Item';
 import {
   applyProductsToCart,
   requestDeleteCart,
-} from '../../../ducks/savedCarts';
-import { showConfirm } from '../../../ducks/global';
-import { defaultEmptyArr } from '../../../common/utils/constants';
+} from 'src/ducks/savedCarts';
+import { showConfirm } from 'src/ducks/global';
+import { defaultEmptyArr } from 'src/common/utils/constants';
 
-type Props =
-  | Cart
-  | {
-      applyCartBy: (id: string, remove: boolean) => void,
-      applyCart: () => void,
-      applyCartRemove: () => void,
-      onDeleteCart: (id: string) => void,
-      onDelete: () => void,
-    };
+type Props = Cart & {
+  applyCartBy: (id: string, remove: boolean) => void,
+  applyCart: () => void,
+  applyCartRemove: () => void,
+  onDeleteCart: (id: string) => void,
+  onDelete: () => void,
+};
 
-const styles = {
+const styles = StyleSheet.create({
   basic: {
     padding: 10,
     alignItems: 'flex-end',
@@ -43,7 +42,7 @@ const styles = {
     padding: 10,
     marginTop: 25,
   },
-};
+});
 
 class SavedCartDetailScreen extends React.Component<Props> {
   renderItem = (item: CartItem) => <Item item={item} />;
@@ -100,7 +99,7 @@ const mapStateToProps = (
         id: cartId,
         name: cart.name,
         createdAt: cart.createdAt,
-        cartItems: Object.values(cart.content),
+        cartItems: cart.content ? Object.values(cart.content) : defaultEmptyArr,
       }
     : {};
 };
@@ -129,6 +128,8 @@ const mergeProps = (stateProps: Props, dispatchProps: Props, ownProps) => ({
   onDelete: () => dispatchProps.onDeleteCart(stateProps.id),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(
-  SavedCartDetailScreen,
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+  mergeProps,
+)(SavedCartDetailScreen);

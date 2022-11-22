@@ -1,61 +1,29 @@
 // @flow
 import React from 'react';
-import { Button, Text, View } from 'native-base';
+import {
+  branch,
+  renderComponent,
+  compose,
+  defaultProps,
+} from 'recompose';
 import QtyInput from '../qty-input';
-import { lighterGray } from '../../utils/constants';
+import type { CartItem } from '../../types';
+import AddProduct from '../AddProduct';
 
 export type Props = {
+  flex?: ?boolean,
+  cartItem: CartItem,
+  productID: string,
+  offerID?: ?string,
   defaultValue?: number,
   max?: number,
-  onSubmit: (number) => void,
-};
-
-type State = {
   value: number,
+  onChange: number => void,
 };
 
-const styles = {
-  main: {
-    flexDirection: 'row',
-    padding: 10,
-    backgroundColor: lighterGray,
-  },
-  button: {
-    flex: 1,
-  },
-};
+const enhance = compose(
+  defaultProps({ defaultValue: 0, max: 100, flex: false }),
+  branch((props: Props) => props.value === 0, renderComponent(AddProduct)),
+);
 
-class QtyForm extends React.Component<Props, State> {
-  state = {
-    value: this.props.defaultValue,
-  };
-  onChange = (value: number) => this.setState({ value });
-  onSubmit = () => this.props.onSubmit(this.state.value);
-  render() {
-    const { value } = this.state;
-    const { max } = this.props;
-    return (
-      <View style={styles.main}>
-        <QtyInput
-          value={value}
-          onChange={this.onChange}
-          max={max}
-        />
-        <Button
-          primary
-          flex1
-          onPress={this.onSubmit}
-        >
-          <Text>Ordenar</Text>
-        </Button>
-      </View>
-    );
-  }
-}
-
-QtyForm.defaultProps = {
-  defaultValue: 0,
-  max: 100,
-};
-
-export default QtyForm;
+export default enhance(QtyInput);

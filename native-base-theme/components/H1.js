@@ -5,6 +5,12 @@ export default (variables = variable) => {
     color: variables.textColor,
     fontSize: variables.fontSizeH1,
     lineHeight: variables.lineHeightH1,
+    '.bold': {
+      fontWeight: 'bold',
+    },
+    '.primary': {
+      color: variables.brandPrimary,
+    },
   };
 
   return h1Theme;

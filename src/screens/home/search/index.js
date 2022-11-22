@@ -6,6 +6,7 @@ import Search from '../components/search';
 import type { Category, Product, State } from '../../../common/types';
 import SearchItemsResult from './components/items';
 import { setFilters } from '../../../ducks/global';
+import { defaultEmptyArr } from '../../../common/utils/constants';
 
 type Props = {
   navigation: { navigate: (string, Object) => void, goBack: (?string) => void },
@@ -81,7 +82,7 @@ const mapStateToProps = (state: State) => {
               it.name.toLocaleLowerCase().startsWith(nsearchTerm),
             )
             .slice(0, 3)
-        : [],
+        : defaultEmptyArr,
     products:
       searchTerm && searchTerm.length > 0
         ? Object.values(state.products.byId)
@@ -99,7 +100,7 @@ const mapStateToProps = (state: State) => {
                   )),
             )
             .slice(0, 3)
-        : [],
+        : defaultEmptyArr,
   };
 };
 

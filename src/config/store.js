@@ -1,4 +1,4 @@
-// @flow
+
 import { createStore, applyMiddleware } from 'redux';
 import logger from 'redux-logger';
 import { createLogicMiddleware } from 'redux-logic';
@@ -32,7 +32,7 @@ const configureStore = () => {
   const store = createStore(
     reducer,
     applyMiddleware(
-      logger,
+      // logger,
       navMiddleware,
       createLogicMiddleware(logics, { firebase, db }),
     ),

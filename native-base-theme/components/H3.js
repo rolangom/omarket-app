@@ -4,7 +4,13 @@ export default (variables = variable) => {
   const h3Theme = {
     color: variables.textColor,
     fontSize: variables.fontSizeH3,
-    lineHeight: variables.lineHeightH3
+    lineHeight: variables.lineHeightH3,
+    '.bold': {
+      fontWeight: 'bold',
+    },
+    '.primary': {
+      color: variables.brandPrimary,
+    },
   };
 
   return h3Theme;

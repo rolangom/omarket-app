@@ -13,19 +13,20 @@ import {
   Text,
   Input,
 } from 'native-base';
-import Link from '../../../../common/components/link/index';
-import DropDown from '../../../../common/components/drop-down/index';
+import Link from 'src/common/components/link';
+import DropDown from 'src/common/components/drop-down';
 
-import { darkGray, lightGray } from '../../../../common/utils/constants';
+import { switchTrackColor, lightGray } from 'src/common/utils/constants';
 import {
   inputCVCValidate,
   inputIsPropValid,
   inputRequired,
   parseCreditCardNumber,
-} from '../../../../common/utils/index';
-import VisibleIfFieldEq from '../../../../common/components/visible-if-field-eq';
-import PlainAddressForm from '../../../../common/components/address-form/plain';
-import Visible from "../../../../common/components/visible/index";
+} from 'src/common/utils';
+import VisibleIfFieldEq from 'src/common/components/visible-if-field-eq';
+import PlainAddressForm from 'src/common/components/address-form/plain';
+import Visible from 'src/common/components/visible';
+import WeekdaysTimesFields from 'src/common/components/WeekdaysTimesFields';
 
 const styles = {
   addButton: {
@@ -96,8 +97,7 @@ const OrderRequestForm = ({
             <Switch
               value={!!input.value}
               onValueChange={input.onChange}
-              onTintColor={lightGray}
-              thumbTintColor={darkGray}
+              trackColor={switchTrackColor}
             />
             <Body>
               <Text>Guardar dirección</Text>
@@ -106,6 +106,12 @@ const OrderRequestForm = ({
         )}
       />
     </VisibleIfFieldEq>
+    <Item stackedLabel>
+      <Label>Días y horarios disponibles</Label>
+      <DropDown placeholder="Seleccione">
+        <WeekdaysTimesFields />
+      </DropDown>
+    </Item>
     <Field
       name="paymentMethod"
       validate={inputRequired}
@@ -158,7 +164,10 @@ const OrderRequestForm = ({
                 <Field
                   name="cvc"
                   validate={inputCVCValidate}
-                  render={({ input: _input, meta: { touched: _touched, error: _error } }) => (
+                  render={({
+                    input: _input,
+                    meta: { touched: _touched, error: _error },
+                  }) => (
                     <Input
                       style={styles.flex1}
                       placeholder="cvc/cvv"

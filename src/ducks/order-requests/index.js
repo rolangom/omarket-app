@@ -9,7 +9,7 @@ import type { OrderRequest, KeysOf, State, Rating } from '../../common/types';
 import { setIsLoading, addError, setUsePoints } from '../global';
 import { reduceFnByID, setImmutable, upsertDoc } from '../../common/utils';
 import { clearCartItems } from '../cart';
-import { getPoints } from '../user';
+import {getPoints, updateTimeWeekdays} from '../user';
 
 // export const getSubtotal: number = (state: State, orderRequestID) =>
 //   state.orders.byId[orderRequestID].items.reduce(
@@ -118,7 +118,7 @@ export const postOrderRequestLogic = createLogic({
   ) => {
     try {
       dispatch(setIsLoading(true));
-      const { doSaveAddress } = action.payload;
+      const { doSaveAddress, avWds, avTmByWd } = action.payload;
       const { cartItems: { byId: cartItemsById }, user: { uid } } = getState();
       const items = Object.values(cartItemsById);
       const idToken = await firebase.auth().currentUser.getIdToken();
@@ -157,6 +157,7 @@ export const postOrderRequestLogic = createLogic({
         index: 0,
         actions: [defaultAction],
       });
+      dispatch(updateTimeWeekdays({ avWds, avTmByWd }));
       dispatch(isError ? defaultAction : navActionSucc);
       dispatch(setUsePoints(false));
     } catch (error) {

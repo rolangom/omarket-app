@@ -5,6 +5,7 @@ import { Button, View, Text, Icon } from 'native-base';
 import Prompt from '../../../libs/react-native-prompt';
 import { postCurrentCart } from '../../../ducks/savedCarts';
 import Visible from '../../../common/components/visible';
+import { row, paddingM } from 'src/common/utils/styles';
 
 type Props = {
   disabled?: boolean,
@@ -33,10 +34,19 @@ export default class ArchiveView extends React.Component<Props, State> {
   render() {
     return (
       <Visible enabled={!this.props.disabled}>
-        <View>
-          <Button primary full iconLeft onPress={this.onPress}>
-            <Icon name="ios-archive" />
-            <Text>Guardar para luego</Text>
+        <View style={[row, paddingM]}>
+          <Button
+            light
+            flex1
+            onPress={this.onPress}
+          >
+            <Text>Guardar lista</Text>
+          </Button>
+          <Button
+            transparent
+            flex1
+          >
+            <Text />
           </Button>
           <Prompt
             title="Nombre de Lista"

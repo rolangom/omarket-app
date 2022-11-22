@@ -23,7 +23,7 @@ export default {
   badgePadding: platform === "ios" ? 3 : 0,
 
   // Button
-  btnFontFamily: platform === "ios" ? "System" : "Roboto_medium",
+  btnFontFamily: "Roboto_medium", // platform === "ios" ? "System" :
   btnDisabledBg: "#b5b5b5",
   btnDisabledClr: "#f1f1f1",
 
@@ -119,20 +119,20 @@ export default {
   brandWarning: '#B3B3B3', // "#f0ad4e",
   brandSidebar: "#252932",
   brandDark: '#4D4D4D', // "#000",
-  brandLight: "#f1f1f1",
+  brandLight: "#ffffff", // "#f1f1f1",
 
   // Font
   fontFamily: "Roboto_light",
-  fontSizeBase: 15,
+  fontSizeBase: 14,
 
   get fontSizeH1() {
-    return this.fontSizeBase * 1.8;
-  },
-  get fontSizeH2() {
     return this.fontSizeBase * 1.6;
   },
-  get fontSizeH3() {
+  get fontSizeH2() {
     return this.fontSizeBase * 1.4;
+  },
+  get fontSizeH3() {
+    return this.fontSizeBase * 1.2;
   },
 
   // Footer
@@ -254,7 +254,7 @@ export default {
   tabTextColor: "#222222",
 
   // Text
-  textColor: "#666666",
+  textColor: '#9E9E9E', //'"#666666",
   inverseTextColor: "#fff",
   noteFontSize: 14,
 

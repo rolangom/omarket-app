@@ -48,7 +48,8 @@ const IconButtonCart = ({ onNavigate, qty, isLocal }: Props) => (
       onPress={onNavigate}
     >
       <Icon
-        name={isLocal ? 'ios-cart' : 'ios-cart-outline'}
+        // name={isLocal ? 'ios-cart' : 'ios-cart-outline'}
+        name="ios-cart"
         style={styles.icon}
       />
     </Button>

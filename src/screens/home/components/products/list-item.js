@@ -1,48 +1,57 @@
 // @flow
 import * as React from 'react';
 import type { Dispatch } from 'redux';
-import { compose, withHandlers, withProps, flattenProp, defaultProps } from 'recompose';
+import {
+  compose,
+  withHandlers,
+  withProps,
+  flattenProp,
+  defaultProps,
+} from 'recompose';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import { View, Dimensions, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, Button } from 'native-base';
-import OptImage from '../../../../common/components/opt-image';
+
+import OptImage from 'src/common/components/opt-image';
+import { getPriceWithTax, isOfferDiscount } from 'src/common/utils';
+import { priceReg } from 'src/common/utils/styles';
 import {
-  getPriceWithTax,
-  isOfferDiscount,
-} from '../../../../common/utils';
-import {
+  darkerGray,
   darkGray,
+  gray,
+  red,
   lighterGray,
   defaultEmptyArr,
-} from '../../../../common/utils/constants';
-import type { Offer, Product, State } from '../../../../common/types';
-import { incrCartProduct } from '../../../../ducks/cart';
-import { setShowRelatedProdId } from '../../../../ducks/global';
-import Maybe from '../../../../common/components/Maybe';
+  defaultQty0,
+  currency,
+} from 'src/common/utils/constants';
+import type { Offer, Product, State, CartItem } from 'src/common/types';
+import { setShowRelatedProdId } from 'src/ducks/global';
+import Maybe from 'src/common/components/Maybe';
+import QtyForm from 'src/common/components/qty-form';
+import { changeCartProductQty } from 'src/ducks/cart';
 
 export type Props = Product & {
   priceWithOfferAndCurr: string,
   priceWithCurr: string,
   offer: ?Offer,
   isOfferDisc: boolean,
+  cartItem: CartItem,
   size?: number,
   imgStyle?: { width: number, height: number },
-  addButton: boolean,
   navigation: { navigate(string, Object): void },
-  add1ToCart(): void,
   onNavigateProduct(): void,
   hideRelatedProductIdModal(): void,
 };
 
 const { width } = Dimensions.get('window');
-const size = (width * 0.5) - 4;
+const size = width * 0.5 - 2;
 
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    margin: 2,
-    paddingBottom: 10,
+    margin: 1,
   },
   item: {
     flexDirection: 'column',
@@ -54,30 +63,34 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    justifyContent: 'center',
   },
   imgStyle: {
     width: size,
     height: size * 1.15,
   },
   title: {
-    fontSize: 12,
-    flex: 1,
+    fontSize: 14,
+    textAlign: 'center',
     fontFamily: 'Roboto_regular',
     fontWeight: 'bold',
-    color: darkGray,
+    color: darkerGray,
   },
   subtitle: {
     fontFamily: 'Roboto_regular',
-    fontSize: 10,
-    color: darkGray,
+    textAlign: 'center',
+    fontSize: 12,
+    color: gray,
   },
   price: {
     fontFamily: 'Roboto_regular',
-    fontSize: 10,
-    color: darkGray,
+    textAlign: 'center',
+    fontSize: 14,
+    color: red,
   },
   priceReg: {
     fontFamily: 'Roboto_regular',
+    textAlign: 'center',
     fontSize: 8,
     color: darkGray,
     textDecorationLine: 'line-through',
@@ -85,13 +98,16 @@ const styles = StyleSheet.create({
 });
 
 const ProductListItem = ({
+  id,
   size,
+  offer,
   imgStyle,
   name,
   descr,
+  pricePer,
+  cartItem,
   fileURL,
-  addButton,
-  add1ToCart,
+  onChangeQty,
   onNavigateProduct,
   priceWithOfferAndCurr,
   isOfferDisc,
@@ -100,66 +116,50 @@ const ProductListItem = ({
   <TouchableOpacity onPress={onNavigateProduct} style={styles.container}>
     <View style={{ width: size }}>
       <OptImage uri={fileURL} size={size} imgStyle={imgStyle} />
-      <Maybe
-        visible={addButton}
-        component={Button}
-        onPress={add1ToCart}
-        block
-        light
-      >
-        <Text>+1</Text>
-      </Maybe>
-      <View style={styles.content}>
-        <View style={styles.row}>
-          <Text style={styles.title} numberOfLines={1}>
-            {name}
-          </Text>
-          <View>
-            <Text style={styles.price}>{priceWithOfferAndCurr}</Text>
-            <Maybe
-              visible={isOfferDisc}
-              component={Text}
-              style={styles.priceReg}
-            >
-              {priceWithCurr}
-            </Maybe>
-          </View>
-        </View>
-        <Text style={styles.subtitle} numberOfLines={2} note>
-          {descr}
-        </Text>
+      <View style={styles.row}>
+        <Text style={styles.price}>{priceWithOfferAndCurr}</Text>
+        <Maybe visible={isOfferDisc} component={Text} style={priceReg}>
+          {priceWithCurr}
+        </Maybe>
       </View>
+      <Text style={styles.title} numberOfLines={1}>
+        {name}
+      </Text>
+      <Text style={styles.subtitle} numberOfLines={1} note>
+        {pricePer}
+      </Text>
+      <QtyForm
+        productID={id}
+        offerID={offer && offer.id}
+        value={cartItem.qty}
+        onChange={onChangeQty}
+      />
     </View>
   </TouchableOpacity>
 );
 
 const mapStateToProps = (state: State, { id }: Props): Props => {
   const [offerId] = state.offers.rel[id] || defaultEmptyArr;
+  const cartItem = state.cartItems.byId[id] || defaultQty0;
   return {
     offer: state.offers.byId[offerId],
+    cartItem,
   };
 };
 
 const mapDispatchToProps = (dispatch: Dispatch, props: Props): Props => ({
   hideRelatedProductIdModal: () => dispatch(setShowRelatedProdId(null)),
-  add1ToCart: (offer: Offer) =>
-    dispatch(incrCartProduct(props.id, offer && offer.id)),
-});
-
-const mergeProps = (statePros: Props, dispatchProps: Props, ownProps: Props): Props => ({
-  ...statePros,
-  ...dispatchProps,
-  ...ownProps,
-  add1ToCart: () => dispatchProps.add1ToCart(statePros.offer),
+  onChangeQty: (qty: number) => dispatch(changeCartProductQty(props.id, qty)),
 });
 
 const enhance = compose(
-  defaultProps({ size, imgStyle: styles.imgStyle }),
+  defaultProps({ size, imgStyle: styles.imgStyle, pricePer: 'Unidad.' }),
   flattenProp('item'),
-  connect(mapStateToProps, mapDispatchToProps, mergeProps),
+  connect(mapStateToProps, mapDispatchToProps),
   withNavigation,
   withHandlers({
     onNavigateProduct: (props: Props) => () => {
+      // console.log('Product List item onNavigate', props);
       props.navigation.navigate('ProductDetail', { productID: props.id });
       props.hideRelatedProductIdModal();
     },
@@ -172,11 +172,11 @@ const enhance = compose(
         props.price,
         props.taxFactor,
         props.offer,
-        true,
+        currency,
       ),
       name: props.offer ? props.offer.title : props.name,
       priceWithCurr: isOfferDisc
-        ? getPriceWithTax(props.price, props.taxFactor, null, true)
+        ? getPriceWithTax(props.price, props.taxFactor, null, currency)
         : '-',
     };
   }),

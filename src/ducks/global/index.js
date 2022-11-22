@@ -187,13 +187,17 @@ export const searchTermLogic = createLogic({
 export const initAppDataLogic = createLogic({
   type: initAppData.getType(),
   process(_, dispatch, done) {
-    multiDispatch(
-      dispatch,
-      fetchAds(true),
-      fetchCategories(true),
-      fetchConfigs(),
-      getUser(),
-    );
+    // multiDispatch(
+    //   dispatch,
+    //   fetchAds(true),
+    //   fetchCategories(true),
+    //   fetchConfigs(),
+    //   getUser(),
+    // );
+    dispatch(fetchAds(true));
+    dispatch(fetchCategories(true));
+    dispatch(fetchConfigs());
+    dispatch(getUser());
     done();
   },
 });

@@ -3,8 +3,8 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { List } from 'native-base';
 
-import type { OrderRequest, State } from '../../../../common/types';
-import { initOrderRequestsSubcr } from '../../../../config/app';
+import type { OrderRequest, State } from 'src/common/types';
+import { initOrderRequestsSubcr } from 'src/config/app';
 import Item from './item';
 
 type Props = {

@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import {
   ListItem,
@@ -16,15 +17,16 @@ import {
 import DatePicker from 'react-native-datepicker';
 // import Prompt from 'react-native-prompt';
 import { Form as FinalForm, Field } from 'react-final-form';
-import DropDown from '../../common/components/drop-down';
-import Visible from '../../common/components/visible';
-import VisibleIfFieldEq from '../../common/components/visible-if-field-eq';
-import type { State, User } from '../../common/types';
+import DropDown from 'src/common/components/drop-down';
+import Visible from 'src/common/components/visible';
+import WeekdaysTimesFields from 'src/common/components/WeekdaysTimesFields';
+import VisibleIfFieldEq from 'src/common/components/visible-if-field-eq';
+import type { State, User } from 'src/common/types';
 import {
   logout,
   postUser,
-} from '../../ducks/user';
-import { darkGray, lighterGray } from '../../common/utils/constants';
+} from 'src/ducks/user';
+import { darkGray, lighterGray } from 'src/common/utils/constants';
 
 export type Props = {
   user: User,
@@ -33,26 +35,27 @@ export type Props = {
   onSave: () => void,
 }
 
-const styles = {
+const styles = StyleSheet.create({
   datePickerDateTouch: {
     flex: 1,
     alignSelf: 'stretch',
   },
-  datePicker: {
-    dateInput: {
-      borderWidth: 0,
-      alignItems: 'flex-start',
-      justifyContent: 'center',
-    },
-    dateText: {
-      fontSize: 17,
-      color: darkGray,
-    },
-    placeholderText: {
-      color: lighterGray,
-    },
+});
+
+const datePickerStyles = StyleSheet.create({
+  dateInput: {
+    borderWidth: 0,
+    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
-};
+  dateText: {
+    fontSize: 17,
+    color: darkGray,
+  },
+  placeholderText: {
+    color: lighterGray,
+  },
+});
 
 const genders = [
   { label: 'Masculino', value: 'M' },
@@ -147,7 +150,7 @@ const UserInfoView = ({
                 onDateChange={input.onChange}
                 showIcon={false}
                 style={styles.datePickerDateTouch}
-                customStyles={styles.datePicker}
+                customStyles={datePickerStyles}
               />
             </Item>
           )}
@@ -168,6 +171,7 @@ const UserInfoView = ({
             </Item>
           )}
         />
+        <WeekdaysTimesFields />
         <ListItem>
           <Body>
             <Visible enabled={!pristine}>

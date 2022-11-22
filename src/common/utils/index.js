@@ -1,6 +1,6 @@
 // @flow
 
-import { currency } from './constants';
+import {currency, defaultEmptyArr, defaultEmptyObj} from './constants';
 import type {
   CreditCard,
   CreditCardForm,
@@ -32,14 +32,14 @@ export const tsToDateStr = (timestamp: Timestamp | Date): string =>
 export function getFmtDocs(querySnapshot): Array {
   return querySnapshot && querySnapshot.docs
     ? querySnapshot.docs.map(it => ({ id: it.id, ...it.data() }))
-    : [];
+    : defaultEmptyArr;
 }
 
 export function getRealtDocs(snapshot): Array {
   const data = [];
-  snapshot.forEach(docSnapshot => (
-    data.push({ id: docSnapshot.key, ...docSnapshot.val() }), false
-  ));
+  snapshot.forEach(docSnapshot =>
+    void (data.push({ id: docSnapshot.key, ...docSnapshot.val() }))
+  );
   return data;
 }
 
@@ -48,7 +48,7 @@ export const getNavParamsFromProp = (props: Object): Object =>
     props.navigation &&
     props.navigation.state &&
     props.navigation.state.params) ||
-  {};
+  defaultEmptyObj;
 
 const sortFnAsc = (attr: string) => (a, b) =>
   (a[attr] || 100) - (b[attr] || 100);
@@ -88,11 +88,12 @@ export const getPriceWithTax = (
   price: number,
   taxFactor: ?number,
   offer: ?Offer,
-  withCurrency: boolean = false,
-): number => {
-  const priceWithOffer = offer ? getOfferPrice(price, offer) : price;
+  withCurrency: ?string,
+  qty: number = 1,
+): string => {
+  const priceWithOffer = (offer ? getOfferPrice(price, offer) : price) * qty;
   const priceRounded = round2(priceWithOffer * (1 + getSecureTaxB1(taxFactor)));
-  return withCurrency ? getPriceWithCurrency(priceRounded) : priceRounded;
+  return withCurrency ? getPriceWithCurrency(priceRounded, withCurrency) : priceRounded;
 };
 
 export const isOfferDiscount = (offer: ?Offer): boolean => {
@@ -274,4 +275,5 @@ export const assert = (cond: boolean, errMsg: string) => {
 };
 export const multiDispatch = (dispatch, ...actions) =>
   actions.forEach(dispatch);
+
 export default null;

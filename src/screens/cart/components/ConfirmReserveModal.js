@@ -2,26 +2,25 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { ConfirmDialog } from 'react-native-simple-dialogs';
-import type { Cart, State } from '../../../common/types';
+import type { Cart, State } from 'src/common/types';
 import {
   clearCartItems,
   reserveCartProducts,
   setCartProducts,
-} from '../../../ducks/cart';
-import { postCurrentCart, requestDeleteCart } from '../../../ducks/savedCarts';
-import { setReserveConfirmVisible } from '../../../ducks/global';
-import { multiDispatch } from '../../../common/utils';
+} from 'src/ducks/cart';
+import { requestDeleteCart } from 'src/ducks/savedCarts';
+import { setReserveConfirmVisible } from 'src/ducks/global';
+import { multiDispatch } from 'src/common/utils';
 
 type ExtraProps = {
   savedCarts: Cart[],
   areItemsOnCart: boolean,
 };
 
-type Props = {
+type Props = ExtraProps & {
   visible: boolean,
   onAccept: () => void,
   onCancel: () => void,
-  ...ExtraProps,
 };
 
 const message =

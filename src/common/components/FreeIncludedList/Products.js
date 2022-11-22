@@ -1,7 +1,9 @@
 // @flow
 import { connect } from 'react-redux';
+import { compose, branch, renderNothing } from 'recompose';
 import { FreeIncluded } from '.';
 import type { Offer, State } from '../../types';
+import { isOfferFreeIncluded } from '../../utils';
 
 type Props = {
   offer: Offer,
@@ -13,4 +15,10 @@ const mapStateToProps = (state: State, { offer }: Props) => ({
     product: state.products.byId[it.productId],
   })),
 });
-export default connect(mapStateToProps)(FreeIncluded);
+
+const enhance = compose(
+  branch((props: Props) => !isOfferFreeIncluded(props.offer), renderNothing),
+  connect(mapStateToProps),
+);
+
+export default enhance(FreeIncluded);

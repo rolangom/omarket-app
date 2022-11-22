@@ -2,7 +2,7 @@
 import * as React from 'react';
 import { Switch } from 'react-native';
 import { ListItem, Body, Text, Right } from 'native-base';
-import { darkGray, lightGray } from '../../../common/utils/constants';
+import { darkGray, lightGray, switchTrackColor } from '../../../common/utils/constants';
 
 type Props = {
   title: string,
@@ -24,8 +24,7 @@ const CommonSwitch = ({ title, subtitle, value, onChange }: Props) => (
       <Switch
         value={value}
         onValueChange={onChange}
-        onTintColor={lightGray}
-        thumbTintColor={darkGray}
+        trackColor={switchTrackColor}
       />
     </Right>
   </ListItem>

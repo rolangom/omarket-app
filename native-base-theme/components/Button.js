@@ -33,7 +33,7 @@ export default (variables = variable) => {
       },
       '.light': {
         'NativeBase.Text': {
-          color: variables.brandLight,
+          color: variables.brandDark, // variables.brandLight,
         },
         'NativeBase.Icon': {
           color: variables.brandLight,
@@ -158,7 +158,7 @@ export default (variables = variable) => {
     '.light': {
       '.transparent': {
         'NativeBase.Text': {
-          color: variables.brandLight,
+          color: variables.brandDark, // variables.brandLight,
         },
         'NativeBase.Icon': {
           color: variables.brandLight,
@@ -189,6 +189,8 @@ export default (variables = variable) => {
         color: variables.brandDark,
       },
       backgroundColor: variables.brandLight,
+      borderColor: variables.btnDisabledBg,
+      borderWidth: variables.borderWidth * 2,
     },
 
     '.primary': {
@@ -280,6 +282,12 @@ export default (variables = variable) => {
     '.rounded': {
       // paddingHorizontal: variables.buttonPadding + 20,
       borderRadius: variables.borderRadiusLarge,
+      'NativeBase.IconNB': {
+        fontSize: variables.fontSizeBase * 0.75,
+      },
+      'NativeBase.Icon': {
+        fontSize: variables.fontSizeBase * 0.75,
+      },
     },
 
     '.transparent': {
@@ -427,6 +435,14 @@ export default (variables = variable) => {
       // childPosition: 1
     },
 
+    '.multiline': {
+      'NativeBase.Text': {
+        numberOfLines: 2,
+        textAlign: 'center',
+      },
+      paddingVertical: 0,
+    },
+
     'NativeBase.Icon': {
       color: variables.inverseTextColor,
       fontSize: 24,
@@ -473,6 +489,22 @@ export default (variables = variable) => {
           lineHeight: null,
         },
       },
+    },
+
+    '.roundedBorderLeftBottom': {
+      borderBottomLeftRadius: 10,
+    },
+    '.roundedBorderRightBottom': {
+      borderBottomRightRadius: 10,
+    },
+    '.stretch': {
+      'NativeBase.Icon': {
+        padding: 0,
+        margin: 0,
+      },
+    },
+    '.marginLeft': {
+      marginLeft: 10,
     },
 
     paddingVertical: variables.buttonPadding,

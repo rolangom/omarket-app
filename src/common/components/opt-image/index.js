@@ -1,12 +1,13 @@
 // @flow
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { Icon } from 'native-base';
 
 import { lightGray } from '../../utils/constants';
 
 export type Props = {
   uri: string,
+  resizeMode: string,
   size?: number,
   imgStyle: {
     width: number,
@@ -14,19 +15,22 @@ export type Props = {
   },
 };
 
-const styles = {
+const styles = StyleSheet.create({
   view: {
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: 'white',
   },
-};
+});
 
-const OptImage = ({ uri, size, imgStyle }: Props) => (
+const getDefaultImgStyle = (size: number) => ({ width: size, height: size * 1.15 });
+
+const OptImage = ({ uri, size, resizeMode, imgStyle = getDefaultImgStyle(size) }: Props) => (
   <View style={[styles.view, imgStyle]}>
     {uri ?
       <Image
         source={{ uri }}
-        resizeMode="cover"
+        resizeMode={resizeMode}
         style={imgStyle}
       />
       :
@@ -41,6 +45,7 @@ const OptImage = ({ uri, size, imgStyle }: Props) => (
 
 OptImage.defaultProps = {
   size: 24,
+  resizeMode: 'cover',
 };
 
 export default OptImage;

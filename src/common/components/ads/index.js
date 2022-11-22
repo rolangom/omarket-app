@@ -1,10 +1,11 @@
 import React from 'react';
 import { Image, Dimensions, View } from 'react-native';
 import SwiperFlatList from 'react-native-swiper-flatlist';
+import { branch, compose, renderNothing } from 'recompose';
 
 import { connect } from 'react-redux';
 import { Ad as AdType, State } from '../../types';
-import { darkGray, AD_RATIO } from '../../utils/constants';
+import {darkGray, AD_RATIO, defaultEmptyArr} from '../../utils/constants';
 import { visibleIf } from '../visible';
 
 const { width } = Dimensions.get('window');
@@ -46,5 +47,15 @@ class Ads extends React.Component<Props> {
   }
 }
 
+Ads.defaultProps = {
+  ads: defaultEmptyArr,
+};
+
 const mapStateToProps = (state: State) => ({ ads: state.ads });
-export default connect(mapStateToProps)(visibleIf(Ads));
+export default compose(
+  connect(mapStateToProps),
+  branch(
+    (props: Props) => props.ads.length === 0,
+    renderNothing,
+  ),
+)(Ads);

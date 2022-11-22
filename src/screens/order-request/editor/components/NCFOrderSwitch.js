@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Switch } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { ListItem, Left, Body, Right, Text, Button, Icon } from 'native-base';
-import { darkGray, lightGray } from '../../../../common/utils/constants';
+import { darkGray, lightGray, switchTrackColor } from '../../../../common/utils/constants';
 import type { State, TaxInfo } from '../../../../common/types';
 import { setUseNCF } from '../../../../ducks/user';
 
@@ -45,8 +45,7 @@ const NCFOrderSwitch = ({ value, onChange, taxInfo, onNavigate }: Props) => (
         value={value}
         disabled={taxInfo.name === undefined}
         onValueChange={onChange}
-        onTintColor={lightGray}
-        thumbTintColor={darkGray}
+        trackColor={switchTrackColor}
       />
     </Right>
   </ListItem>

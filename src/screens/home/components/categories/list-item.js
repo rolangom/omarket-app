@@ -12,8 +12,8 @@ import {
   H3,
 } from 'native-base';
 
-import OptThumbnail from '../../../../common/components/opt-thumbnail';
-import { lightGray, gray } from '../../../../common/utils/constants';
+import OptThumbnail from 'src/common/components/opt-thumbnail';
+import { lightGray, gray } from 'src/common/utils/constants';
 
 export type Props = {
   imgURL?: ?string,
@@ -62,6 +62,7 @@ export default class CategoryListItem extends React.Component<Props> {
         <OptThumbnail
           uri={imgURL}
           resizeMode="cover"
+          borderless
           size={45}
           square
           style={styles.image}
